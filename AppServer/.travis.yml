@@ -1,0 +1,23 @@
+language: java
+sudo: false
+
+addons:
+  sonarcloud:
+    organization: "unizar-30249-20220-ucampus"
+    token:
+      secure: $SONAR_TOKEN
+
+jdk:
+  - openjdk8
+
+jobs:
+  include:
+    - stage: "Unit Tests & SonarCloud Analysis"
+      script:
+        - gradle jacocoTestReport
+        - gradle sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.projectKey=$SONAR_PROJECT_KEY
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle
+    - '$HOME/.sonar/cache

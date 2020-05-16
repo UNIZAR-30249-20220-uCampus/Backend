@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web-server
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1  
+  template:
+    metadata:
+      labels:
+        app: web-server
+    spec:
+      containers:
+        - name: web-server
+          image: gcr.io/PROJECT_ID/IMAGE:TAG
+          readinessProbe:
+            httpGet:
+              port: 7080
+              path: /api/conexion          
+          ports:
+            - containerPort: 7080
