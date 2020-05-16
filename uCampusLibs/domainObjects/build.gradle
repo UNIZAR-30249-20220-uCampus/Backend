@@ -52,3 +52,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.bedatadriven/jackson-datatype-jts
 	compile group: 'com.bedatadriven', name: 'jackson-datatype-jts', version: '2.4'
 }
+
+task compileDomainObjects{
+	println("I am building up the domainObjects jar files")
+}
