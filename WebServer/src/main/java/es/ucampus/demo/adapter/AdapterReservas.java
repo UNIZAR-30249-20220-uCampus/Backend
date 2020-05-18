@@ -25,8 +25,8 @@ import java.util.List;
 public class AdapterReservas {
 
 	@Autowired
-	private final static String QUEUE_ENVIAR = "WebASpringReservasFer";
-	private final static String QUEUE_RECIBIR = "SpringAWebReservasFer";
+	private final static String QUEUE_ENVIAR = "WebASpringReservas";
+	private final static String QUEUE_RECIBIR = "SpringAWebReservas";
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;

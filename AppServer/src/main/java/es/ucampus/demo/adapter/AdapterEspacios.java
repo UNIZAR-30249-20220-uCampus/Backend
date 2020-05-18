@@ -29,8 +29,8 @@ public class AdapterEspacios {
 	@Autowired
 	private FuncionesEspacio funcionesEspacios;
 	
-	private final static String QUEUE_ENVIAR = "SpringAWebEspaciosFer";
-	private final static String QUEUE_RECIBIR = "WebASpringEspaciosFer";
+	private final static String QUEUE_ENVIAR = "SpringAWebEspacios";
+	private final static String QUEUE_RECIBIR = "WebASpringEspacios";
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
