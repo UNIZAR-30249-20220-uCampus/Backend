@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dtoObjects.entity.ReservaDTO2;
+import domainObjects.request.ReservaRequest;
 import es.ucampus.demo.adapter.*;
 
 @RestController
@@ -29,7 +29,7 @@ public class ReservasController {
 	 * Crea una reserva
 	 */
     @PostMapping(value = "/api/crear-reserva/{espacio}")
-	public ResponseEntity<String> crearReserva(@PathVariable String espacio, @RequestBody ReservaDTO2 reserva) throws Exception {
+	public ResponseEntity<String> crearReserva(@PathVariable String espacio, @RequestBody ReservaRequest reserva) throws Exception {
 
 		adapterReservas.enviarReserva(espacio,reserva);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirReserva());

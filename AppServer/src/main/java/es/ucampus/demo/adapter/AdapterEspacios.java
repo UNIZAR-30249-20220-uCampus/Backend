@@ -8,7 +8,6 @@ import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.entity.ReservaDTO;
-import dtoObjects.entity.ReservaDTO2;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import es.ucampus.demo.service.FuncionesEspacio;

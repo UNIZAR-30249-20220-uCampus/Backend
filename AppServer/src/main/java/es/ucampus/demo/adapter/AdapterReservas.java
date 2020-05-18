@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
+import domainObjects.request.ReservaRequest;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.entity.ReservaDTO;
-import dtoObjects.entity.ReservaDTO2;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import es.ucampus.demo.service.FuncionesEspacio;
@@ -100,16 +100,22 @@ public class AdapterReservas {
 
 			switch (path[0]) {
                 case "crear-reserva":
-                    Espacio espacioReserva = funcionesEspacios.getEspacioId(path[1]);
-                    ReservaDTO2 reserva = mapper.readValue(path[2], ReservaDTO2.class);
-                    Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario());
-                    Boolean ok = funcionesReserva.hacerReserva(r);
-                    if(ok){
-                        emisorAMQP("Reservada");
-                    }
-                    else{
-                        emisorAMQP("Hay colision");
-                    }
+					Espacio espacioReserva = funcionesEspacios.getEspacioId(path[1]);
+					if(espacioReserva != null){
+						ReservaRequest reserva = mapper.readValue(path[2], ReservaRequest.class);
+						System.out.println(reserva.toString());
+						Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario());
+						Boolean ok = funcionesReserva.hacerReserva(r);
+						if(ok){
+							emisorAMQP("Reservada");
+						}
+						else{
+							emisorAMQP("Hay colision");
+						}
+					}
+					else{
+						emisorAMQP("Espacio no existe");
+					}
 				break;
 				case "aceptar-reserva":
 					idReserva = Long.parseLong(path[1]);

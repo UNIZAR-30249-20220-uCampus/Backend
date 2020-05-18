@@ -2,15 +2,15 @@ package dtoObjects.entity;
 
 import domainObjects.entity.Reserva;
 import domainObjects.valueObject.EstadoReserva;
-import domainObjects.valueObject.Horario;
+import dtoObjects.valueObject.HorarioDTO;
 
 public class ReservaDTO {
 	
 	private long id;
 
-	private EspacioDTO espacio;
+	private String espacio;
 
-	private Horario horario;
+	private HorarioDTO horario;
 
 	private String usuario;
 
@@ -20,17 +20,17 @@ public class ReservaDTO {
 
 	public ReservaDTO(Reserva reserva) {
 		this.id = reserva.getId();
-		this.espacio = new EspacioDTO(reserva.getEspacio());
-		this.horario = reserva.getHorario();
+		this.espacio = reserva.getIdEspacio();
+		this.horario = new HorarioDTO(reserva.getHorario());
 		this.usuario = reserva.getUsuario();
 		this.estado = reserva.getEstado();
 	}
 
-	public EspacioDTO getEspacio() {
+	public String getEspacio() {
 		return espacio;
 	}
 
-	public Horario getHorario() {
+	public HorarioDTO getHorario() {
 		return horario;
 	}
 
@@ -41,7 +41,6 @@ public class ReservaDTO {
 	public EstadoReserva getEstado() {
 		return estado;
 	}
-
 
 	@Override
 	public String toString() {

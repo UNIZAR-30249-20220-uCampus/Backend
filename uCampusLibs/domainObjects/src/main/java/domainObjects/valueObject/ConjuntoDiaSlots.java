@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import domainObjects.request.ConjuntoDiaSlotsRequest;
+
 @Entity
 @Table(name = "conjunto_dia_slots")
 public class ConjuntoDiaSlots {
@@ -28,6 +30,12 @@ public class ConjuntoDiaSlots {
 		this.diaSemana = diaSemana;
 		this.slotInicio = slotInicio;
 		this.slotFinal = slotFinal;
+	}
+
+	public ConjuntoDiaSlots(ConjuntoDiaSlotsRequest conjuntoDiaSlots) {
+		this.diaSemana = conjuntoDiaSlots.getDiaSemana();
+		this.slotInicio = conjuntoDiaSlots.getSlotInicio();
+		this.slotFinal = conjuntoDiaSlots.getSlotFinal();
 	}
 
 	public int getDiaSemana() {

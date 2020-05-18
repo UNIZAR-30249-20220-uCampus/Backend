@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import domainObjects.request.HorarioRequest;
 import domainObjects.valueObject.EstadoReserva;
 import domainObjects.valueObject.Horario;
 
@@ -42,11 +43,17 @@ public class Reserva {
 		this.estado = EstadoReserva.PENDIENTE;
 	}
 
+	public Reserva(Espacio espacio, HorarioRequest horario, String usuario) {
+		this.espacio = espacio;
+		this.horario = new Horario(horario);
+		this.usuario = usuario;
+		this.estado = EstadoReserva.PENDIENTE;
+	}
+
 	public Long getId(){
 		return id;
 	}
-
-
+	
 	public String getUsuario() {
 		return usuario;
 	}
@@ -84,6 +91,10 @@ public class Reserva {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean estaAceptada(Reserva reserva){
+		return this.estado.name().equals(reserva.estado.name());
 	}
 
 	public boolean hayColision(Reserva reserva){
