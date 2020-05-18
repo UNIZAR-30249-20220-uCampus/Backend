@@ -1,5 +1,6 @@
 package domainObjects.valueObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import domainObjects.request.ConjuntoDiaSlotsRequest;
+import domainObjects.request.HorarioRequest;
 
 @Entity
 @Table(name = "horario")
@@ -37,18 +41,29 @@ public class Horario {
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.frecuencia = frecuencia;
-		this.conjuntoDiaSlots = new Vector<ConjuntoDiaSlots>();
+		this.conjuntoDiaSlots = new ArrayList<ConjuntoDiaSlots>();
 	}
 
-	public Horario(Date fechaInicio, Date fechaFin, int frecuencia, Vector<ConjuntoDiaSlots> conjuntoDiaSlots) {
+	public Horario(Date fechaInicio, Date fechaFin, int frecuencia, List<ConjuntoDiaSlots> conjuntoDiaSlots) {
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.frecuencia = frecuencia;
 		this.conjuntoDiaSlots = conjuntoDiaSlots;
 	}
 
-	public Horario(Vector<ConjuntoDiaSlots> conjuntoDiaSlots) {
+	public Horario(List<ConjuntoDiaSlots> conjuntoDiaSlots) {
 		this.conjuntoDiaSlots = conjuntoDiaSlots;
+	}
+
+	public Horario(HorarioRequest horario) {
+		this.fechaInicio = horario.getFechaInicio();
+		this.fechaFin = horario.getFechaFin();
+		this.frecuencia = horario.getFrecuencia();
+		List<ConjuntoDiaSlots> c = new ArrayList<ConjuntoDiaSlots>();
+		for (ConjuntoDiaSlotsRequest conjuntoDiaSlots : horario.getConjuntoDiaSlots()) {
+			c.add(new ConjuntoDiaSlots(conjuntoDiaSlots));
+		}
+		this.conjuntoDiaSlots = c;
 	}
 
 	/*

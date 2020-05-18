@@ -6,8 +6,8 @@ import org.json.simple.parser.JSONParser;
 //import org.postgresql.core.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import domainObjects.request.ReservaRequest;
 import dtoObjects.entity.EspacioDTO;
-import dtoObjects.entity.ReservaDTO2;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import com.rabbitmq.client.ConnectionFactory;
@@ -72,10 +72,12 @@ public class AdapterReservas {
 	////////////////// ENVIAR ///////////////////////////
 
 
-	public void enviarReserva(String espacio, ReservaDTO2 reserva) throws IOException {
+	public void enviarReserva(String espacio, ReservaRequest reserva) throws IOException {
+		System.out.println(reserva.toString());
 		ObjectMapper mapper = new ObjectMapper();
 		// Java object to JSON string
 		String jsonString = mapper.writeValueAsString(reserva);
+		System.out.println(jsonString);
 		String messageString = "crear-reserva/" + espacio + "/" + jsonString;
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");

@@ -40,6 +40,7 @@ dependencies {
 
 	compile files('libs/domainObjects.jar')
 	compile files('libs/dtoObjects.jar')
+	
 }
 
 test {

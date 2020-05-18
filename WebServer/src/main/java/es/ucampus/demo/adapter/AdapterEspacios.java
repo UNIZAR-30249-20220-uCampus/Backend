@@ -7,7 +7,6 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dtoObjects.entity.EspacioDTO;
-import dtoObjects.entity.ReservaDTO2;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import com.rabbitmq.client.ConnectionFactory;
@@ -87,41 +86,6 @@ public class AdapterEspacios {
 		// Java object to JSON string
 		String jsonString = mapper.writeValueAsString(criterios);
 		String messageString = "buscar-espacio/" + jsonString;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public void enviarReserva(String espacio, ReservaDTO2 reserva) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		// Java object to JSON string
-		String jsonString = mapper.writeValueAsString(reserva);
-		String messageString = "crear-reserva/" + espacio + "/" + jsonString;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public void enviarAceptarReserva(String reserva) throws IOException {
-		String messageString = "aceptar-reserva/" + reserva;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public void enviarCancelarReserva(String reserva) throws IOException {
-		String messageString = "cancelar-reserva/" + reserva;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public void enviarGetReservas(String espacio) throws IOException {
-		// Java object to JSON string
-		String messageString = "reservas/" + espacio;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public void enviarGetReservasUsuario(String usuario) throws IOException {
-		// Java object to JSON string
-		String messageString = "reservas-usuario/" + usuario;
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
