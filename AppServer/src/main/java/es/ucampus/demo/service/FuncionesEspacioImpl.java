@@ -92,7 +92,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 
 	public boolean setEquipamiento(CriteriosBusquedaDTO cambios) {
 		List<Integer> numEq = cambios.cantidadEquipamientos();
-		int i = espaciosRepository.establecerEquipamiento(cambios.getNombre(), numEq.get(0), numEq.get(1), numEq.get(2),
+		String nombreEspacio = "\"" + cambios.getNombre() + "\"";
+		System.out.println("NOMBRE ESPACIO: ");
+		System.out.println(nombreEspacio);
+		int i = espaciosRepository.establecerEquipamiento(nombreEspacio, numEq.get(0), numEq.get(1), numEq.get(2),
 				Integer.toString(numEq.get(3)), numEq.get(4), numEq.get(5), numEq.get(6), numEq.get(7), numEq.get(8),
 				numEq.get(9), numEq.get(10), numEq.get(11), numEq.get(12), numEq.get(13));
 		return i > 0;

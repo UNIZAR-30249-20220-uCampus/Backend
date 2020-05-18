@@ -32,8 +32,8 @@ public class AdapterReservas {
 	@Autowired
     private FuncionesReserva funcionesReserva;
 
-	private final static String QUEUE_ENVIAR = "SpringAWebReservas";
-	private final static String QUEUE_RECIBIR = "WebASpringReservas";
+	private final static String QUEUE_ENVIAR = "SpringAWebReservasFer";
+	private final static String QUEUE_RECIBIR = "WebASpringReservasFer";
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;

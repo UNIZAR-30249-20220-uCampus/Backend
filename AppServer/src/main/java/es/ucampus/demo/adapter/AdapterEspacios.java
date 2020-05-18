@@ -30,8 +30,8 @@ public class AdapterEspacios {
 	@Autowired
 	private FuncionesEspacio funcionesEspacios;
 	
-	private final static String QUEUE_ENVIAR = "SpringAWebEspacios";
-	private final static String QUEUE_RECIBIR = "WebASpringEspacios";
+	private final static String QUEUE_ENVIAR = "SpringAWebEspaciosFer";
+	private final static String QUEUE_RECIBIR = "WebASpringEspaciosFer";
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
@@ -122,7 +122,8 @@ public class AdapterEspacios {
                 break;
                 case "equipamiento":
                     CriteriosBusquedaDTO cambiosEquip = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-                    System.out.println(cambiosEquip);
+					System.out.println("CAMBIO EQUIPAMIENTO: ");
+					System.out.println(cambiosEquip);
                     boolean resultado = funcionesEspacios.setEquipamiento(cambiosEquip);
                     if(resultado) {
                         emisorAMQP("OK");
