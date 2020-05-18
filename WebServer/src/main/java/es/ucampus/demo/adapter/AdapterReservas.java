@@ -1,4 +1,4 @@
-package es.ucampus.demo.adapterAMQP;
+package es.ucampus.demo.adapter;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,18 +22,18 @@ import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
 import java.util.List;
 
-public class AdapterEspacios {
+public class AdapterReservas {
 
 	@Autowired
-	private final static String QUEUE_ENVIAR = "WebASpringSergio";
-	private final static String QUEUE_RECIBIR = "SpringAWebSergio";
+	private final static String QUEUE_ENVIAR = "WebASpringReservas";
+	private final static String QUEUE_RECIBIR = "SpringAWebReservas";
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
 
-	public AdapterEspacios() throws IOException {
+	public AdapterReservas() throws IOException {
 		// Conexión al broker RabbitMQ broker (prueba en la URL de
 		// la variable de entorno que se llame como diga ENV_AMQPURL_NAME
 		// o sino en localhost)
@@ -69,26 +69,8 @@ public class AdapterEspacios {
 		connection.close();
 	}
 
-	public void enviarGetEspacio(String id) throws IOException {
-		String messageString = "espacios/" + id;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
+	////////////////// ENVIAR ///////////////////////////
 
-	public void enviarGetEspacio(int planta, double x, double y) throws IOException {
-		String messageString = "espacios/" + planta + "/" + x + "/" + y;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public void enviarbuscarEspacio(CriteriosBusquedaDTO criterios) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		// Java object to JSON string
-		String jsonString = mapper.writeValueAsString(criterios);
-		String messageString = "buscar-espacio/" + jsonString;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
 
 	public void enviarReserva(String espacio, ReservaDTO2 reserva) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
@@ -126,85 +108,7 @@ public class AdapterEspacios {
 	}
 
 
-
 	////////////////// RECIBIR ///////////////////////////
-	public EspacioDTO recibirGetEspacio() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		ObjectMapper mapper = new ObjectMapper();
-		EspacioDTO espacio = mapper.readValue(message, EspacioDTO.class);
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return espacio;
-	}
-
-	public JSONArray recibirBuscarEspacio() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		JSONParser parser = new JSONParser();
-		JSONArray json = (JSONArray) parser.parse(message);
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return json;
-	}
-/*
-	public void establecerEquipamiento(String id, TipoEquipamiento tipo, int cantidad) throws IOException {
-		String messageString = "equipamiento/" + id + "/" + tipo + "/" + cantidad;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-*/
-	public void establecerEquipamiento(CriteriosBusquedaDTO equipRequest) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		// Java object to JSON string
-		String jsonString = mapper.writeValueAsString(equipRequest);
-		String messageString = "equipamiento/" + jsonString;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-	public String recibirEstablecerEquipamiento() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-		return message;
-	}
-
-	public void enviarGetEspaciosAlquilables(int planta) throws IOException {
-		String messageString = "espacios-alquilables/" + planta;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public JSONArray recibirGetEspaciosAlquilables() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-		
-		JSONParser parser = new JSONParser();
-		JSONArray json = (JSONArray) parser.parse(message);
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return json;
-	}
-
-	public void enviarCalcularTarifaEspacioAlquilable(String id) throws IOException {
-		String messageString = "tarifa-espacio/" + id;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public String recibirCalcularTarifaEspacioAlquilable() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
 
 	public String recibirReserva() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);

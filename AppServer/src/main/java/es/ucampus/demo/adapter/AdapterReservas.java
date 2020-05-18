@@ -1,4 +1,4 @@
-package es.ucampus.demo.adapterAMQP;
+package es.ucampus.demo.adapter;
 
 import org.json.simple.JSONObject;
 //import org.postgresql.core.ConnectionFactory;
@@ -25,22 +25,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterEspacios {
+public class AdapterReservas {
 
 	@Autowired
     private FuncionesEspacio funcionesEspacios;
-    @Autowired
+	@Autowired
     private FuncionesReserva funcionesReserva;
 
-	private final static String QUEUE_ENVIAR = "SpringAWebSergio";
-	private final static String QUEUE_RECIBIR = "WebASpringSergio";
+	private final static String QUEUE_ENVIAR = "SpringAWebReservas";
+	private final static String QUEUE_RECIBIR = "WebASpringReservas";
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
 
-	public AdapterEspacios() throws IOException {
+	public AdapterReservas() throws IOException {
 		// Conexión al broker RabbitMQ broker (prueba en la URL de
 		// la variable de entorno que se llame como diga ENV_AMQPURL_NAME
 		// o sino en localhost)
@@ -99,42 +99,6 @@ public class AdapterEspacios {
 			Long idReserva;
 
 			switch (path[0]) {
-				case "espacios":
-                    EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(Integer.parseInt(path[1]),Double.parseDouble(path[2]),Double.parseDouble(path[3]));
-                    emisorAMQP(espacio.toJson());
-                break;
-                case "buscar-espacio":
-                
-                    CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-                    System.out.println(criterios);
-                    
-                    if(criterios.busquedaPorId()){
-
-                        EspacioDTO espacio1 = funcionesEspacios.getEspacioDTOId(criterios.getNombre());
-                        String jsonEspacio = mapper.writeValueAsString(espacio1);
-                        System.out.println(jsonEspacio);
-                        emisorAMQP(jsonEspacio);
-                    }
-                    else{
-                        List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
-                        espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
-                        String espacios2 = new Gson().toJson(espacios);
-                        System.out.println(espacios2);
-                        emisorAMQP(espacios2);
-                    }
-                break;
-                case "equipamiento":
-                    CriteriosBusquedaDTO cambiosEquip = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-                    System.out.println(cambiosEquip);
-                    boolean resultado = funcionesEspacios.setEquipamiento(cambiosEquip);
-                    if(resultado) {
-                        emisorAMQP("OK");
-                    }
-                    else {
-                        emisorAMQP("FALLO");
-                    }
-
-                break;
                 case "crear-reserva":
                     Espacio espacioReserva = funcionesEspacios.getEspacioId(path[1]);
                     ReservaDTO2 reserva = mapper.readValue(path[2], ReservaDTO2.class);

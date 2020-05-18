@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import es.ucampus.demo.adapterAMQP.*;
+import es.ucampus.demo.adapter.*;
 import com.google.gson.JsonObject;
 
 import org.json.simple.JSONArray;
