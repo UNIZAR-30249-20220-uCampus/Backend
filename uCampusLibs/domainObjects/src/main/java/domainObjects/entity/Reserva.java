@@ -40,14 +40,24 @@ public class Reserva {
 		this.espacio = espacio;
 		this.horario = horario;
 		this.usuario = usuario;
-		this.estado = EstadoReserva.PENDIENTE;
+		if(espacio.getAlquilable() == 1){
+			this.estado = EstadoReserva.PENDIENTEPAGO;
+		}
+		else{
+			this.estado = EstadoReserva.PENDIENTE;
+		}
 	}
 
 	public Reserva(Espacio espacio, HorarioRequest horario, String usuario) {
 		this.espacio = espacio;
 		this.horario = new Horario(horario);
 		this.usuario = usuario;
-		this.estado = EstadoReserva.PENDIENTE;
+		if(espacio.getAlquilable() == 1){
+			this.estado = EstadoReserva.PENDIENTEPAGO;
+		}
+		else{
+			this.estado = EstadoReserva.PENDIENTE;
+		}
 	}
 
 	public Long getId(){
