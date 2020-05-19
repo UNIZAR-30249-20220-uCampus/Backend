@@ -102,6 +102,13 @@ public class AdapterReservas {
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
+	public void enviarGetReservas(String espacio, String estado) throws IOException {
+		// Java object to JSON string
+		String messageString = "reservas-estado/" + espacio + "/" + estado;
+		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		System.out.println(" [x] Enviado '" + messageString + "'");
+	}
+
 	public void enviarGetReservasUsuario(String usuario) throws IOException {
 		// Java object to JSON string
 		String messageString = "reservas-usuario/" + usuario;

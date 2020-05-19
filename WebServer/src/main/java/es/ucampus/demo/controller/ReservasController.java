@@ -66,10 +66,20 @@ public class ReservasController {
 	}
 
 	/*
+	 * Obtiene las reservas de un espacio dado su id
+	 */
+	@GetMapping(value = "/api/reservas/{espacio}/{estado}")
+	public ResponseEntity<JSONArray> getReservas(@PathVariable String espacio, @PathVariable String estado) throws Exception {
+
+		adapterReservas.enviarGetReservas(espacio, estado);
+		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservas());
+	}
+
+	/*
 	 * Obtiene las reservas de un usuario dado su id
 	 */
-	@GetMapping(value = "/api/reservas-usuario/{usuario}")
-	public ResponseEntity<JSONArray> getReservasUsuario(@PathVariable String usuario) throws Exception {
+	@GetMapping(value = "/api/reservas-usuario/{usuario}/{estado}")
+	public ResponseEntity<JSONArray> getReservasUsuario(@PathVariable String usuario, @PathVariable String estado) throws Exception {
 
 		adapterReservas.enviarGetReservasUsuario(usuario);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservasUsuario());

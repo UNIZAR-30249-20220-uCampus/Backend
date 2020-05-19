@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
+import domainObjects.valueObject.EstadoReserva;
 import dtoObjects.entity.ReservaDTO;
 import es.ucampus.demo.repository.RepositorioReservas;
 
@@ -23,8 +24,6 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 
 
 	public boolean hacerReserva(Reserva reserva) {
-
-		System.out.println(reserva.toString());
 
 		List<Reserva> reservas = repositorioReservas.findAll();
 
@@ -71,12 +70,9 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 
 	public List<ReservaDTO> buscarReserva(Espacio espacio){
 		List<Reserva> reservas = repositorioReservas.findByEspacio(espacio);
-		
 		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
 		
 		for (Reserva reserva : reservas) {
-			System.out.println(reservas.toString());
-
 			ReservaDTO reservaDTO = new ReservaDTO(reserva);
 			reservasDTO.add(reservaDTO);
 		}
@@ -84,9 +80,23 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 		return reservasDTO;
 	}
 
+	public List<ReservaDTO> buscarReservaEstado(Espacio espacio, EstadoReserva estado){
+		List<Reserva> reservas = repositorioReservas.findByEspacio(espacio);
+		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
+		
+		for (Reserva reserva : reservas) {
+			if(reserva.getEstado().equals(estado)){
+				ReservaDTO reservaDTO = new ReservaDTO(reserva);
+				reservasDTO.add(reservaDTO);
+			}
+		}
+
+		return reservasDTO;
+	}
+
+
 	public List<ReservaDTO> buscarReservaUsuario(String usuario){
 		List<Reserva> reservas = repositorioReservas.findByUsuario(usuario);
-		
 		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
 		
 		for (Reserva reserva : reservas) {

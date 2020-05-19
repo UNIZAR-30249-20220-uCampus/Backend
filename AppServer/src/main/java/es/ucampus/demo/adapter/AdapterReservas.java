@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
 import domainObjects.request.ReservaRequest;
+import domainObjects.valueObject.EstadoReserva;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.entity.ReservaDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
@@ -96,7 +97,9 @@ public class AdapterReservas {
 
 			String[] path = message.split("/");
 			ObjectMapper mapper = new ObjectMapper();
+			
 			Long idReserva;
+			String reservasString;
 
 			switch (path[0]) {
                 case "crear-reserva":
@@ -114,7 +117,7 @@ public class AdapterReservas {
 						}
 					}
 					else{
-						emisorAMQP("Espacio no existe");
+						emisorAMQP("Espacio no encontrado");
 					}
 				break;
 				case "aceptar-reserva":
@@ -138,11 +141,19 @@ public class AdapterReservas {
                     }
 				break;
 				case "reservas":
-                    Espacio espacioReservas = funcionesEspacios.getEspacioId(path[1]);
-                    List<ReservaDTO> reservas = new ArrayList<ReservaDTO>();
+					Espacio espacioReservas = funcionesEspacios.getEspacioId(path[1]);
+					List<ReservaDTO> reservas = new ArrayList<ReservaDTO>();
 					reservas = funcionesReserva.buscarReserva(espacioReservas);
-					String reservasString = new Gson().toJson(reservas);
-					System.out.println(reservasString);
+					reservasString = new Gson().toJson(reservas);
+					emisorAMQP(reservasString);
+				break;
+				case "reservas-estado":
+					espacioReservas = funcionesEspacios.getEspacioId(path[1]);
+					String estado = path[2];
+					EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
+					List<ReservaDTO> reservasEstado = new ArrayList<ReservaDTO>();
+					reservasEstado = funcionesReserva.buscarReservaEstado(espacioReservas, estadoreserva);
+					reservasString = new Gson().toJson(reservasEstado);
 					emisorAMQP(reservasString);
 				break;
 				case "reservas-usuario":
