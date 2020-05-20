@@ -17,7 +17,7 @@ public class SwaggerAPI {
     @Bean
     public Docket api() { 
         return new Docket(DocumentationType.SWAGGER_2)
-        	.apiInfo(apiInfo())
+            .apiInfo(apiInfo())
           	.select()                                  
           	.apis(RequestHandlerSelectors.basePackage("es.ucampus.demo.controller"))             
           	.paths(PathSelectors.any())                          
