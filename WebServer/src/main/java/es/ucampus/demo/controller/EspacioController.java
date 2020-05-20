@@ -6,6 +6,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import es.ucampus.demo.adapter.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiResponse;
+
+
 import com.google.gson.JsonObject;
 
 import org.json.simple.JSONArray;
@@ -22,6 +29,7 @@ import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 @RestController
+@Api(value = "Espacios", description = "Operaciones para la gestión de espacios")
 public class EspacioController {
 
 	private AdapterEspacios AdapterEspacios;
@@ -31,6 +39,7 @@ public class EspacioController {
 	}
 
 	@GetMapping(value = "/api/conexion")
+	@ApiOperation(value = "Conexión con servidor", notes = "Devuelve estado del backend" )
 	public ResponseEntity<String> conexion1() throws Exception {
 		return ResponseEntity.status(HttpStatus.OK).body("OK");
 	}
@@ -39,7 +48,10 @@ public class EspacioController {
 	 * Dado el identificador de un espacio obtener su informacion
 	 */
 	@GetMapping(value = "/api/espacios/{id}")
-	public ResponseEntity<EspacioDTO> getEspacioId(@PathVariable String id) throws Exception {
+	@ApiOperation(value = "Busqueda de un espacio por id", notes = "Devuelve información de un espacio" )
+	public ResponseEntity<EspacioDTO> getEspacioId(
+		@ApiParam(value = "Id del espacio desde el que se recuperará el objeto espacio", required = true) @PathVariable String id) 
+			throws Exception {
 
 		AdapterEspacios.enviarGetEspacio(id);
 		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirGetEspacio());
@@ -49,7 +61,11 @@ public class EspacioController {
 	 * Dada la planta y las coordenadas de un espacio obtener su informacion
 	 */
 	@GetMapping(path = "/api/espacios/{planta}/{x}/{y}")
-	public ResponseEntity<EspacioDTO> getSpace(@PathVariable int planta, @PathVariable double x, @PathVariable double y)
+	@ApiOperation(value = "Busqueda de un espacio por planta y coordenadas", notes = "Devuelve información de un espacio" )
+	public ResponseEntity<EspacioDTO> getSpace(
+		@ApiParam(value = "Planta donde se encuentra el espacio", required = true) @PathVariable int planta, 
+		@ApiParam(value = "Coordenada long del espacio", required = true) @PathVariable double x, 
+		@ApiParam(value = "Coordenada lat del espacio", required = true) @PathVariable double y)
 			throws Exception {
 
 		AdapterEspacios.enviarGetEspacio(planta, x, y);
@@ -60,8 +76,10 @@ public class EspacioController {
 	 * Busqueda de espacios segun criterios
 	 */
 	@PostMapping(value = "/api/buscar-espacio")
+	@ApiOperation(value = "Busqueda de espacios segun criterios", notes = "Devuelve lista de espacios con esas características")
 	public ResponseEntity<JSONArray> buscarEspacio(HttpServletRequest request,
-			@RequestBody CriteriosBusquedaDTO busquedaRequest) throws Exception {
+		@ApiParam(value = "Criterios de busqueda", required = true) @RequestBody CriteriosBusquedaDTO busquedaRequest) 
+			throws Exception {
 
 		AdapterEspacios.enviarbuscarEspacio(busquedaRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirBuscarEspacio());
@@ -71,6 +89,7 @@ public class EspacioController {
 	 * Establecer cantidad de equipamiento en un espacio determinado.
 	 */
 	@PostMapping(value = "/api/equipamiento")
+	@ApiOperation(value = "Establece el equipamiento de un espacio")
 	public ResponseEntity<String> estableceEquipamiento(HttpServletRequest request,
 			@RequestBody CriteriosBusquedaDTO equipRequest) throws Exception {
 
@@ -82,7 +101,10 @@ public class EspacioController {
 	 * Dada la planta devuelve una lista con los espacios alquilables
 	 */
 	@GetMapping(path = "/api/espacios-alquilables/{planta}")
-	public ResponseEntity<JSONArray> getEspaciosAlquilables(@PathVariable int planta) throws Exception {
+	@ApiOperation(value = "Busqueda de espacios alquilables", notes = "Devuelve lista de espacios alquilables")
+	public ResponseEntity<JSONArray> getEspaciosAlquilables(
+		@ApiParam(value = "Planta donde se encuentra el espacio", required = true) @PathVariable int planta) 
+			throws Exception {
 
 		AdapterEspacios.enviarGetEspaciosAlquilables(planta);
 		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirGetEspaciosAlquilables());
@@ -92,7 +114,10 @@ public class EspacioController {
 	 * Dada la planta devuelve una lista con los espacios alquilables
 	 */
 	@GetMapping(path = "/api/tarifa-espacio/{id}")
-	public ResponseEntity<String> calcularTarifaEspacioAlquilable(@PathVariable String id) throws Exception {
+	@ApiOperation(value = "Obtiene la tarifa de un espacio", notes = "Devuelve la tarifa de un espacios")
+	public ResponseEntity<String> calcularTarifaEspacioAlquilable(
+		@ApiParam(value = "Id del espacio desde el que se recuperará el objeto espacio", required = true) @PathVariable String id) 
+			throws Exception {
 
 		AdapterEspacios.enviarCalcularTarifaEspacioAlquilable(id);
 		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirCalcularTarifaEspacioAlquilable());

@@ -14,8 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import domainObjects.request.ReservaRequest;
 import es.ucampus.demo.adapter.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiResponse;
+
 
 @RestController
+@Api(value = "Reservas", description = "Operaciones para la gestión de reservas")
 public class ReservasController {
 
 	
@@ -28,8 +35,12 @@ public class ReservasController {
 	/*
 	 * Crea una reserva
 	 */
-    @PostMapping(value = "/api/crear-reserva/{espacio}")
-	public ResponseEntity<String> crearReserva(@PathVariable String espacio, @RequestBody ReservaRequest reserva) throws Exception {
+	@PostMapping(value = "/api/crear-reserva/{espacio}")
+	@ApiOperation(value = "Crea una reserva para un espacio", notes = "Devuelve estado de la reserva" )
+	public ResponseEntity<String> crearReserva(
+		@ApiParam(value = "Id del espacio que se quiere reservar", required = true) @PathVariable String espacio, 
+		@ApiParam(value = "Parametros de reserva", required = true) @RequestBody ReservaRequest reserva) 
+			throws Exception {
 
 		adapterReservas.enviarReserva(espacio,reserva);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirReserva());
@@ -39,7 +50,10 @@ public class ReservasController {
 	 * Acepta una reserva
 	 */
 	@PutMapping(value = "/api/aceptar-reserva/{reserva}")
-	public ResponseEntity<String> aceptarReserva(@PathVariable String reserva) throws Exception {
+	@ApiOperation(value = "Acepta una reserva para un espacio", notes = "Devuelve estado de la reserva" )
+	public ResponseEntity<String> aceptarReserva(
+		@ApiParam(value = "Id de la reserva que se quiere aceptar", required = true) @PathVariable String reserva) 
+			throws Exception {
 
 		adapterReservas.enviarAceptarReserva(reserva);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirAceptarReserva());
@@ -59,7 +73,10 @@ public class ReservasController {
 	 * Cancela una reserva
 	 */
 	@PutMapping(value = "/api/cancelar-reserva/{reserva}")
-	public ResponseEntity<String> cancelarReserva(@PathVariable String reserva) throws Exception {
+	@ApiOperation(value = "Cancela una reserva para un espacio", notes = "Devuelve estado de la reserva" )
+	public ResponseEntity<String> cancelarReserva(
+		@ApiParam(value = "Id de la reserva que se quiere cancelar", required = true) @PathVariable String reserva) 
+			throws Exception {
 
 		adapterReservas.enviarCancelarReserva(reserva);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirCancelarReserva());
@@ -69,7 +86,10 @@ public class ReservasController {
 	 * Obtiene las reservas de un espacio dado su id
 	 */
 	@GetMapping(value = "/api/reservas/{espacio}")
-	public ResponseEntity<JSONArray> getReservas(@PathVariable String espacio) throws Exception {
+	@ApiOperation(value = "Busqueda de reservas correspondientes a un espacio", notes = "Devuelve lista de reservas correspondientes a un espacio")
+	public ResponseEntity<JSONArray> getReservas(
+		@ApiParam(value = "Id del espacio", required = true) @PathVariable String espacio) 
+			throws Exception {
 
 		adapterReservas.enviarGetReservas(espacio);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservas());
@@ -79,7 +99,11 @@ public class ReservasController {
 	 * Obtiene las reservas de un espacio dado su id
 	 */
 	@GetMapping(value = "/api/reservas/{espacio}/{estado}")
-	public ResponseEntity<JSONArray> getReservas(@PathVariable String espacio, @PathVariable String estado) throws Exception {
+	@ApiOperation(value = "Busqueda de reservas correspondientes a un espacio", notes = "Devuelve lista de reservas correspondientes a un espacio")
+	public ResponseEntity<JSONArray> getReservas(
+		@ApiParam(value = "Id del espacio", required = true) @PathVariable String espacio, 
+		@ApiParam(value = "Estado de la reserva (PENDIENTE, PENDIENTEPAGO, ACEPTADA, CANCELADA)", required = true) @PathVariable String estado) 
+			throws Exception {
 
 		adapterReservas.enviarGetReservas(espacio, estado);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservas());
@@ -89,7 +113,10 @@ public class ReservasController {
 	 * Obtiene las reservas de un usuario dado su id
 	 */
 	@GetMapping(value = "/api/reservas-usuario/{usuario}")
-	public ResponseEntity<JSONArray> getReservasUsuario(@PathVariable String usuario) throws Exception {
+	@ApiOperation(value = "Busqueda de reservas correspondientes a un usuario", notes = "Devuelve lista de reservas correspondientes a un usuario")
+	public ResponseEntity<JSONArray> getReservasUsuario(
+		@ApiParam(value = "Id del usuario", required = true) @PathVariable String usuario) 
+			throws Exception {
 
 		adapterReservas.enviarGetReservasUsuario(usuario);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservasUsuario());
