@@ -78,8 +78,8 @@ public class ReservasController {
 	/*
 	 * Obtiene las reservas de un usuario dado su id
 	 */
-	@GetMapping(value = "/api/reservas-usuario/{usuario}/{estado}")
-	public ResponseEntity<JSONArray> getReservasUsuario(@PathVariable String usuario, @PathVariable String estado) throws Exception {
+	@GetMapping(value = "/api/reservas-usuario/{usuario}")
+	public ResponseEntity<JSONArray> getReservasUsuario(@PathVariable String usuario) throws Exception {
 
 		adapterReservas.enviarGetReservasUsuario(usuario);
 		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservasUsuario());
