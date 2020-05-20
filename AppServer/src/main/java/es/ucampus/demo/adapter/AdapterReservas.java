@@ -105,16 +105,15 @@ public class AdapterReservas {
 					if (espacioReserva != null) {
 						ReservaRequest reserva = mapper.readValue(path[2], ReservaRequest.class);
 						System.out.println(reserva.toString());
-						Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario(),
-								reserva.getTipo());
+						Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario(), reserva.getTipo());
 						boolean ok = funcionesReserva.hacerReserva(r);
 						if (ok) {
 							emisorAMQP("Reservada");
 						} else {
-							emisorAMQP("Hay colision");
+							emisorAMQP("Colision");
 						}
 					} else {
-						emisorAMQP("Espacio no encontrado");
+						emisorAMQP("No encontrado");
 					}
 					break;
 				case "aceptar-reserva":

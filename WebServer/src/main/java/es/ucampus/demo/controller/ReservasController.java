@@ -43,7 +43,16 @@ public class ReservasController {
 			throws Exception {
 
 		adapterReservas.enviarReserva(espacio,reserva);
-		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirReserva());
+		
+		String res = adapterReservas.recibirReserva();
+		HttpStatus codigo = HttpStatus.CREATED;
+		if(res.equals("Colision")){
+			codigo = HttpStatus.BAD_REQUEST;
+		}
+		else if(res.equals("No encontrado")){
+			codigo = HttpStatus.NOT_FOUND;
+		}
+		return ResponseEntity.status(codigo).body(res);
 	}
 
 	/*
@@ -56,17 +65,34 @@ public class ReservasController {
 			throws Exception {
 
 		adapterReservas.enviarAceptarReserva(reserva);
-		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirAceptarReserva());
+
+		String res = adapterReservas.recibirAceptarReserva();
+		HttpStatus codigo = HttpStatus.OK;
+
+		if(res.equals("Reserva no encontrada")){
+			codigo = HttpStatus.NOT_FOUND;
+		}
+		return ResponseEntity.status(codigo).body(res);
 	}
 
 	/*
 	 * Paga una reserva
 	 */
 	@PutMapping(value = "/api/pagar-reserva/{reserva}")
-	public ResponseEntity<String> pagarReserva(@PathVariable String reserva) throws Exception {
+	@ApiOperation(value = "Paga una reserva para un espacio", notes = "Devuelve estado de la reserva" )
+	public ResponseEntity<String> pagarReserva(
+		@ApiParam(value = "Id de la reserva que se quiere pagar", required = true) @PathVariable String reserva) 
+			throws Exception {
 
 		adapterReservas.enviarPagarReserva(reserva);
-		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirPagarReserva());
+
+		String res = adapterReservas.recibirPagarReserva();
+		HttpStatus codigo = HttpStatus.OK;
+
+		if(res.equals("Reserva no encontrada")){
+			codigo = HttpStatus.NOT_FOUND;
+		}
+		return ResponseEntity.status(codigo).body(res);
 	}
 
 	/*
@@ -79,7 +105,14 @@ public class ReservasController {
 			throws Exception {
 
 		adapterReservas.enviarCancelarReserva(reserva);
-		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirCancelarReserva());
+
+		String res = adapterReservas.recibirCancelarReserva();
+		HttpStatus codigo = HttpStatus.OK;
+
+		if(res.equals("Reserva no encontrada")){
+			codigo = HttpStatus.NOT_FOUND;
+		}
+		return ResponseEntity.status(codigo).body(res);
 	}
 
 	/*
