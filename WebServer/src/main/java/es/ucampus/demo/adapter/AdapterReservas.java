@@ -154,28 +154,21 @@ public class AdapterReservas {
 		return message;
 	}
 
-	public JSONArray recibirGetReservas() throws Exception {
+	public String recibirGetReservas() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 		String message = new String(delivery.getBody());
-
-		JSONParser parser = new JSONParser();
-		JSONArray json = (JSONArray) parser.parse(message);
-
 		System.out.println(" [x] Recibido '" + message + "'");
-		return json;
+		return message;
 	}
 
-	public JSONArray recibirGetReservasUsuario() throws Exception {
+
+	public String recibirGetReservasUsuario() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 		String message = new String(delivery.getBody());
-
-		JSONParser parser = new JSONParser();
-		JSONArray json = (JSONArray) parser.parse(message);
-
 		System.out.println(" [x] Recibido '" + message + "'");
-		return json;
+		return message;
 	}
 
 }

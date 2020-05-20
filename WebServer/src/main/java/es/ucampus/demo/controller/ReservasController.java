@@ -3,6 +3,7 @@ package es.ucampus.demo.controller;
 import java.io.IOException;
 
 import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -125,7 +126,18 @@ public class ReservasController {
 			throws Exception {
 
 		adapterReservas.enviarGetReservas(espacio);
-		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservas());
+
+		String res = adapterReservas.recibirGetReservas();
+		HttpStatus codigo = HttpStatus.OK;
+
+		if(res.equals("No encontrado")){
+			codigo = HttpStatus.NOT_FOUND;
+			return ResponseEntity.status(codigo).body(null);
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONArray json = (JSONArray) parser.parse(res);
+		return ResponseEntity.status(codigo).body(json);
 	}
 
 	/*
@@ -139,7 +151,18 @@ public class ReservasController {
 			throws Exception {
 
 		adapterReservas.enviarGetReservas(espacio, estado);
-		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservas());
+
+		String res = adapterReservas.recibirGetReservas();
+		HttpStatus codigo = HttpStatus.OK;
+
+		if(res.equals("No encontrado")){
+			codigo = HttpStatus.NOT_FOUND;
+			return ResponseEntity.status(codigo).body(null);
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONArray json = (JSONArray) parser.parse(res);
+		return ResponseEntity.status(codigo).body(json);
 	}
 
 	/*
@@ -152,7 +175,13 @@ public class ReservasController {
 			throws Exception {
 
 		adapterReservas.enviarGetReservasUsuario(usuario);
-		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirGetReservasUsuario());
+
+		String res = adapterReservas.recibirGetReservasUsuario();
+		HttpStatus codigo = HttpStatus.OK;
+		JSONParser parser = new JSONParser();
+		JSONArray json = (JSONArray) parser.parse(res);
+
+		return ResponseEntity.status(codigo).body(json);
 	}
 	
 }

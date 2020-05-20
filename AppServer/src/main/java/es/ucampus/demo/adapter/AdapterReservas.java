@@ -145,19 +145,29 @@ public class AdapterReservas {
 					break;
 				case "reservas":
 					Espacio espacioReservas = funcionesEspacios.getEspacioId(path[1]);
-					List<ReservaDTO> reservas = new ArrayList<ReservaDTO>();
-					reservas = funcionesReserva.buscarReserva(espacioReservas);
-					reservasString = new Gson().toJson(reservas);
-					emisorAMQP(reservasString);
+					if (espacioReservas != null) {
+						List<ReservaDTO> reservas = new ArrayList<ReservaDTO>();
+						reservas = funcionesReserva.buscarReserva(espacioReservas);
+						reservasString = new Gson().toJson(reservas);
+						emisorAMQP(reservasString);
+					}
+					else{
+						emisorAMQP("No encontrado");
+					}
 					break;
 				case "reservas-estado":
 					espacioReservas = funcionesEspacios.getEspacioId(path[1]);
-					String estado = path[2];
-					EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
-					List<ReservaDTO> reservasEstado = new ArrayList<ReservaDTO>();
-					reservasEstado = funcionesReserva.buscarReservaEstado(espacioReservas, estadoreserva);
-					reservasString = new Gson().toJson(reservasEstado);
-					emisorAMQP(reservasString);
+					if (espacioReservas != null) {
+						String estado = path[2];
+						EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
+						List<ReservaDTO> reservasEstado = new ArrayList<ReservaDTO>();
+						reservasEstado = funcionesReserva.buscarReservaEstado(espacioReservas, estadoreserva);
+						reservasString = new Gson().toJson(reservasEstado);
+						emisorAMQP(reservasString);
+					}
+					else{
+						emisorAMQP("No encontrado");
+					}
 					break;
 				case "reservas-usuario":
 					String usuario = path[1];
