@@ -1,26 +1,19 @@
 package es.ucampus.demo.adapter;
 
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 //import org.postgresql.core.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import domainObjects.request.ReservaRequest;
-import dtoObjects.entity.EspacioDTO;
-import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 
 import java.io.IOException;
-import java.util.List;
 
 public class AdapterReservas {
 
@@ -89,6 +82,12 @@ public class AdapterReservas {
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
+	public void enviarPagarReserva(String reserva) throws IOException {
+		String messageString = "pagar-reserva/" + reserva;
+		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		System.out.println(" [x] Enviado '" + messageString + "'");
+	}
+
 	public void enviarCancelarReserva(String reserva) throws IOException {
 		String messageString = "cancelar-reserva/" + reserva;
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
@@ -129,6 +128,15 @@ public class AdapterReservas {
 	}
 
 	public String recibirAceptarReserva() throws Exception {
+		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
+		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+		String message = new String(delivery.getBody());
+
+		System.out.println(" [x] Recibido '" + message + "'");
+		return message;
+	}
+
+	public String recibirPagarReserva() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 		String message = new String(delivery.getBody());

@@ -60,6 +60,16 @@ public class ReservasController {
 	}
 
 	/*
+	 * Paga una reserva
+	 */
+	@PutMapping(value = "/api/pagar-reserva/{reserva}")
+	public ResponseEntity<String> pagarReserva(@PathVariable String reserva) throws Exception {
+
+		adapterReservas.enviarPagarReserva(reserva);
+		return ResponseEntity.status(HttpStatus.OK).body(adapterReservas.recibirPagarReserva());
+	}
+
+	/*
 	 * Cancela una reserva
 	 */
 	@PutMapping(value = "/api/cancelar-reserva/{reserva}")

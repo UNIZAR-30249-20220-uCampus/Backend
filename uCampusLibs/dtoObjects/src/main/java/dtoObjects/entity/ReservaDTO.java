@@ -15,6 +15,7 @@ public class ReservaDTO {
 	private String usuario;
 
 	private EstadoReserva estado;
+	private String tipo;
 
 	public ReservaDTO() {}
 
@@ -24,6 +25,7 @@ public class ReservaDTO {
 		this.horario = new HorarioDTO(reserva.getHorario());
 		this.usuario = reserva.getUsuario();
 		this.estado = reserva.getEstado();
+		this.tipo = reserva.getTipo();
 	}
 
 	public String getEspacio() {
@@ -45,7 +47,7 @@ public class ReservaDTO {
 	@Override
 	public String toString() {
 		return "ReservaDTO [espacio=" + espacio + ", estado=" + estado + ", horario=" + horario + ", id=" + id
-				+ ", usuario=" + usuario + "]";
+				+ ", tipo=" + tipo + ", usuario=" + usuario + "]";
 	}
 
 }
