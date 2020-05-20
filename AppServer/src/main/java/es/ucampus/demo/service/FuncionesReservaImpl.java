@@ -22,14 +22,13 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 	@Autowired
 	private RepositorioReservas repositorioReservas;
 
-
 	public boolean hacerReserva(Reserva reserva) {
 
 		List<Reserva> reservas = repositorioReservas.findAll();
 
 		for (Reserva reserva2 : reservas) {
-			if(reserva.mismoEspacio(reserva2)){
-				if(reserva.hayColision(reserva2)){
+			if (reserva.mismoEspacio(reserva2)) {
+				if (reserva.hayColision(reserva2)) {
 					return false;
 				}
 			}
@@ -40,38 +39,46 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 		return true;
 	}
 
-	public boolean aceptarReserva(Long idReserva){
-		boolean aceptar = false;
+	public boolean aceptarReserva(Long idReserva) {
+		boolean aceptada = false;
 		Optional<Reserva> reserva = repositorioReservas.findById(idReserva);
-		
-		if(reserva.isPresent()){
-			reserva.get().aceptarReserva();;
-			repositorioReservas.save(reserva.get());
-			aceptar = true;
-		}		
-
-		return aceptar;
-
+		if (reserva.isPresent()) {
+			aceptada = reserva.get().aceptarReserva();
+			if (aceptada) {
+				repositorioReservas.save(reserva.get());
+			}
+		}
+		return aceptada;
 	}
 
-	public boolean cancelarReserva(Long idReserva){
-		boolean canceled = false;
+	public boolean pagarReserva(Long idReserva) {
+		boolean pagada = false;
 		Optional<Reserva> reserva = repositorioReservas.findById(idReserva);
-		
-		if(reserva.isPresent()){
-			reserva.get().cancelarReserva();
-			repositorioReservas.save(reserva.get());
-			canceled = true;
-		}		
-
-		return canceled;
-
+		if (reserva.isPresent()) {
+			pagada = reserva.get().pagarReserva();
+			if (pagada) {
+				repositorioReservas.save(reserva.get());
+			}
+		}
+		return pagada;
 	}
 
-	public List<ReservaDTO> buscarReserva(Espacio espacio){
+	public boolean cancelarReserva(Long idReserva) {
+		boolean cancelada = false;
+		Optional<Reserva> reserva = repositorioReservas.findById(idReserva);
+		if (reserva.isPresent()) {
+			cancelada = reserva.get().cancelarReserva();
+			if (cancelada) {
+				repositorioReservas.save(reserva.get());
+			}
+		}
+		return cancelada;
+	}
+
+	public List<ReservaDTO> buscarReserva(Espacio espacio) {
 		List<Reserva> reservas = repositorioReservas.findByEspacio(espacio);
 		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
-		
+
 		for (Reserva reserva : reservas) {
 			ReservaDTO reservaDTO = new ReservaDTO(reserva);
 			reservasDTO.add(reservaDTO);
@@ -80,12 +87,12 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 		return reservasDTO;
 	}
 
-	public List<ReservaDTO> buscarReservaEstado(Espacio espacio, EstadoReserva estado){
+	public List<ReservaDTO> buscarReservaEstado(Espacio espacio, EstadoReserva estado) {
 		List<Reserva> reservas = repositorioReservas.findByEspacio(espacio);
 		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
-		
+
 		for (Reserva reserva : reservas) {
-			if(reserva.getEstado().equals(estado)){
+			if (reserva.getEstado().equals(estado)) {
 				ReservaDTO reservaDTO = new ReservaDTO(reserva);
 				reservasDTO.add(reservaDTO);
 			}
@@ -94,11 +101,10 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 		return reservasDTO;
 	}
 
-
-	public List<ReservaDTO> buscarReservaUsuario(String usuario){
+	public List<ReservaDTO> buscarReservaUsuario(String usuario) {
 		List<Reserva> reservas = repositorioReservas.findByUsuario(usuario);
 		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
-		
+
 		for (Reserva reserva : reservas) {
 			System.out.println(reservas.toString());
 

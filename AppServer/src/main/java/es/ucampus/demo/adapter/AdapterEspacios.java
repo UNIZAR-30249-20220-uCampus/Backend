@@ -4,14 +4,10 @@ import org.json.simple.JSONObject;
 //import org.postgresql.core.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import domainObjects.entity.Espacio;
-import domainObjects.entity.Reserva;
 import dtoObjects.entity.EspacioDTO;
-import dtoObjects.entity.ReservaDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import es.ucampus.demo.service.FuncionesEspacio;
-import es.ucampus.demo.service.FuncionesReserva;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;

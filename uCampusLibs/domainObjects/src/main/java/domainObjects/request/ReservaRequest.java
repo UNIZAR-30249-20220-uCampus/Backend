@@ -7,6 +7,7 @@ public class ReservaRequest {
 
 	private String usuario;
 
+	private String tipo;
 
 	public ReservaRequest() {}
 
@@ -18,9 +19,13 @@ public class ReservaRequest {
 		return usuario;
 	}
 
+	public String getTipo() {
+		return tipo;
+	}
+
 	@Override
 	public String toString() {
-		return "ReservaRequest [horario=" + horario + ", usuario=" + usuario + "]";
+		return "ReservaRequest [horario=" + horario + ", tipo=" + tipo + ", usuario=" + usuario + "]";
 	}
 
 }

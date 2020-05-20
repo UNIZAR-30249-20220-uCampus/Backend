@@ -1,7 +1,6 @@
 package es.ucampus.demo.adapter;
 
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 //import org.postgresql.core.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +11,10 @@ import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 
 import java.io.IOException;
-import java.util.List;
-
 public class AdapterEspacios {
 
 	@Autowired

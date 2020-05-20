@@ -13,7 +13,6 @@ import domainObjects.request.HorarioRequest;
 import domainObjects.valueObject.EstadoReserva;
 import domainObjects.valueObject.Horario;
 
-
 @Entity
 @Table(name = "reserva")
 public class Reserva {
@@ -32,38 +31,32 @@ public class Reserva {
 
 	private EstadoReserva estado;
 
+	private String tipo;
+
 	public Reserva() {
 		this.estado = EstadoReserva.PENDIENTE;
 	}
 
-	public Reserva(Espacio espacio, Horario horario, String usuario) {
+	public Reserva(Espacio espacio, Horario horario, String usuario, String tipo) {
 		this.espacio = espacio;
 		this.horario = horario;
 		this.usuario = usuario;
-		if(espacio.getAlquilable() == 1){
-			this.estado = EstadoReserva.PENDIENTEPAGO;
-		}
-		else{
-			this.estado = EstadoReserva.PENDIENTE;
-		}
+		this.estado = EstadoReserva.PENDIENTE;
+		this.tipo = tipo;
 	}
 
-	public Reserva(Espacio espacio, HorarioRequest horario, String usuario) {
+	public Reserva(Espacio espacio, HorarioRequest horario, String usuario, String tipo) {
 		this.espacio = espacio;
 		this.horario = new Horario(horario);
 		this.usuario = usuario;
-		if(espacio.getAlquilable() == 1){
-			this.estado = EstadoReserva.PENDIENTEPAGO;
-		}
-		else{
-			this.estado = EstadoReserva.PENDIENTE;
-		}
+		this.estado = EstadoReserva.PENDIENTE;
+		this.tipo = tipo;
 	}
 
-	public Long getId(){
+	public Long getId() {
 		return id;
 	}
-	
+
 	public String getUsuario() {
 		return usuario;
 	}
@@ -84,37 +77,61 @@ public class Reserva {
 		return horario;
 	}
 
-	public void aceptarReserva() {
-		estado = EstadoReserva.ACEPTADA;
+	public boolean aceptarReserva() {
+		if (estado == EstadoReserva.PENDIENTE && tipo.equals("alquiler")) {
+			estado = EstadoReserva.PENDIENTEPAGO;
+			return true;
+		} else if (estado == EstadoReserva.PENDIENTE && tipo.equals("reserva")) {
+			estado = EstadoReserva.ACEPTADA;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public void cancelarReserva() {
+	public boolean pagarReserva() {
+		if (estado == EstadoReserva.PENDIENTEPAGO && tipo.equals("alquiler")) {
+			estado = EstadoReserva.ACEPTADA;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean cancelarReserva() {
 		estado = EstadoReserva.CANCELADA;
+		return true;
 	}
 
-	public EstadoReserva getEstado(){
+	public EstadoReserva getEstado() {
 		return estado;
 	}
 
-	public boolean mismoEspacio(Reserva reserva){
-		if(this.espacio.getId_espacio().equals(reserva.getIdEspacio())){
+	public String getTipo() {
+		return tipo;
+	}
+
+	public boolean mismoEspacio(Reserva reserva) {
+		if (this.espacio.getId_espacio().equals(reserva.getIdEspacio())) {
 			return true;
 		}
 		return false;
 	}
 
-	public boolean estaAceptada(Reserva reserva){
+	public boolean estaAceptada(Reserva reserva) {
 		return this.estado.name().equals(reserva.estado.name());
 	}
 
-	public boolean hayColision(Reserva reserva){
+	public boolean hayColision(Reserva reserva) {
 		boolean colision = false;
-		
-		if(this.horario.coincidenFechas(reserva.getHorario())){
-			if(this.horario.coincidenSemanas(reserva.getHorario())){
-				if(this.horario.coincidenDias(reserva.getHorario())){
-					if(this.horario.coincidenSlots(reserva.getHorario())){
-						colision = true;
+
+		if (this.horario.coincidenFechas(reserva.getHorario())) {
+			if (this.horario.coincidenSemanas(reserva.getHorario())) {
+				if (this.horario.coincidenDias(reserva.getHorario())) {
+					if (this.horario.coincidenSlots(reserva.getHorario())) {
+						if (reserva.getEstado() == EstadoReserva.ACEPTADA
+								|| reserva.getEstado() == EstadoReserva.PENDIENTEPAGO)
+							colision = true;
 					}
 				}
 			}
@@ -125,7 +142,8 @@ public class Reserva {
 
 	@Override
 	public String toString() {
-		return "Reserva [espacio=" + espacio + ", horario=" + horario + ", id=" + id + ", usuario=" + usuario + "]";
+		return "Reserva [espacio=" + espacio + ", estado=" + estado + ", horario=" + horario + ", id=" + id + ", tipo="
+				+ tipo + ", usuario=" + usuario + "]";
 	}
 
 }

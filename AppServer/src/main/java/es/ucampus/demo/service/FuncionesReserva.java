@@ -14,6 +14,7 @@ public interface FuncionesReserva {
 
     boolean hacerReserva(Reserva reserva);
     boolean aceptarReserva(Long idReserva);
+	boolean pagarReserva(Long idReserva);
     boolean cancelarReserva(Long idReserva);
     List<ReservaDTO> buscarReserva(Espacio espacio);
     List<ReservaDTO> buscarReservaEstado(Espacio espacio, EstadoReserva estado);

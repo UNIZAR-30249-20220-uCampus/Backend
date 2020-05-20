@@ -8,9 +8,7 @@ import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
 import domainObjects.request.ReservaRequest;
 import domainObjects.valueObject.EstadoReserva;
-import dtoObjects.entity.EspacioDTO;
 import dtoObjects.entity.ReservaDTO;
-import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import es.ucampus.demo.service.FuncionesEspacio;
 import es.ucampus.demo.service.FuncionesReserva;
@@ -29,9 +27,9 @@ import java.util.List;
 public class AdapterReservas {
 
 	@Autowired
-    private FuncionesEspacio funcionesEspacios;
+	private FuncionesEspacio funcionesEspacios;
 	@Autowired
-    private FuncionesReserva funcionesReserva;
+	private FuncionesReserva funcionesReserva;
 
 	private final static String QUEUE_ENVIAR = "SpringAWebReservas";
 	private final static String QUEUE_RECIBIR = "WebASpringReservas";
@@ -97,56 +95,62 @@ public class AdapterReservas {
 
 			String[] path = message.split("/");
 			ObjectMapper mapper = new ObjectMapper();
-			
+
 			Long idReserva;
 			String reservasString;
 
 			switch (path[0]) {
-                case "crear-reserva":
+				case "crear-reserva":
 					Espacio espacioReserva = funcionesEspacios.getEspacioId(path[1]);
-					if(espacioReserva != null){
+					if (espacioReserva != null) {
 						ReservaRequest reserva = mapper.readValue(path[2], ReservaRequest.class);
 						System.out.println(reserva.toString());
-						Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario());
-						Boolean ok = funcionesReserva.hacerReserva(r);
-						if(ok){
+						Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario(),
+								reserva.getTipo());
+						boolean ok = funcionesReserva.hacerReserva(r);
+						if (ok) {
 							emisorAMQP("Reservada");
-						}
-						else{
+						} else {
 							emisorAMQP("Hay colision");
 						}
-					}
-					else{
+					} else {
 						emisorAMQP("Espacio no encontrado");
 					}
-				break;
+					break;
 				case "aceptar-reserva":
 					idReserva = Long.parseLong(path[1]);
-                    Boolean aceptar = funcionesReserva.aceptarReserva(idReserva);
-                    if(aceptar){
-                        emisorAMQP("Aceptada");
-                    }
-                    else{
-                        emisorAMQP("Reserva no encontrada");
-                    }
-				break;
+					boolean aceptar = funcionesReserva.aceptarReserva(idReserva);
+					if (aceptar) {
+						emisorAMQP("Aceptada");
+					} else {
+						emisorAMQP("Reserva no encontrada");
+					}
+					break;
+				case "pagar-reserva":
+					idReserva = Long.parseLong(path[1]);
+					boolean pagar = funcionesReserva.pagarReserva(idReserva);
+					if (pagar) {
+						emisorAMQP("Pagada");
+					} else {
+						emisorAMQP("Reserva no encontrada");
+					}
+					break;
 				case "cancelar-reserva":
 					idReserva = Long.parseLong(path[1]);
-                    Boolean canceled = funcionesReserva.cancelarReserva(idReserva);
-                    if(canceled){
-                        emisorAMQP("Cancelada");
-                    }
-                    else{
-                        emisorAMQP("Reserva no encontrada");
-                    }
-				break;
+					boolean canceled = funcionesReserva.cancelarReserva(idReserva);
+					if (canceled) {
+						emisorAMQP("Cancelada");
+					} else {
+						emisorAMQP("Reserva no encontrada");
+					}
+					break;
 				case "reservas":
 					Espacio espacioReservas = funcionesEspacios.getEspacioId(path[1]);
 					List<ReservaDTO> reservas = new ArrayList<ReservaDTO>();
 					reservas = funcionesReserva.buscarReserva(espacioReservas);
 					reservasString = new Gson().toJson(reservas);
 					emisorAMQP(reservasString);
-				break;
+					break;
 				case "reservas-estado":
 					espacioReservas = funcionesEspacios.getEspacioId(path[1]);
 					String estado = path[2];
@@ -155,16 +159,16 @@ public class AdapterReservas {
 					reservasEstado = funcionesReserva.buscarReservaEstado(espacioReservas, estadoreserva);
 					reservasString = new Gson().toJson(reservasEstado);
 					emisorAMQP(reservasString);
-				break;
+					break;
 				case "reservas-usuario":
-                    String usuario = path[1];
-                    List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
+					String usuario = path[1];
+					List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
 					reservasUsuario = funcionesReserva.buscarReservaUsuario(usuario);
 					String reservasUsuarioString = new Gson().toJson(reservasUsuario);
 					System.out.println(reservasUsuarioString);
 					emisorAMQP(reservasUsuarioString);
-                break;
-            }
+					break;
+			}
 		}
 	}
 }
