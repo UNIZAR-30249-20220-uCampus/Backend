@@ -73,12 +73,17 @@ public class Espacio {
 		this.equipamientos = new Vector<Equipamiento>();
 	}
 
+	public Espacio(Vector<Equipamiento> equipamiento) {
+		super();
+		this.maximoDeEquipamientos = new Vector<Equipamiento>();
+		this.equipamientos = new Vector<Equipamiento>();
+	}
+
 	@PostLoad
 	private void build() {
 		definirEquipamientosMaximos();
 		definirEquipamientosExistentes();
 		this.tarifa = this.calcularTarifa();
-		/* definirCoordenadas(); */
 	}
 
 	// Define la cantidad máxima posible para cada tipo de equipamiento en el
@@ -164,10 +169,6 @@ public class Espacio {
 
 	public Vector<Equipamiento> getMaximoDeEquipamientos() {
 		return maximoDeEquipamientos;
-	}
-
-	public void setMaximoDeEquipamientos(Vector<Equipamiento> maximoDeEquipamientos) {
-		this.maximoDeEquipamientos = maximoDeEquipamientos;
 	}
 
 	public String getId_utc() {

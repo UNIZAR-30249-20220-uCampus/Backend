@@ -10,4 +10,11 @@ public class EspacioTest {
 		Espacio espacio = new Espacio();
 		assertNotNull(espacio);
 	}
+
+	@Test
+	public void crearEspacioConEquipamientosMaximos() {
+		Espacio espacio = new Espacio();
+		assertNotNull(espacio);
+		assertNotNull(espacio.getMaximoDeEquipamientos());
+	}
 }
