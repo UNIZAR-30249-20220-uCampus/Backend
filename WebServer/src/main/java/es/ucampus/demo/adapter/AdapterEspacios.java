@@ -87,18 +87,6 @@ public class AdapterEspacios {
 
 
 	////////////////// RECIBIR ///////////////////////////
-	public EspacioDTO recibirGetEspacio() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		ObjectMapper mapper = new ObjectMapper();
-		EspacioDTO espacio = mapper.readValue(message, EspacioDTO.class);
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return espacio;
-	}
-
 	public String recibirGetEspacioS() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
