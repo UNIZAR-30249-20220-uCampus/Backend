@@ -115,4 +115,19 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 		return reservasDTO;
 	}
 
+	public List<ReservaDTO> buscarReservaUsuarioEstado(String usuario, EstadoReserva estado) {
+		List<Reserva> reservas = repositorioReservas.findByUsuario(usuario);
+		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
+
+		for (Reserva reserva : reservas) {
+			if (reserva.getEstado().equals(estado)) {
+				ReservaDTO reservaDTO = new ReservaDTO(reserva);
+				reservasDTO.add(reservaDTO);
+			}
+		}
+
+		return reservasDTO;
+	}
+
+
 }

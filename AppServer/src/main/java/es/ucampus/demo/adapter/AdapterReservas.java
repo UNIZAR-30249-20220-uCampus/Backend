@@ -177,6 +177,15 @@ public class AdapterReservas {
 					System.out.println(reservasUsuarioString);
 					emisorAMQP(reservasUsuarioString);
 					break;
+				case "reservas-usuario-estado":
+					String usuarioEstado = path[1];
+					String estado = path[2];
+					EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
+					List<ReservaDTO> reservasUsuarioEstado = new ArrayList<ReservaDTO>();
+					reservasUsuarioEstado = funcionesReserva.buscarReservaUsuarioEstado(usuarioEstado,estadoreserva);
+					String reservasUsuarioEstadoString = new Gson().toJson(reservasUsuarioEstado);
+					emisorAMQP(reservasUsuarioEstadoString);
+					break;
 			}
 		}
 	}

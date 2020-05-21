@@ -183,5 +183,25 @@ public class ReservasController {
 
 		return ResponseEntity.status(codigo).body(json);
 	}
+
+	/*
+	 * Obtiene las reservas de un usuario dado su id
+	 */
+	@GetMapping(value = "/api/reservas-usuario/{usuario}/{estado}")
+	@ApiOperation(value = "Busqueda de reservas correspondientes a un usuario", notes = "Devuelve lista de reservas correspondientes a un usuario")
+	public ResponseEntity<JSONArray> getReservasUsuarioEstado(
+		@ApiParam(value = "Id del usuario", required = true) @PathVariable String usuario,
+		@ApiParam(value = "Estado de la reserva (PENDIENTE, PENDIENTEPAGO, ACEPTADA, CANCELADA)", required = true) @PathVariable String estado) 
+			throws Exception {
+
+		adapterReservas.enviarGetReservasUsuario(usuario, estado);
+
+		String res = adapterReservas.recibirGetReservasUsuario();
+		HttpStatus codigo = HttpStatus.OK;
+		JSONParser parser = new JSONParser();
+		JSONArray json = (JSONArray) parser.parse(res);
+
+		return ResponseEntity.status(codigo).body(json);
+	}
 	
 }

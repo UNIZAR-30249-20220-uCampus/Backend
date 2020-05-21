@@ -19,4 +19,6 @@ public interface FuncionesReserva {
     List<ReservaDTO> buscarReserva(Espacio espacio);
     List<ReservaDTO> buscarReservaEstado(Espacio espacio, EstadoReserva estado);
     List<ReservaDTO> buscarReservaUsuario(String usuario);
+    List<ReservaDTO> buscarReservaUsuarioEstado(String usuario, EstadoReserva estado);
+
 }
