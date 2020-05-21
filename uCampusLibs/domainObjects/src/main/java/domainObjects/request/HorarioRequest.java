@@ -1,11 +1,7 @@
 package domainObjects.request;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import domainObjects.valueObject.ConjuntoDiaSlots;
-
 
 public class HorarioRequest {
 

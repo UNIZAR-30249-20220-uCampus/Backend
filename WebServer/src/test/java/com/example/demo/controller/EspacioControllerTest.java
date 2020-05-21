@@ -29,9 +29,6 @@ public class EspacioControllerTest {
 	
 	@Test
     public void test_GET_API_ESPACIOS() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<String> entity = new HttpEntity<>(headers);
 		
 		ResponseEntity<EspacioDTO> response = restTemplate.getForEntity(BASE_URL + "/espacios/1/675745.92064/4616800.60363", EspacioDTO.class);
 
