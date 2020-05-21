@@ -11,6 +11,12 @@ group = 'es.ucampus'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+sonarqube {
+    properties {
+        property 'sonar.projectName', 'Example of SonarQube Scanner for Gradle Usage'
+    }
+}
+
 repositories {
 	mavenCentral()
 }
