@@ -92,8 +92,13 @@ public class AdapterEspacios {
 
 			switch (path[0]) {
 				case "espacios":
-                    EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(Integer.parseInt(path[1]),Double.parseDouble(path[2]),Double.parseDouble(path[3]));
-                    emisorAMQP(espacio.toJson());
+					EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(Integer.parseInt(path[1]),Double.parseDouble(path[2]),Double.parseDouble(path[3]));
+					if(espacio != null){
+						emisorAMQP(espacio.toJson());
+					}
+					else{
+						emisorAMQP("No encontrado");
+					}
                 break;
                 case "buscar-espacio":
                 

@@ -99,6 +99,15 @@ public class AdapterEspacios {
 		return espacio;
 	}
 
+	public String recibirGetEspacioS() throws Exception {
+		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
+		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+		String message = new String(delivery.getBody());
+
+		System.out.println(" [x] Recibido '" + message + "'");
+		return message;
+	}
+
 	public JSONArray recibirBuscarEspacio() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
@@ -163,57 +172,6 @@ public class AdapterEspacios {
 
 		System.out.println(" [x] Recibido '" + message + "'");
 		return message;
-	}
-
-	public String recibirReserva() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-	public String recibirAceptarReserva() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-	public String recibirCancelarReserva() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-	public JSONArray recibirGetReservas() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		JSONParser parser = new JSONParser();
-		JSONArray json = (JSONArray) parser.parse(message);
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return json;
-	}
-
-	public JSONArray recibirGetReservasUsuario() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		JSONParser parser = new JSONParser();
-		JSONArray json = (JSONArray) parser.parse(message);
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return json;
 	}
 
 }

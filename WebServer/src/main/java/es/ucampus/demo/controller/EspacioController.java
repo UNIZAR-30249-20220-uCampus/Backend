@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import es.ucampus.demo.adapter.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,7 +53,19 @@ public class EspacioController {
 			throws Exception {
 
 		AdapterEspacios.enviarGetEspacio(id);
-		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirGetEspacio());
+
+		String res = AdapterEspacios.recibirGetEspacioS();
+		HttpStatus codigo = HttpStatus.OK;
+
+		
+		ObjectMapper mapper = new ObjectMapper();
+		EspacioDTO espacio = mapper.readValue(res, EspacioDTO.class);
+
+		if(res.equals("No encontrado")){
+			codigo = HttpStatus.NOT_FOUND;
+		}
+
+		return ResponseEntity.status(codigo).body(espacio);
 	}
 
 	/*
@@ -66,7 +80,20 @@ public class EspacioController {
 			throws Exception {
 
 		AdapterEspacios.enviarGetEspacio(planta, x, y);
-		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirGetEspacio());
+
+		String res = AdapterEspacios.recibirGetEspacioS();
+		HttpStatus codigo = HttpStatus.OK;
+
+		if(res.equals("No encontrado")){
+			codigo = HttpStatus.NOT_FOUND;
+			return ResponseEntity.status(codigo).body(null);
+
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+		EspacioDTO espacio = mapper.readValue(res, EspacioDTO.class);
+
+		return ResponseEntity.status(codigo).body(espacio);
 	}
 
 	/*
