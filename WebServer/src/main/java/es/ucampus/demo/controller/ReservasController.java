@@ -38,6 +38,9 @@ public class ReservasController {
 	 */
 	@PostMapping(value = "/api/crear-reserva/{espacio}")
 	@ApiOperation(value = "Crea una reserva para un espacio", notes = "Devuelve estado de la reserva" )
+	@ApiResponses(value = {
+		@ApiResponse(code = 400, message = "Hay colisión con otra reserva"),
+	})
 	public ResponseEntity<String> crearReserva(
 		@ApiParam(value = "Id del espacio que se quiere reservar", required = true) @PathVariable String espacio, 
 		@ApiParam(value = "Parametros de reserva", required = true) @RequestBody ReservaRequest reserva) 
