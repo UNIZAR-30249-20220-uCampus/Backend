@@ -65,10 +65,6 @@ public class Reserva {
 		return espacio;
 	}
 
-	public void setEspacio(Espacio espacio) {
-		this.espacio = espacio;
-	}
-
 	public String getIdEspacio() {
 		return espacio.getId_espacio();
 	}
@@ -116,10 +112,6 @@ public class Reserva {
 			return true;
 		}
 		return false;
-	}
-
-	public boolean estaAceptada(Reserva reserva) {
-		return this.estado.name().equals(reserva.estado.name());
 	}
 
 	public boolean hayColision(Reserva reserva) {
