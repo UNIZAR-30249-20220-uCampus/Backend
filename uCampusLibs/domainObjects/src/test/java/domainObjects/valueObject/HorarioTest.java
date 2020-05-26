@@ -1,20 +1,15 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+package domainObjects.valueObject;
+
+import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.Test;
 
-import domainObjects.valueObject.ConjuntoDiaSlots;
-import domainObjects.valueObject.Horario;
-
-class HorarioTests {
+public class HorarioTest {
 
 	ConjuntoDiaSlots conjunto1 = new ConjuntoDiaSlots(1, 10, 14);
 	ConjuntoDiaSlots conjunto2 = new ConjuntoDiaSlots(2, 10, 14);
@@ -29,7 +24,7 @@ class HorarioTests {
 	ConjuntoDiaSlots slots6 = new ConjuntoDiaSlots(3, 15, 19);
 
 	@Test
-	void coincidenFechasTest1() {
+	public void coincidenFechasTest1() {
 		Date d1 = new Date(1000L);
 		Date d2 = new Date(2000L);
 		Date d3 = new Date(3000L);
@@ -41,8 +36,8 @@ class HorarioTests {
 		assertEquals(true, h1.coincidenFechas(h2));
 	}
 
-	@Test
-	void coincidenFechasTest2() {
+	 @Test
+	public void coincidenFechasTest2() {
 		Date d10 = new Date(10000L);
 		Date d20 = new Date(20000L);
 		Date d30 = new Date(30000L);
@@ -55,7 +50,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenFechasTest4() {
+	public void coincidenFechasTest4() {
 		Date d10 = new Date(10000L);
 		Date d20 = new Date(20000L);
 		Date d30 = new Date(30000L);
@@ -68,7 +63,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenFechasTest5() {
+	public void coincidenFechasTest5() {
 		Date d10 = new Date(10000L);
 		Date d20 = new Date(20000L);
 		Date d30 = new Date(30000L);
@@ -81,7 +76,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenFechasTest6() {
+	public void coincidenFechasTest6() {
 		Date d10 = new Date(10000L);
 		Date d20 = new Date(20000L);
 		Date d30 = new Date(30000L);
@@ -94,7 +89,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenFechasTest7() {
+	public void coincidenFechasTest7() {
 		Date d10 = new Date(10000L);
 		Date d20 = new Date(20000L);
 		Date d30 = new Date(30000L);
@@ -107,9 +102,8 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenFechasTest8() {
+	public void coincidenFechasTest8() {
 		Date d10 = new Date(10000L);
-		Date d20 = new Date(20000L);
 		Date d30 = new Date(30000L);
 		Date d40 = new Date(40000L);
 
@@ -120,7 +114,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenSemanasTest1() throws ParseException {
+	public void coincidenSemanasTest1() throws ParseException {
 		String sDate1 = "06/04/2020";
 		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
 		String sDate2 = "06/05/2020";
@@ -137,7 +131,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenSemanasTest2() throws ParseException {
+	public void coincidenSemanasTest2() throws ParseException {
 		String sDate1 = "06/04/2020";
 		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
 		String sDate2 = "06/05/2020";
@@ -154,7 +148,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenSemanasTest3() throws ParseException {
+	public void coincidenSemanasTest3() throws ParseException {
 		String sDate1 = "06/04/2020";
 		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
 		String sDate2 = "06/06/2020";
@@ -171,7 +165,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenSemanasTest4() throws ParseException {
+	public void coincidenSemanasTest4() throws ParseException {
 		String sDate1 = "01/01/2020";
 		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
 		String sDate2 = "31/12/2020";
@@ -188,7 +182,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenDiasTest1() throws ParseException {
+	public void coincidenDiasTest1() throws ParseException {
 		Vector<ConjuntoDiaSlots> lunesMartes = new Vector<ConjuntoDiaSlots>();
 		lunesMartes.add(conjunto1);
 		lunesMartes.add(conjunto2);
@@ -202,7 +196,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenDiasTest2() throws ParseException {
+	public void coincidenDiasTest2() throws ParseException {
 		Vector<ConjuntoDiaSlots> lunesMartes = new Vector<ConjuntoDiaSlots>();
 		lunesMartes.add(conjunto1);
 		lunesMartes.add(conjunto2);
@@ -216,7 +210,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void findUnionTest1() {
+	public void findUnionTest1() {
 		Horario h = new Horario(null, null, 0);
 		Vector<Integer> v1 = new Vector<>();
 		Vector<Integer> v2 = new Vector<>();
@@ -234,7 +228,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void findUnionTest2() {
+	public void findUnionTest2() {
 		Horario h = new Horario(null, null, 0);
 		Vector<Integer> v1 = new Vector<>();
 		Vector<Integer> v2 = new Vector<>();
@@ -252,7 +246,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenSlotsTest1() throws ParseException {
+	public void coincidenSlotsTest1() throws ParseException {
 		Vector<ConjuntoDiaSlots> lunes = new Vector<ConjuntoDiaSlots>();
 		lunes.add(slots1);
 		lunes.add(slots2);
@@ -266,7 +260,7 @@ class HorarioTests {
 	}
 
 	@Test
-	void coincidenSlotsTest2() throws ParseException {
+	public void coincidenSlotsTest2() throws ParseException {
 		Vector<ConjuntoDiaSlots> lunes = new Vector<ConjuntoDiaSlots>();
 		lunes.add(slots1);
 		lunes.add(slots2);
@@ -278,5 +272,4 @@ class HorarioTests {
 
 		assertEquals(true, h1.coincidenSlots(h2));
 	}
-
 }
