@@ -1,11 +1,15 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import domainObjects.valueObject.ConjuntoDiaSlots;
 import domainObjects.valueObject.Horario;
@@ -16,7 +20,7 @@ class HorarioTests {
 	ConjuntoDiaSlots conjunto2 = new ConjuntoDiaSlots(2, 10, 14);
 	ConjuntoDiaSlots conjunto3 = new ConjuntoDiaSlots(3, 15, 19);
 	ConjuntoDiaSlots conjunto4 = new ConjuntoDiaSlots(4, 15, 19);
-	
+
 	ConjuntoDiaSlots slots1 = new ConjuntoDiaSlots(1, 15, 19);
 	ConjuntoDiaSlots slots2 = new ConjuntoDiaSlots(1, 8, 10);
 	ConjuntoDiaSlots slots3 = new ConjuntoDiaSlots(2, 15, 19);
@@ -117,68 +121,68 @@ class HorarioTests {
 
 	@Test
 	void coincidenSemanasTest1() throws ParseException {
-		String sDate1="06/04/2020";  
-		Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1); 
-		String sDate2="06/05/2020";  
-		Date date2=new SimpleDateFormat("dd/MM/yyyy").parse(sDate2); 
-		String sDate3="13/04/2020";  
-		Date date3=new SimpleDateFormat("dd/MM/yyyy").parse(sDate3); 
-		String sDate4="13/05/2020";  
-		Date date4=new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
+		String sDate1 = "06/04/2020";
+		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+		String sDate2 = "06/05/2020";
+		Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate2);
+		String sDate3 = "13/04/2020";
+		Date date3 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate3);
+		String sDate4 = "13/05/2020";
+		Date date4 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
 
-		Horario h1 = new Horario(date1,date2,2);
-		Horario h2 = new Horario(date3,date4,2);
+		Horario h1 = new Horario(date1, date2, 2);
+		Horario h2 = new Horario(date3, date4, 2);
 
 		assertEquals(false, h1.coincidenSemanas(h2));
 	}
 
 	@Test
 	void coincidenSemanasTest2() throws ParseException {
-		String sDate1="06/04/2020";  
-		Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1); 
-		String sDate2="06/05/2020";  
-		Date date2=new SimpleDateFormat("dd/MM/yyyy").parse(sDate2); 
-		String sDate3="13/04/2020";  
-		Date date3=new SimpleDateFormat("dd/MM/yyyy").parse(sDate3); 
-		String sDate4="13/05/2020";  
-		Date date4=new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
+		String sDate1 = "06/04/2020";
+		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+		String sDate2 = "06/05/2020";
+		Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate2);
+		String sDate3 = "13/04/2020";
+		Date date3 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate3);
+		String sDate4 = "13/05/2020";
+		Date date4 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
 
-		Horario h1 = new Horario(date1,date2,1);
-		Horario h2 = new Horario(date3,date4,1);
+		Horario h1 = new Horario(date1, date2, 1);
+		Horario h2 = new Horario(date3, date4, 1);
 
 		assertEquals(true, h1.coincidenSemanas(h2));
 	}
 
 	@Test
 	void coincidenSemanasTest3() throws ParseException {
-		String sDate1="06/04/2020";  
-		Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1); 
-		String sDate2="06/06/2020";  
-		Date date2=new SimpleDateFormat("dd/MM/yyyy").parse(sDate2); 
-		String sDate3="13/04/2020";  
-		Date date3=new SimpleDateFormat("dd/MM/yyyy").parse(sDate3); 
-		String sDate4="13/06/2020";  
-		Date date4=new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
+		String sDate1 = "06/04/2020";
+		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+		String sDate2 = "06/06/2020";
+		Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate2);
+		String sDate3 = "13/04/2020";
+		Date date3 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate3);
+		String sDate4 = "13/06/2020";
+		Date date4 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
 
-		Horario h1 = new Horario(date1,date2,2);
-		Horario h2 = new Horario(date3,date4,3);
+		Horario h1 = new Horario(date1, date2, 2);
+		Horario h2 = new Horario(date3, date4, 3);
 
 		assertEquals(true, h1.coincidenSemanas(h2));
 	}
 
 	@Test
 	void coincidenSemanasTest4() throws ParseException {
-		String sDate1="01/01/2020";  
-		Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1); 
-		String sDate2="31/12/2020";  
-		Date date2=new SimpleDateFormat("dd/MM/yyyy").parse(sDate2); 
-		String sDate3="21/04/2020";  
-		Date date3=new SimpleDateFormat("dd/MM/yyyy").parse(sDate3); 
-		String sDate4="25/04/2020";  
-		Date date4=new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
+		String sDate1 = "01/01/2020";
+		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+		String sDate2 = "31/12/2020";
+		Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate2);
+		String sDate3 = "21/04/2020";
+		Date date3 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate3);
+		String sDate4 = "25/04/2020";
+		Date date4 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate4);
 
-		Horario h1 = new Horario(date1,date2,1);
-		Horario h2 = new Horario(date3,date4,1);
+		Horario h1 = new Horario(date1, date2, 1);
+		Horario h2 = new Horario(date3, date4, 1);
 
 		assertEquals(true, h1.coincidenSemanas(h2));
 	}
@@ -212,27 +216,39 @@ class HorarioTests {
 	}
 
 	@Test
-	void findUnionTest1(){
-		Horario h= new Horario(null, null, 0);
+	void findUnionTest1() {
+		Horario h = new Horario(null, null, 0);
 		Vector<Integer> v1 = new Vector<>();
 		Vector<Integer> v2 = new Vector<>();
-		v1.add(1);v1.add(3);v1.add(3);v1.add(3);
-		v2.add(2);v2.add(2);v2.add(3);v2.add(3);
+		v1.add(1);
+		v1.add(3);
+		v1.add(3);
+		v1.add(3);
+		v2.add(2);
+		v2.add(2);
+		v2.add(3);
+		v2.add(3);
 		Vector<Integer> resultado = new Vector<>();
 		resultado.add(3);
-		assertEquals(resultado, h.findUnion(v1,v2));
+		assertEquals(resultado, h.findUnion(v1, v2));
 	}
 
 	@Test
-	void findUnionTest2(){
-		Horario h= new Horario(null, null, 0);
+	void findUnionTest2() {
+		Horario h = new Horario(null, null, 0);
 		Vector<Integer> v1 = new Vector<>();
 		Vector<Integer> v2 = new Vector<>();
-		v1.add(1);v1.add(3);v1.add(3);v1.add(3);
-		v2.add(2);v2.add(2);v2.add(2);v2.add(2);
+		v1.add(1);
+		v1.add(3);
+		v1.add(3);
+		v1.add(3);
+		v2.add(2);
+		v2.add(2);
+		v2.add(2);
+		v2.add(2);
 		Vector<Integer> resultado = new Vector<>();
-		//resultado.add(3);
-		assertEquals(resultado, h.findUnion(v1,v2));
+		// resultado.add(3);
+		assertEquals(resultado, h.findUnion(v1, v2));
 	}
 
 	@Test
@@ -262,6 +278,5 @@ class HorarioTests {
 
 		assertEquals(true, h1.coincidenSlots(h2));
 	}
-
 
 }
