@@ -3,24 +3,11 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
 	id 'jacoco'
-	id "org.sonarqube" version "2.8"
 }
 
 group = 'es.ucampus'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
-
-sonarqube {
-    properties {
-        property 'sonar.host.url', 'https://sonarcloud.io'
-        property 'sonar.organization', 'unizar-30249-20220-ucampus'
-    }
-}
-
-jacoco {
-    toolVersion = "0.8.2"
-    reportsDir = file("$buildDir/customJacocoReportDir")
-}
 
 repositories {
 	mavenCentral()
@@ -49,5 +36,11 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform()
+  useJUnitPlatform()
 }
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+

@@ -32,12 +32,17 @@ public class Horario {
 	private Date fechaFin;
 	private int frecuencia;
 
-	@ManyToMany(cascade=CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL)
 	private List<ConjuntoDiaSlots> conjuntoDiaSlots;
 
-	public Horario(){}
+	public Horario() {
+	}
 
 	public Horario(Date fechaInicio, Date fechaFin, int frecuencia) {
+		if (fechaInicio.compareTo(fechaFin) > 0)
+			throw new IllegalArgumentException("fechaInicio no puede ser posterior a fechaFin");
+		if (frecuencia < 0)
+			throw new IllegalArgumentException("frecuencia no puede ser menor que 0");
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.frecuencia = frecuencia;
@@ -45,10 +50,27 @@ public class Horario {
 	}
 
 	public Horario(Date fechaInicio, Date fechaFin, int frecuencia, List<ConjuntoDiaSlots> conjuntoDiaSlots) {
+		if (fechaInicio.compareTo(fechaFin) > 0)
+			throw new IllegalArgumentException("fechaInicio no puede ser posterior a fechaFin");
+		if (frecuencia < 0)
+			throw new IllegalArgumentException("frecuencia no puede ser menor que 0");
+		if (!esValidaListaConjuntoDiaSlots(conjuntoDiaSlots))
+			throw new IllegalArgumentException("Lista de dias y slots inválida, hay colisiones");
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.frecuencia = frecuencia;
 		this.conjuntoDiaSlots = conjuntoDiaSlots;
+	}
+
+	private boolean esValidaListaConjuntoDiaSlots(List<ConjuntoDiaSlots> conjuntoDiaSlots) {
+		for (ConjuntoDiaSlots c1 : conjuntoDiaSlots) {
+			for (ConjuntoDiaSlots c2 : conjuntoDiaSlots) {
+				if (conjuntoDiaSlots.indexOf(c1) != conjuntoDiaSlots.indexOf(c2) && c1.conflictoCon(c2)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public Horario(List<ConjuntoDiaSlots> conjuntoDiaSlots) {
@@ -222,12 +244,8 @@ public class Horario {
 	public boolean coincidenSlots(Horario horario2) {
 		boolean hayColision = false;
 		Vector<Integer> dias = this.diasSemanaQueColisionan(horario2);
-		Vector<Integer> slots1 = new Vector<>();
-		Vector<Integer> slots2 = new Vector<>();
-		Vector<Integer> slotsUnion = new Vector<>();
 		Vector<ConjuntoDiaSlots> conjuntos1;
 		Vector<ConjuntoDiaSlots> conjuntos2;
-		int aux;
 
 		// Se examinan solo los días de la semana que colisionan
 		for (int i = 0; i < dias.size() && !hayColision; i++) {
@@ -238,31 +256,15 @@ public class Horario {
 			conjuntos1 = this.obtenerConjuntosDondeDiaSemanaEs(dias.get(i));
 			conjuntos2 = horario2.obtenerConjuntosDondeDiaSemanaEs(dias.get(i));
 
-			for (int indice1 = 0; indice1 < conjuntos1.size() && !hayColision; indice1++) {
-				for (int indice2 = 0; indice2 < conjuntos2.size() && !hayColision; indice2++) {
-					// slots1 almacenará los números de slot del primer horario, del día de la
-					// semana que se examina
-					aux = conjuntos1.get(indice1).getSlotInicio();
-					while (aux <= conjuntos1.get(indice1).getSlotFinal()) {
-						slots1.add(aux);
-						aux++;
-					}
-					// slots2 almacenará los números de slot del segundo horario, del día de la
-					// semana que se examina
-					aux = conjuntos2.get(indice2).getSlotInicio();
-					while (aux <= conjuntos2.get(indice2).getSlotFinal()) {
-						slots2.add(aux);
-						aux++;
-					}
-					// Si hay algún slot que produce colisión se termina el bucle y se devuelve true
-					slotsUnion = findUnion(slots1, slots2);
-					if (slotsUnion.size() > 0) {
-						hayColision = true;
+			for (ConjuntoDiaSlots c1 : conjuntos1) {
+				for (ConjuntoDiaSlots c2 : conjuntos2) {
+					if (c1.conflictoCon(c2)) {
+						return true;
 					}
 				}
 			}
 		}
-		return hayColision;
+		return false;
 	}
 
 	public Date getFechaInicio() {
