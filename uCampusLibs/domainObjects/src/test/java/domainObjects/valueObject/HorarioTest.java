@@ -1,9 +1,11 @@
 package domainObjects.valueObject;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
@@ -36,7 +38,7 @@ public class HorarioTest {
 		assertEquals(true, h1.coincidenFechas(h2));
 	}
 
-	 @Test
+	@Test
 	public void coincidenFechasTest2() {
 		Date d10 = new Date(10000L);
 		Date d20 = new Date(20000L);
@@ -211,7 +213,7 @@ public class HorarioTest {
 
 	@Test
 	public void findUnionTest1() {
-		Horario h = new Horario(null, null, 0);
+		Horario h = new Horario(new Date(1000L), new Date(2000L), 0);
 		Vector<Integer> v1 = new Vector<>();
 		Vector<Integer> v2 = new Vector<>();
 		v1.add(1);
@@ -229,7 +231,7 @@ public class HorarioTest {
 
 	@Test
 	public void findUnionTest2() {
-		Horario h = new Horario(null, null, 0);
+		Horario h = new Horario(new Date(1000L), new Date(2000L), 0);
 		Vector<Integer> v1 = new Vector<>();
 		Vector<Integer> v2 = new Vector<>();
 		v1.add(1);
@@ -271,5 +273,21 @@ public class HorarioTest {
 		Horario h2 = new Horario(martes);
 
 		assertEquals(true, h1.coincidenSlots(h2));
+	}
+
+	@Test
+	public void constructorHorarioTest0() {
+		assertNotNull(new Horario(new Date(1000L), new Date(2000L), 1));
+		ArrayList<ConjuntoDiaSlots> lista = new ArrayList<ConjuntoDiaSlots>();
+		lista.add(conjunto1);
+		assertNotNull(new Horario(new Date(1000L), new Date(2000L), 1, lista));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void constructorHorarioTest1() {
+		ArrayList<ConjuntoDiaSlots> lista = new ArrayList<ConjuntoDiaSlots>();
+		lista.add(slots1);
+		lista.add(slots5);
+		new Horario(new Date(1000L), new Date(2000L), 1, lista);
 	}
 }

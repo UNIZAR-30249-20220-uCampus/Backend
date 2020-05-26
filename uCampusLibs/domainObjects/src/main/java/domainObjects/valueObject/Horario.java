@@ -32,12 +32,17 @@ public class Horario {
 	private Date fechaFin;
 	private int frecuencia;
 
-	@ManyToMany(cascade=CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL)
 	private List<ConjuntoDiaSlots> conjuntoDiaSlots;
 
-	public Horario(){}
+	public Horario() {
+	}
 
 	public Horario(Date fechaInicio, Date fechaFin, int frecuencia) {
+		if (fechaInicio.compareTo(fechaFin) > 0)
+			throw new IllegalArgumentException("fechaInicio no puede ser posterior a fechaFin");
+		if (frecuencia < 0)
+			throw new IllegalArgumentException("frecuencia no puede ser menor que 0");
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.frecuencia = frecuencia;
@@ -45,10 +50,27 @@ public class Horario {
 	}
 
 	public Horario(Date fechaInicio, Date fechaFin, int frecuencia, List<ConjuntoDiaSlots> conjuntoDiaSlots) {
+		if (fechaInicio.compareTo(fechaFin) > 0)
+			throw new IllegalArgumentException("fechaInicio no puede ser posterior a fechaFin");
+		if (frecuencia < 0)
+			throw new IllegalArgumentException("frecuencia no puede ser menor que 0");
+		if (!esValidaListaConjuntoDiaSlots(conjuntoDiaSlots))
+			throw new IllegalArgumentException("Lista de dias y slots inválida, hay colisiones");
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.frecuencia = frecuencia;
 		this.conjuntoDiaSlots = conjuntoDiaSlots;
+	}
+
+	private boolean esValidaListaConjuntoDiaSlots(List<ConjuntoDiaSlots> conjuntoDiaSlots) {
+		for (ConjuntoDiaSlots c1 : conjuntoDiaSlots) {
+			for (ConjuntoDiaSlots c2 : conjuntoDiaSlots) {
+				if (conjuntoDiaSlots.indexOf(c1) != conjuntoDiaSlots.indexOf(c2) && c1.conflictoCon(c2)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public Horario(List<ConjuntoDiaSlots> conjuntoDiaSlots) {

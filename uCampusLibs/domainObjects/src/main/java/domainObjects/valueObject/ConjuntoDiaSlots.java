@@ -82,4 +82,17 @@ public class ConjuntoDiaSlots {
 		return "ConjuntoDiaSlots [diaSemana=" + diaSemana + ", slotFinal=" + slotFinal + ", slotInicio=" + slotInicio
 				+ "]";
 	}
+
+	public boolean conflictoCon(ConjuntoDiaSlots c){
+		boolean conflicto = false;
+		if(this.diaSemana == c.diaSemana){
+			if(this.slotInicio<=c.slotInicio && c.slotInicio <= this.slotFinal){
+				conflicto = true;
+			}
+			else if(c.slotInicio<=this.slotInicio && this.slotInicio <= c.slotFinal){
+				conflicto = true;
+			}
+		}
+		return conflicto;
+	}
 }
