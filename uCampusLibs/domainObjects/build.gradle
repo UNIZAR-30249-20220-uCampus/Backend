@@ -9,6 +9,7 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+	id 'jacoco'
 }
 
 repositories {
@@ -56,4 +57,9 @@ dependencies {
 
 task compileDomainObjects{
 	println("I am building up the domainObjects jar files")
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/customJacocoReportDir")
 }

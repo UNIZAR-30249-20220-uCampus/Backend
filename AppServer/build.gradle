@@ -57,7 +57,7 @@ test {
 	useJUnitPlatform()
 }
 
-jacocoTestReport {
-	// Forcing the execution of 'test' before the execution of 'jacocoTestReport'
-	dependsOn test
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/customJacocoReportDir")
 }
