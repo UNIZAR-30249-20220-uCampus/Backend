@@ -73,10 +73,10 @@ public class Espacio {
 		this.equipamientos = new Vector<Equipamiento>();
 	}
 
-	public Espacio(Vector<Equipamiento> equipamiento) {
+	public Espacio(Vector<Equipamiento> equipamiento, Vector<Equipamiento> equipamientoMaximos) {
 		super();
-		this.maximoDeEquipamientos = new Vector<Equipamiento>();
-		this.equipamientos = new Vector<Equipamiento>();
+		this.maximoDeEquipamientos = equipamientoMaximos;
+		this.equipamientos = equipamiento;
 	}
 
 	@PostLoad
