@@ -23,19 +23,28 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
-      - name: Grant execute permission for buildJARs script
-        run: chmod +x ./buildJARs.sh
-      - name: Grant execute permission for libs gradle
-        run: chmod +x ./uCampusLibs/domainObjects/gradle && chmod +x ./uCampusLibs/dtoObjects/gradle
-      - name: Build libs with buildJARs script
-        run: ./buildJARs.sh
-      - name: Grant execute permission for gradle
-        run: chmod +x ./AppServer/gradle && chmod +x ./WebServer/gradle
-      - name: Build AppServer with Gradle
-        run: ./AppServer/gradle build
-      - name: Build WebServer with Gradle
-        run: ./WebServer/gradle build
+          java-version: 11
+      - name: Build domain objects
+        uses: eskatos/gradle-command-action@v1
+        with:
+          build-root-directory: uCampusLibs/domainObjects
+      - run: cp ./uCampusLibs/domainObjects/build/libs/domainObjects.jar ./uCampusLibs/dtoObjects/libs/domainObjects.jar
+      - name: Build DTO objects
+        uses: eskatos/gradle-command-action@v1
+        with:
+          build-root-directory: uCampusLibs/dtoObjects
+      - run: cp ./uCampusLibs/domainObjects/build/libs/domainObjects.jar ./AppServer/libs/domainObjects.jar
+      - run: cp ./uCampusLibs/dtoObjects/build/libs/dtoObjects.jar ./AppServer/libs/dtoObjects.jar
+      - run: cp ./uCampusLibs/domainObjects/build/libs/domainObjects.jar ./WebServer/libs/domainObjects.jar
+      - run: cp ./uCampusLibs/dtoObjects/build/libs/dtoObjects.jar ./WebServer/libs/dtoObjects.jar
+      - name: Build AppServer
+        uses: eskatos/gradle-command-action@v1
+        with:
+          build-root-directory: AppServer
+      - name: Build WebServer
+        uses: eskatos/gradle-command-action@v1
+        with:
+          build-root-directory: WebServer      
       - run: echo $(ls)
       - run: echo $(ls AppServer)
       - run: echo $(ls WebServer)
