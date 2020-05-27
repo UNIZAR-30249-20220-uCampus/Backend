@@ -30,22 +30,18 @@ jobs:
         working-directory: ./uCampusLibs/domainObjects/
       - run: cp ./uCampusLibs/domainObjects/build/libs/domainObjects.jar ./uCampusLibs/dtoObjects/libs/domainObjects.jar
       - run: chmod +x ./uCampusLibs/dtoObjects/gradlew
-      - run: ./uCampusLibs/dtoObjects/gradlew build
+      - run: ./gradlew build
+        working-directory: ./uCampusLibs/dtoObjects/      
       - run: cp ./uCampusLibs/domainObjects/build/libs/domainObjects.jar ./AppServer/libs/domainObjects.jar
       - run: cp ./uCampusLibs/dtoObjects/build/libs/dtoObjects.jar ./AppServer/libs/dtoObjects.jar
       - run: cp ./uCampusLibs/domainObjects/build/libs/domainObjects.jar ./WebServer/libs/domainObjects.jar
       - run: cp ./uCampusLibs/dtoObjects/build/libs/dtoObjects.jar ./WebServer/libs/dtoObjects.jar
       - run: chmod +x ./AppServer/gradlew
-      - run: ./AppServer/gradlew build
+      - run: ./gradlew build
+        working-directory: ./AppServer
       - run: chmod +x ./WebServer/gradlew
-      - run: ./WebServer/gradlew build
-      - run: echo $(ls)
-      - run: echo $(ls AppServer)
-      - run: echo $(ls WebServer)
-      - run: echo $(ls AppServer/build)
-      - run: echo $(ls WebServer/build)
-      - run: echo $(ls AppServer/build/lib)
-      - run: echo $(ls WebServer/build/lib)      
+      - run: ./gradlew build
+        working-directory: ./WebServer
       - name: Upload AppServer .jar as artifact
         uses: actions/upload-artifact@v1
         with:
