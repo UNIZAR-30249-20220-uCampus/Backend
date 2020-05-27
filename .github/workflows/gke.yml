@@ -26,7 +26,8 @@ jobs:
           java-version: '11.0.7'
           architecture: x64
       - run: chmod +x ./uCampusLibs/domainObjects/gradlew
-      - run: ./uCampusLibs/domainObjects/gradlew build --info
+      - run: ./gradlew build
+        working-directory: ./uCampusLibs/domainObjects/
       - run: cp ./uCampusLibs/domainObjects/build/libs/domainObjects.jar ./uCampusLibs/dtoObjects/libs/domainObjects.jar
       - run: chmod +x ./uCampusLibs/dtoObjects/gradlew
       - run: ./uCampusLibs/dtoObjects/gradlew build
