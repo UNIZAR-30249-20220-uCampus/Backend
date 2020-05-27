@@ -36,16 +36,23 @@ jobs:
         run: ./AppServer/gradlew build
       - name: Build WebServer with Gradle
         run: ./WebServer/gradlew build
+      - run: echo $(ls)
+      - run: echo $(ls AppServer)
+      - run: echo $(ls WebServer)
+      - run: echo $(ls AppServer/build)
+      - run: echo $(ls WebServer/build)
+      - run: echo $(ls AppServer/build/lib)
+      - run: echo $(ls WebServer/build/lib)      
       - name: Upload AppServer .jar as artifact
         uses: actions/upload-artifact@v1
         with:
           name: app-snapshot
-          path: AppServer/build/libs
+          path: ./AppServer/build/libs
       - name: Upload WebServer .jar as artifact
         uses: actions/upload-artifact@v1
         with:
           name: web-snapshot
-          path: WebServer/build/libs
+          path: ./WebServer/build/libs
 
   # deploy:
   #   needs: build
