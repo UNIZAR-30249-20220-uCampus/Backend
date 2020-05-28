@@ -116,11 +116,16 @@ jobs:
           chmod u+x ./AppServer/kustomize
           chmod u+x ./WebServer/kustomize
 
+      - name: Kustomize AppServer image
+        run: ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$APP_IMAGE:$GITHUB_SHA
+        working-directory: ./AppServer
+      - name: Kustomize WebServer image
+        run: ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$WEB_IMAGE:$GITHUB_SHA
+        working-directory: ./WebServer
+
       - name: Deploy
         run: |-
-          ./AppServer/kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$APP_IMAGE:$GITHUB_SHA
-          ./WebServer/kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$WEB_IMAGE:$GITHUB_SHA          
-          ./AppServer/kustomize build . | kubectl apply -f -
-          ./WebServer/kustomize build . | kubectl apply -f -
+          ./AppServer/kustomize build AppServer | kubectl apply -f -
+          ./WebServer/kustomize build WebServer | kubectl apply -f -
           kubectl rollout status deployment/app-server
           kubectl rollout status deployment/web-server
