@@ -8,6 +8,7 @@ on:
     branches: [master]
 
 env:
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: ucampus-cluster
   GKE_ZONE: us-east1-b
@@ -39,6 +40,7 @@ jobs:
       - run: cp ./uCampusLibs/dtoObjects/build/libs/dtoObjects.jar ./WebServer/libs/dtoObjects.jar
       - run: chmod +x ./AppServer/gradlew
       - run: echo "spring.profiles.active=prod" > AppServer/src/main/resources/application.properties
+      - run: sed -i -e 's/PASSWORD/'"$POSTGRES_PASSWORD"'/g' AppServer/src/main/resources/application-prod.properties
       - run: ./gradlew build
         working-directory: ./AppServer
       - run: chmod +x ./WebServer/gradlew
@@ -86,6 +88,8 @@ jobs:
 
       - run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+      - run: echo $(ls WebServer)
 
       - name: Build WebServer docker image
         run: |-
