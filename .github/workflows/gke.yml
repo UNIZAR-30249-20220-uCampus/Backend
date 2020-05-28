@@ -69,12 +69,12 @@ jobs:
       - uses: actions/download-artifact@v1
         with:
           name: app-snapshot
-          path: AppServer
+          path: AppServer/app-snapshot
 
       - uses: actions/download-artifact@v1
         with:
           name: web-snapshot
-          path: WebServer          
+          path: WebServer/web-snapshot
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -88,8 +88,6 @@ jobs:
 
       - run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-
-      - run: echo $(ls WebServer)
 
       - name: Build WebServer docker image
         run: |-
