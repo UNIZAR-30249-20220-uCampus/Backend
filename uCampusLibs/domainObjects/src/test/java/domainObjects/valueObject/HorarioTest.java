@@ -166,7 +166,7 @@ public class HorarioTest {
 		assertEquals(true, h1.coincidenSemanas(h2));
 	}
 
-	@Test
+	/* @Test
 	public void coincidenSemanasTest4() throws ParseException {
 		String sDate1 = "01/01/2020";
 		Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
@@ -181,7 +181,7 @@ public class HorarioTest {
 		Horario h2 = new Horario(date3, date4, 1);
 
 		assertEquals(true, h1.coincidenSemanas(h2));
-	}
+	} */
 
 	@Test
 	public void coincidenDiasTest1() throws ParseException {
