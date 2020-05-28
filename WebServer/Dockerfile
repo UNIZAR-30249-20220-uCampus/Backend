@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine AS builder
 WORKDIR /target/dependency
-ARG APPJAR=app-snapshot/*.jar
+ARG APPJAR=web-snapshot/*.jar
 COPY ${APPJAR} app.jar
 RUN jar -xf ./app.jar
 
