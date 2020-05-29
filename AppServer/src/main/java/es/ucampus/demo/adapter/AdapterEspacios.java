@@ -131,8 +131,9 @@ public class AdapterEspacios {
                     else {
                         emisorAMQP("FALLO");
                     }
-
-                break;
+				break;
+				default:
+					emisorAMQP("Error");
             }
 		}
 	}

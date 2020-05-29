@@ -46,6 +46,7 @@ public class EspacioController {
 	/*
 	 * Dado el identificador de un espacio obtener su informacion
 	 */
+	/*
 	@GetMapping(value = "/api/espacios/{id}")
 	@ApiOperation(value = "Busqueda de un espacio por id", notes = "Devuelve información de un espacio" )
 	public ResponseEntity<EspacioDTO> getEspacioId(
@@ -67,6 +68,7 @@ public class EspacioController {
 
 		return ResponseEntity.status(codigo).body(espacio);
 	}
+	*/
 
 	/*
 	 * Dada la planta y las coordenadas de un espacio obtener su informacion
@@ -101,7 +103,7 @@ public class EspacioController {
 	 */
 	@PostMapping(value = "/api/buscar-espacio")
 	@ApiOperation(value = "Busqueda de espacios segun criterios", notes = "Devuelve lista de espacios con esas características")
-	public ResponseEntity<JSONArray> buscarEspacio(HttpServletRequest request,
+	public ResponseEntity<JSONArray> buscarEspacio(
 		@ApiParam(value = "Criterios de busqueda", required = true) @RequestBody CriteriosBusquedaDTO busquedaRequest) 
 			throws Exception {
 
@@ -124,6 +126,7 @@ public class EspacioController {
 	/*
 	 * Dada la planta devuelve una lista con los espacios alquilables
 	 */
+	/*
 	@GetMapping(path = "/api/espacios-alquilables/{planta}")
 	@ApiOperation(value = "Busqueda de espacios alquilables", notes = "Devuelve lista de espacios alquilables")
 	public ResponseEntity<JSONArray> getEspaciosAlquilables(
@@ -133,10 +136,11 @@ public class EspacioController {
 		AdapterEspacios.enviarGetEspaciosAlquilables(planta);
 		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirGetEspaciosAlquilables());
 	}
-
+	*/
 	/*
 	 * Dada la planta devuelve una lista con los espacios alquilables
 	 */
+	/*
 	@GetMapping(path = "/api/tarifa-espacio/{id}")
 	@ApiOperation(value = "Obtiene la tarifa de un espacio", notes = "Devuelve la tarifa de un espacios")
 	public ResponseEntity<String> calcularTarifaEspacioAlquilable(
@@ -146,5 +150,6 @@ public class EspacioController {
 		AdapterEspacios.enviarCalcularTarifaEspacioAlquilable(id);
 		return ResponseEntity.status(HttpStatus.OK).body(AdapterEspacios.recibirCalcularTarifaEspacioAlquilable());
 	}
+	*/
 
 }

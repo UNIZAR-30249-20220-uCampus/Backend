@@ -62,12 +62,6 @@ public class AdapterEspacios {
 		connection.close();
 	}
 
-	////////////
-	public void enviarGetEspacio(String id) throws IOException {
-		String messageString = "espacios/" + id;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
 
 	public void enviarGetEspacio(int planta, double x, double y) throws IOException {
 		String messageString = "espacios/" + planta + "/" + x + "/" + y;
@@ -129,6 +123,7 @@ public class AdapterEspacios {
 		return message;
 	}
 
+	/*
 	public void enviarGetEspaciosAlquilables(int planta) throws IOException {
 		String messageString = "espacios-alquilables/" + planta;
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
@@ -161,5 +156,5 @@ public class AdapterEspacios {
 		System.out.println(" [x] Recibido '" + message + "'");
 		return message;
 	}
-
+	*/
 }
