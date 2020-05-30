@@ -2,10 +2,6 @@ package es.ucampus.demo.adapter;
 
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
-//import org.postgresql.core.ConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import com.rabbitmq.client.ConnectionFactory;

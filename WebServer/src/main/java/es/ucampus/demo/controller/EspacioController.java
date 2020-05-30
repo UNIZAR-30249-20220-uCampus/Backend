@@ -10,8 +10,6 @@ import es.ucampus.demo.adapter.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ApiResponse;
 
 import org.json.simple.JSONArray;
 import org.springframework.http.HttpStatus;

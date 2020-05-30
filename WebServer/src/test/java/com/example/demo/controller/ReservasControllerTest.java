@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +22,6 @@ import es.ucampus.demo.ServidorWebSpringApplication;
 import es.ucampus.demo.adapter.AdapterReservas;
 import es.ucampus.demo.controller.ReservasController;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -151,21 +149,6 @@ public class ReservasControllerTest {
 
 		ResponseEntity<JSONArray> result = reservasController.getReservasUsuarioEstado("Alex", "PENDIENTE");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
-	}
-
-	@Test
-	@Ignore
-	public void test_ACEPTAR_RESERVA() throws Exception {
-		ResponseEntity<JSONArray> reservas = reservasController.getReservas("\"CRE.1200.01.050\"");
-		JSONArray rs = reservas.getBody();
-		String idReserva = "";
-		rs.forEach(item -> {
-			JSONObject obj = (JSONObject) item;
-			// idReserva = (String) obj.get("id");
-		});
-
-		// ResponseEntity<String> result = reservasController.aceptarReserva(idReserva);
-		// assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
 	@Test

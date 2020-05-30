@@ -1,6 +1,5 @@
 package es.ucampus.demo.adapter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import domainObjects.request.ReservaRequest;
 
 import com.rabbitmq.client.ConnectionFactory;

@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -99,11 +98,4 @@ public class EspacioControllerTest {
 		ResponseEntity<EspacioDTO> result = espacioController.getSpace(7, 675745.92064, 4616800.60363);
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
-
-	@Test
-	@Ignore
-	public void test_GET_BUSCAR_ESPACIOS() throws Exception {
-
-	}
-
 }
