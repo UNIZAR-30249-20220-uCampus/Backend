@@ -4,19 +4,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -24,6 +29,7 @@ import domainObjects.entity.Espacio;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.DemoApplication;
+import es.ucampus.demo.repository.RepositorioEspacios;
 
 import org.json.simple.JSONArray;
 
@@ -31,9 +37,19 @@ import org.json.simple.JSONArray;
 @SpringBootTest(classes = { DemoApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class FuncionesEspacioTest {
 	
-	@Autowired
 	private FuncionesEspacio funcionesEspacios;
+	
 
+	@Before
+    public void init() {
+		RepositorioEspacios repositorioEspacios = Mockito.mock(RepositorioEspacios.class);
+		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(new Espacio()));
+
+		funcionesEspacios = new FuncionesEspacioImpl(repositorioEspacios);
+
+
+	}
+	
 	@Test
 	@Ignore
 	public void contexLoads() throws Exception {
@@ -41,7 +57,6 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_GET_ESPACIO_ID() throws Exception {
 
 		Espacio espacio = funcionesEspacios.getEspacioId("\"CRE.1200.01.050\"");

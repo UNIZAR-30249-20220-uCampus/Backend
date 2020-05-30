@@ -20,6 +20,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 	@Autowired
 	private RepositorioEspacios espaciosRepository;
 
+	FuncionesEspacioImpl(RepositorioEspacios espaciosRepository){
+		this.espaciosRepository = espaciosRepository;
+	}
+
 	public EspacioDTO getEspacioDTOId(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
 		// Transformar a DTO

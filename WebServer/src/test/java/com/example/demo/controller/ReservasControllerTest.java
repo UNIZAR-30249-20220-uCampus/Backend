@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,16 +22,51 @@ import domainObjects.request.ReservaRequest;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.ServidorWebSpringApplication;
+import es.ucampus.demo.adapter.AdapterReservas;
 import es.ucampus.demo.controller.ReservasController;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.QueueingConsumer;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServidorWebSpringApplication.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ReservasControllerTest {
-
-	@Autowired
+	
+	private String QUEUE_ENVIAR = "TestReservasEnviar";
+	private String QUEUE_RECIBIR = "TestReservasRecibir";
 	private ReservasController reservasController;
+	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
+	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
+	private Connection connection;
+	private Channel channel;
+	private QueueingConsumer consumer;
+
+	@Before
+	public void beforeTest() throws Exception {
+		AdapterReservas adapterReservas = new AdapterReservas(QUEUE_ENVIAR, QUEUE_RECIBIR);
+		reservasController = new ReservasController(adapterReservas);
+
+		ConnectionFactory factory = new ConnectionFactory();
+        String amqpURL = System.getenv().get(ENV_AMQPURL_NAME) != null ? System.getenv().get(ENV_AMQPURL_NAME)
+                : CredencialCloudAMQP;
+        try {
+            factory.setUri(amqpURL);
+        } catch (Exception e) {
+            System.exit(-1);
+        }
+        connection = factory.newConnection();
+        channel = connection.createChannel();
+		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuarÃ¡ de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+
+		// El objeto consumer guardará los mensajes que lleguen
+		// a la cola QUEUE_RECIBIR hasta que los usemos
+		consumer = new QueueingConsumer(channel);
+	}
 
 	@Test
 	public void contexLoads() throws Exception {
@@ -81,9 +117,10 @@ public class ReservasControllerTest {
 	}
 
 	@Test
-	@Ignore
     public void test_GET_RESERVAS_ERROR() throws Exception {
-		
+		String msg = "No encontrado";
+		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+
         ResponseEntity<JSONArray> result = reservasController.getReservas("CRE.1065.00.021");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}

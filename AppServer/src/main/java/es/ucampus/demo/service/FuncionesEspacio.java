@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import domainObjects.entity.Espacio;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
+import es.ucampus.demo.repository.RepositorioEspacios;
 
 @Service
 public interface FuncionesEspacio {
 
-    EspacioDTO getEspacioDTOId(String id);
-    Espacio getEspacioId(String id);
+	EspacioDTO getEspacioDTOId(String id);
+	
+	Espacio getEspacioId(String id);
 
 	EspacioDTO getEspacioCoordenadas(int planta, double x, double y);
 
