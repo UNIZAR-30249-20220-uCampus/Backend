@@ -50,6 +50,7 @@ public class FuncionesReservaTest {
 	Reserva reserva;
 
 	@Before
+	@Ignore
     public void before() {
 		espacio = funcionesEspacio.getEspacioId("\"CRE.1200.01.050\"");
 		Horario horario = new Horario(new Date(), new Date(), 2);
@@ -58,11 +59,13 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
+	@Ignore
 	public void contexLoads() throws Exception {
 		assertThat(funcionesReserva).isNotNull();
 	}
 
 	@Test
+	@Ignore
 	public void test_HACER_RESERVA() throws Exception {
 
 		boolean ok = funcionesReserva.hacerReserva(reserva);
@@ -70,6 +73,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_ESPACIO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReserva(espacio);
@@ -77,6 +81,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_ESPACIO_ESTADO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReservaEstado(espacio, EstadoReserva.CANCELADA);
@@ -84,6 +89,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_USUARIO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReservaUsuario("Alex");
@@ -91,6 +97,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReservaUsuarioEstado("Alex",EstadoReserva.CANCELADA);

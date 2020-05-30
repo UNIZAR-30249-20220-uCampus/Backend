@@ -35,11 +35,13 @@ public class FuncionesEspacioTest {
 	private FuncionesEspacio funcionesEspacios;
 
 	@Test
+	@Ignore
 	public void contexLoads() throws Exception {
 		assertThat(funcionesEspacios).isNotNull();
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_ESPACIO_ID() throws Exception {
 
 		Espacio espacio = funcionesEspacios.getEspacioId("\"CRE.1200.01.050\"");
@@ -47,6 +49,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_ESPACIO_ERROR() throws Exception {
 
 		Espacio espacio = funcionesEspacios.getEspacioId("\"CRE.1065.00.021\"");
@@ -54,6 +57,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_EspacioDTO_ID() throws Exception {
 
 		EspacioDTO espacio = funcionesEspacios.getEspacioDTOId("\"CRE.1200.01.050\"");
@@ -61,6 +65,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_EspacioDTO_ERROR() throws Exception {
 
 		EspacioDTO espacio = funcionesEspacios.getEspacioDTOId("\"CRE.1065.00.021\"");
@@ -68,6 +73,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_ESPACIO_COOR() throws Exception {
 
 		EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(1, 675745.92064, 4616800.60363);
@@ -75,6 +81,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_ESPACIO_COOR_ERROR() throws Exception {
 
 		EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(7, 675745.92064, 4616800.60363);
@@ -82,6 +89,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_ESPACIOS_AFORO() throws Exception {
 
 		List<EspacioDTO> espacios = funcionesEspacios.buscarEspacioPorAforo(5);
@@ -89,6 +97,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_ESPACIOS_ALQUILABLES() throws Exception {
 
 		List<EspacioDTO> espaciosAlquilables0 = funcionesEspacios.getEspaciosAlquilables(0);
@@ -107,6 +116,7 @@ public class FuncionesEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_TARIFA_ESPACIO_ERROR() throws Exception {
 
 		double tarifa = funcionesEspacios.calcularTarifaEspacioAlquilable("\"CRE.1065.00.021\"");
