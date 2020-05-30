@@ -38,6 +38,7 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_GET_CREAR_RESERVA() throws Exception {
 
 		String json = 
@@ -64,6 +65,7 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_GET_RESERVAS() throws Exception {
 		
         ResponseEntity<JSONArray> result = reservasController.getReservas("\"CRE.1200.01.050\"");
@@ -71,6 +73,7 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_GET_RESERVAS_ESTADO() throws Exception {
 		
         ResponseEntity<JSONArray> result = reservasController.getReservas("\"CRE.1200.01.050\"", "PENDIENTE");
@@ -78,6 +81,7 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_GET_RESERVAS_ERROR() throws Exception {
 		
         ResponseEntity<JSONArray> result = reservasController.getReservas("CRE.1065.00.021");
@@ -85,6 +89,7 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_GET_RESERVAS_ESTADO_ERROR() throws Exception {
 		
         ResponseEntity<JSONArray> result = reservasController.getReservas("CRE.1065.00.021", "PENDIENTE");
@@ -92,6 +97,7 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_GET_RESERVAS_USUARIO() throws Exception {
 		
         ResponseEntity<JSONArray> result = reservasController.getReservasUsuario("Alex");
@@ -99,6 +105,7 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 		
         ResponseEntity<JSONArray> result = reservasController.getReservasUsuarioEstado("Alex", "PENDIENTE");
@@ -121,18 +128,21 @@ public class ReservasControllerTest {
 	}
 
 	@Test
+	@Ignore
     public void test_ACEPTAR_RESERVA_ERROR() throws Exception {
         ResponseEntity<String> result = reservasController.aceptarReserva("-1");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
 
 	@Test
+	@Ignore
     public void test_CANCELAR_RESERVA_ERROR() throws Exception {
         ResponseEntity<String> result = reservasController.aceptarReserva("-1");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
 
 	@Test
+	@Ignore
     public void test_PAGAR_RESERVA_ERROR() throws Exception {
         ResponseEntity<String> result = reservasController.aceptarReserva("-1");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());

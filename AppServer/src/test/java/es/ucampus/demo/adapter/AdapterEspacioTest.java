@@ -1,11 +1,11 @@
 package es.ucampus.demo.adapter;
 
-
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +54,7 @@ public class AdapterEspacioTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_ESPACIO_ID() throws Exception {
 
 		String msg = "espacios/\"CRE.1200.01.050\"";

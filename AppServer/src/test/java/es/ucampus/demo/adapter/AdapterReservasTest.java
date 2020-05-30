@@ -69,6 +69,7 @@ public class AdapterReservasTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_ESPACIO() throws Exception {
 
 		String msg = "reservas/\"CRE.1200.01.050\"";
@@ -76,6 +77,7 @@ public class AdapterReservasTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_ESPACIO_ESTADO() throws Exception {
 
 		String msg = "reservas-estado/\"CRE.1200.01.050\"/PENDIENTE";
@@ -83,6 +85,7 @@ public class AdapterReservasTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_USUARIO() throws Exception {
 
 		String msg = "reservas-usuario/Alex";
@@ -90,6 +93,7 @@ public class AdapterReservasTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 
 		String msg = "reservas-usuario-estado/Alex/PENDIENTE";
