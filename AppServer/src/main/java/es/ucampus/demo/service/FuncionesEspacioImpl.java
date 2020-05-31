@@ -9,9 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import domainObjects.entity.Espacio;
+import domainObjects.entity.Reserva;
+import domainObjects.request.HorarioRequest;
+import domainObjects.valueObject.EstadoReserva;
+import domainObjects.valueObject.Horario;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
+import dtoObjects.valueObject.HorarioDTO;
 import es.ucampus.demo.repository.RepositorioEspacios;
+import es.ucampus.demo.repository.RepositorioReservas;
 
 @Service
 @Transactional
@@ -19,8 +25,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 
 	@Autowired
 	private RepositorioEspacios espaciosRepository;
+	@Autowired
+	private RepositorioReservas repositorioReservas;
 
-	FuncionesEspacioImpl(RepositorioEspacios espaciosRepository){
+	FuncionesEspacioImpl(RepositorioEspacios espaciosRepository) {
 		this.espaciosRepository = espaciosRepository;
 	}
 
@@ -51,7 +59,7 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		if (id != null) {
 			System.out.println(id);
 			Optional<Espacio> espacio = espaciosRepository.findById(id);
-			if(espacio.isPresent()){
+			if (espacio.isPresent()) {
 				espacioDTO = new EspacioDTO(espacio.get());
 			} else {
 				espacioDTO = null;
@@ -127,4 +135,37 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		}
 	}
 
+	public List<EspacioDTO> buscarEspaciosporCriteriosYHorario(CriteriosBusquedaDTO criterios, HorarioRequest horario) {
+		Reserva miReserva;
+		// Almacena los Espacio que cumplen los criterios de equipamientos y son
+		// reservables en el horario dado
+		List<Espacio> espaciosResultantes = new ArrayList<Espacio>();
+		List<Integer> numEq = criterios.cantidadEquipamientos();
+		// "espacios" almacena los Espacio que cumplen los criterios de equipamientos
+		List<Espacio> espacios = espaciosRepository
+				.findByPlazasGreaterThanEqualAndCanyonGreaterThanEqualAndProyectorGreaterThanEqualAndSonidoGreaterThanEqualAndTvGreaterThanEqualAndVideoGreaterThanEqualAndDvdGreaterThanEqualAndFotocopiadorasGreaterThanEqualAndImpresorasGreaterThanEqualAndOrdenadoresGreaterThanEqualAndFaxesGreaterThanEqualAndTelefonosGreaterThanEqualAndPizarraGreaterThanEqualAndExtpolvoGreaterThanEqualAndExtco2(
+						criterios.getAforo(), numEq.get(0), numEq.get(1), numEq.get(2), Integer.toString(numEq.get(3)),
+						numEq.get(4), numEq.get(5), numEq.get(6), numEq.get(7), numEq.get(8), numEq.get(9),
+						numEq.get(10), numEq.get(11), numEq.get(12), numEq.get(13));
+		List<Reserva> reservas;
+		// Para cada Espacio que cumple los criterios de equipamiento se examinan sus
+		// Reserva
+		for (Espacio espacio : espacios) {
+			miReserva = new Reserva(espacio, horario, null, null);
+			reservas = repositorioReservas.findByEspacio(espacio);
+			// Para cada reserva se comprueba que no colisione con la búsqueda
+			for (Reserva reserva : reservas) {
+				// Si hay colisión no se agrega a los Espacio resultantes
+				if (!miReserva.hayColision(reserva)) {
+					espaciosResultantes.add(espacio);
+				}
+			}
+		}
+		// Los Espacio resultantes se transforman a EspacioDTO
+		List<EspacioDTO> espaciosResultantesDTO = new ArrayList<EspacioDTO>();
+		for (Espacio e : espaciosResultantes) {
+			espaciosResultantesDTO.add(new EspacioDTO(e));
+		}
+		return espaciosResultantesDTO;
+	}
 }
