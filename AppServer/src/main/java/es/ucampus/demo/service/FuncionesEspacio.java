@@ -23,11 +23,11 @@ public interface FuncionesEspacio {
 
 	List<EspacioDTO> buscarEspacioPorCriterios(CriteriosBusquedaDTO criterios);
 
+	List<EspacioDTO> buscarEspaciosPorCriteriosYHorario(CriteriosBusquedaDTO criterios);
+
 	boolean setEquipamiento(CriteriosBusquedaDTO cambios);
 
 	List<EspacioDTO> getEspaciosAlquilables(int planta);
 
-	public double calcularTarifaEspacioAlquilable(String id);
-
-	public List<EspacioDTO> buscarEspaciosporCriteriosYHorario(CriteriosBusquedaDTO criterios, HorarioRequest horario);
+	double calcularTarifaEspacioAlquilable(String id);
 }

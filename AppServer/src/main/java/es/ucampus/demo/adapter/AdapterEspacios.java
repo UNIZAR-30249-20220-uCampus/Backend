@@ -115,8 +115,13 @@ public class AdapterEspacios {
                         emisorAMQP(jsonEspacio);
                     }
                     else{
-                        List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
-                        espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
+						List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
+						if(criterios.busquedaPorHorario()){
+							espacios = funcionesEspacios.buscarEspaciosPorCriteriosYHorario(criterios);
+						}
+						else{
+							espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
+						}
                         String espacios2 = new Gson().toJson(espacios);
                         System.out.println(espacios2);
                         emisorAMQP(espacios2);

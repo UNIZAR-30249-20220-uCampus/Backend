@@ -3,6 +3,8 @@ package dtoObjects.valueObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import domainObjects.request.HorarioRequest;
+import domainObjects.request.ReservaRequest;
 import domainObjects.valueObject.Equipamiento;
 import domainObjects.valueObject.TipoEquipamiento;
 
@@ -13,6 +15,7 @@ public class CriteriosBusquedaDTO {
 	private List<Equipamiento> equipamientos;
 	private List<String> filtrosActivos;
 	private List<Equipamiento> totalEquipamientos;
+	private ReservaRequest horarioRequest;
 
 	public CriteriosBusquedaDTO() {
 		totalEquipamientos = new ArrayList<Equipamiento>();
@@ -37,32 +40,20 @@ public class CriteriosBusquedaDTO {
 		return nombre;
 	}
 
-	public void setId(String nombre) {
-		this.nombre = nombre;
-	}
-
 	public int getAforo() {
 		return aforo;
-	}
-
-	public void setAforo(int aforo) {
-		this.aforo = aforo;
 	}
 
 	public List<Equipamiento> getEquipamientos() {
 		return equipamientos;
 	}
 
-	public void setEquipamientos(List<Equipamiento> equipamientos) {
-		this.equipamientos = equipamientos;
-	}
-
 	public List<String> getFiltrosActivos() {
 		return filtrosActivos;
 	}
 
-	public void setFiltrosActivos(List<String> filtrosActivos) {
-		this.filtrosActivos = filtrosActivos;
+	public ReservaRequest getHorarioRequest() {
+		return horarioRequest;
 	}
 
 	public boolean busquedaPorId() {
@@ -87,6 +78,20 @@ public class CriteriosBusquedaDTO {
 		return !equipamientos.isEmpty();
 	}
 
+	public boolean busquedaAlquilables() {
+		return horarioRequest.getTipo().equals("alquiler");
+	}
+
+	public boolean busquedaPorHorario() {
+		boolean filtroHorario = false;
+		for (String filtro : filtrosActivos) {
+			if (filtro.equals("HORARIO")) {
+				filtroHorario = true;
+			}
+		}
+		return horarioRequest != null && filtroHorario;
+	}
+
 	public boolean equipamientoActivo(String equipamiento) {
 		for (String filtro : filtrosActivos) {
 			if (filtro.equals(equipamiento)) {
@@ -105,6 +110,7 @@ public class CriteriosBusquedaDTO {
 		return 0;
 	}
 
+	//Devuelve la cantidad buscada de cada equipamiento
 	public List<Integer> cantidadEquipamientos() {
 		List<Integer> cantidad = new ArrayList<Integer>();
 		for (Equipamiento equip : totalEquipamientos) {
@@ -120,7 +126,8 @@ public class CriteriosBusquedaDTO {
 	@Override
 	public String toString() {
 		return "CriteriosBusquedaDTO [aforo=" + aforo + ", equipamientos=" + equipamientos + ", filtrosActivos="
-				+ filtrosActivos + ", nombre=" + nombre + ", totalEquipamientos=" + totalEquipamientos + "]";
+				+ filtrosActivos + ", horarioRequest=" + horarioRequest + ", nombre=" + nombre + ", totalEquipamientos="
+				+ totalEquipamientos + "]";
 	}
 
 }

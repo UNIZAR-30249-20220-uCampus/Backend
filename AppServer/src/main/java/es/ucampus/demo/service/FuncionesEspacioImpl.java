@@ -102,6 +102,45 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return espaciosDTO;
 	}
 
+	public List<EspacioDTO> buscarEspaciosPorCriteriosYHorario(CriteriosBusquedaDTO criterios) {
+		Reserva miReserva;
+		// Almacena los Espacio que cumplen los criterios de equipamientos y son
+		// reservables en el horario dado
+		List<Espacio> espaciosResultantes = new ArrayList<Espacio>();
+		List<Integer> numEq = criterios.cantidadEquipamientos();
+		// "espacios" almacena los Espacio que cumplen los criterios de equipamientos
+		List<Espacio> espacios = espaciosRepository
+				.findByPlazasGreaterThanEqualAndCanyonGreaterThanEqualAndProyectorGreaterThanEqualAndSonidoGreaterThanEqualAndTvGreaterThanEqualAndVideoGreaterThanEqualAndDvdGreaterThanEqualAndFotocopiadorasGreaterThanEqualAndImpresorasGreaterThanEqualAndOrdenadoresGreaterThanEqualAndFaxesGreaterThanEqualAndTelefonosGreaterThanEqualAndPizarraGreaterThanEqualAndExtpolvoGreaterThanEqualAndExtco2(
+						criterios.getAforo(), numEq.get(0), numEq.get(1), numEq.get(2), Integer.toString(numEq.get(3)),
+						numEq.get(4), numEq.get(5), numEq.get(6), numEq.get(7), numEq.get(8), numEq.get(9),
+						numEq.get(10), numEq.get(11), numEq.get(12), numEq.get(13));
+		List<Reserva> reservas;
+		// Para cada Espacio que cumple los criterios de equipamiento se examinan sus
+		// Reserva
+		for (Espacio espacio : espacios) {
+			miReserva = new Reserva(espacio, criterios.getHorarioRequest().getHorario(), null, null);
+			reservas = repositorioReservas.findByEspacio(espacio);
+			if(!reservas.isEmpty()){
+				// Para cada reserva se comprueba que no colisione con la búsqueda
+				for (Reserva reserva : reservas) {
+					// Si hay colisión no se agrega a los Espacio resultantes
+					if (!miReserva.hayColision(reserva)) {
+						espaciosResultantes.add(espacio);
+					}
+				}
+			}
+			else{
+				espaciosResultantes.add(espacio);
+			}
+		}
+		// Los Espacio resultantes se transforman a EspacioDTO
+		List<EspacioDTO> espaciosResultantesDTO = new ArrayList<EspacioDTO>();
+		for (Espacio e : espaciosResultantes) {
+			espaciosResultantesDTO.add(new EspacioDTO(e));
+		}
+		return espaciosResultantesDTO;
+	}
+
 	public boolean setEquipamiento(CriteriosBusquedaDTO cambios) {
 		List<Integer> numEq = cambios.cantidadEquipamientos();
 		String nombreEspacio = "\"" + cambios.getNombre() + "\"";
@@ -133,39 +172,5 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		} else {
 			return 0;
 		}
-	}
-
-	public List<EspacioDTO> buscarEspaciosporCriteriosYHorario(CriteriosBusquedaDTO criterios, HorarioRequest horario) {
-		Reserva miReserva;
-		// Almacena los Espacio que cumplen los criterios de equipamientos y son
-		// reservables en el horario dado
-		List<Espacio> espaciosResultantes = new ArrayList<Espacio>();
-		List<Integer> numEq = criterios.cantidadEquipamientos();
-		// "espacios" almacena los Espacio que cumplen los criterios de equipamientos
-		List<Espacio> espacios = espaciosRepository
-				.findByPlazasGreaterThanEqualAndCanyonGreaterThanEqualAndProyectorGreaterThanEqualAndSonidoGreaterThanEqualAndTvGreaterThanEqualAndVideoGreaterThanEqualAndDvdGreaterThanEqualAndFotocopiadorasGreaterThanEqualAndImpresorasGreaterThanEqualAndOrdenadoresGreaterThanEqualAndFaxesGreaterThanEqualAndTelefonosGreaterThanEqualAndPizarraGreaterThanEqualAndExtpolvoGreaterThanEqualAndExtco2(
-						criterios.getAforo(), numEq.get(0), numEq.get(1), numEq.get(2), Integer.toString(numEq.get(3)),
-						numEq.get(4), numEq.get(5), numEq.get(6), numEq.get(7), numEq.get(8), numEq.get(9),
-						numEq.get(10), numEq.get(11), numEq.get(12), numEq.get(13));
-		List<Reserva> reservas;
-		// Para cada Espacio que cumple los criterios de equipamiento se examinan sus
-		// Reserva
-		for (Espacio espacio : espacios) {
-			miReserva = new Reserva(espacio, horario, null, null);
-			reservas = repositorioReservas.findByEspacio(espacio);
-			// Para cada reserva se comprueba que no colisione con la búsqueda
-			for (Reserva reserva : reservas) {
-				// Si hay colisión no se agrega a los Espacio resultantes
-				if (!miReserva.hayColision(reserva)) {
-					espaciosResultantes.add(espacio);
-				}
-			}
-		}
-		// Los Espacio resultantes se transforman a EspacioDTO
-		List<EspacioDTO> espaciosResultantesDTO = new ArrayList<EspacioDTO>();
-		for (Espacio e : espaciosResultantes) {
-			espaciosResultantesDTO.add(new EspacioDTO(e));
-		}
-		return espaciosResultantesDTO;
 	}
 }

@@ -24,6 +24,7 @@ public class EspacioDTO {
 	public EspacioDTO() {
 	}
 
+
 	public EspacioDTO(Espacio es) {
 		this.id_espacio = es.getId_espacio();
 		this.id_edificio = es.getId_edificio();

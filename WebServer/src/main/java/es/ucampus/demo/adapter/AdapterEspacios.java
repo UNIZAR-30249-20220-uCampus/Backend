@@ -98,6 +98,7 @@ public class AdapterEspacios {
 	}
 
 	public void enviarbuscarEspacio(CriteriosBusquedaDTO criterios) throws IOException {
+		System.out.println(criterios.toString());
 		ObjectMapper mapper = new ObjectMapper();
 		// Java object to JSON string
 		String jsonString = mapper.writeValueAsString(criterios);
