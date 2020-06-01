@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-alpine
+FROM openjdk:11
 VOLUME /tmp
 ARG JAR_FILE=web-snapshot/*.jar
 COPY ${JAR_FILE} app.jar
