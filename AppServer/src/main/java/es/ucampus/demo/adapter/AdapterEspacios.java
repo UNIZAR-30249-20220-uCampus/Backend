@@ -122,6 +122,11 @@ public class AdapterEspacios {
 						else{
 							espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
 						}
+
+						if(criterios.busquedaAlquilables()){
+							espacios = funcionesEspacios.getEspaciosAlquilables(espacios);
+						}
+						
                         String espacios2 = new Gson().toJson(espacios);
                         System.out.println(espacios2);
                         emisorAMQP(espacios2);

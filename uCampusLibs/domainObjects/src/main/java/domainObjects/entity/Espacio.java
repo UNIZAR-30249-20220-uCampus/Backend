@@ -61,6 +61,7 @@ public class Espacio {
 	@JsonDeserialize(using = GeometryDeserializer.class)
 	@Column(name = "geom", columnDefinition = "GEOMETRY")
 	private Geometry geom;
+	private int planta;
 
 	@Transient
 	private Vector<Equipamiento> equipamientos;
@@ -177,6 +178,10 @@ public class Espacio {
 
 	public int getTipo_de_uso() {
 		return tipo_de_uso;
+	}
+
+	public int getPlanta() {
+		return planta;
 	}
 
 	@Override

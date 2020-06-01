@@ -76,7 +76,7 @@ public class EspacioController {
 	 */
 	@GetMapping(path = "/api/espacios/{planta}/{x}/{y}")
 	@ApiOperation(value = "Busqueda de un espacio por planta y coordenadas", notes = "Devuelve información de un espacio")
-	public ResponseEntity<EspacioDTO> getSpace(
+	public ResponseEntity<EspacioDTO> getEspacio(
 			@ApiParam(value = "Planta donde se encuentra el espacio", required = true) @PathVariable int planta,
 			@ApiParam(value = "Coordenada long del espacio", required = true) @PathVariable double x,
 			@ApiParam(value = "Coordenada lat del espacio", required = true) @PathVariable double y) throws Exception {
@@ -100,7 +100,7 @@ public class EspacioController {
 	/*
 	 * Busqueda de espacios segun criterios
 	 */
-	@PostMapping(value = "/api/buscar-espacio")
+	@GetMapping(value = "/api/buscar-espacio")
 	@ApiOperation(value = "Busqueda de espacios segun criterios", notes = "Devuelve lista de espacios con esas características")
 	public ResponseEntity<JSONArray> buscarEspacio(
 			@ApiParam(value = "Criterios de busqueda", required = true) @RequestBody CriteriosBusquedaDTO busquedaRequest)

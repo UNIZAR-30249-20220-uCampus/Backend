@@ -41,7 +41,12 @@ public class CriteriosBusquedaDTO {
 	}
 
 	public int getAforo() {
-		return aforo;
+		for (String filtro : filtrosActivos) {
+			if (filtro.equals("AFORO")) {
+				return aforo;
+			}
+		}
+		return 0;
 	}
 
 	public List<Equipamiento> getEquipamientos() {
@@ -79,7 +84,12 @@ public class CriteriosBusquedaDTO {
 	}
 
 	public boolean busquedaAlquilables() {
-		return horarioRequest.getTipo().equals("alquiler");
+		for (String filtro : filtrosActivos) {
+			if (filtro.equals("ALQUILABLES")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean busquedaPorHorario() {

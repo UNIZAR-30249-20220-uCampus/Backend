@@ -29,5 +29,7 @@ public interface FuncionesEspacio {
 
 	List<EspacioDTO> getEspaciosAlquilables(int planta);
 
+	List<EspacioDTO> getEspaciosAlquilables(List<EspacioDTO> espacios);
+
 	double calcularTarifaEspacioAlquilable(String id);
 }

@@ -86,7 +86,7 @@ public class EspacioControllerTest {
 		String msg = mapper.writeValueAsString(espacioDTO);
 		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
 
-		ResponseEntity<EspacioDTO> result = espacioController.getSpace(1, 675745.92064, 4616800.60363);
+		ResponseEntity<EspacioDTO> result = espacioController.getEspacio(1, 675745.92064, 4616800.60363);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
@@ -95,7 +95,7 @@ public class EspacioControllerTest {
 		String msg = "No encontrado";
 		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
 
-		ResponseEntity<EspacioDTO> result = espacioController.getSpace(7, 675745.92064, 4616800.60363);
+		ResponseEntity<EspacioDTO> result = espacioController.getEspacio(7, 675745.92064, 4616800.60363);
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
 }

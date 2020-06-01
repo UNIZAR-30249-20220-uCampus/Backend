@@ -152,7 +152,6 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return i > 0;
 	}
 
-	@Override
 	public List<EspacioDTO> getEspaciosAlquilables(int planta) {
 		List<EspacioDTO> listaEspaciosDTO = new ArrayList<EspacioDTO>();
 		List<String> listaDeIds = espaciosRepository.findEspaciosAlquilables(planta);
@@ -164,7 +163,16 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return listaEspaciosDTO;
 	}
 
-	@Override
+	public List<EspacioDTO> getEspaciosAlquilables(List<EspacioDTO> espacios) {
+		List<EspacioDTO> listaEspaciosDTO = new ArrayList<EspacioDTO>();
+		for (EspacioDTO espacio : espacios) {
+			if (espacio.esAlquilable()) {
+				listaEspaciosDTO.add(espacio);
+			}
+		}
+		return listaEspaciosDTO;
+	}
+
 	public double calcularTarifaEspacioAlquilable(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
 		if (espacio.isPresent()) {
