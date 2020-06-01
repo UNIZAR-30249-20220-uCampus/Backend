@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +20,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -32,6 +36,8 @@ import dtoObjects.entity.EspacioDTO;
 import dtoObjects.entity.ReservaDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.DemoApplication;
+import es.ucampus.demo.repository.RepositorioReservas;
+
 
 import org.json.simple.JSONArray;
 
@@ -39,22 +45,30 @@ import org.json.simple.JSONArray;
 @SpringBootTest(classes = { DemoApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class FuncionesReservaTest {
 
-	@Autowired
+	
 	private FuncionesReserva funcionesReserva;
 
-	@Autowired
-	private FuncionesEspacio funcionesEspacio;
+	private Espacio espacio;
 
-	Espacio espacio;
-
-	Reserva reserva;
+	private Reserva reserva;
 
 	@Before
-	@Ignore
     public void before() {
-		espacio = funcionesEspacio.getEspacioId("\"CRE.1200.01.050\"");
+		//this.espacio = 
 		Horario horario = new Horario(new Date(), new Date(), 2);
-		reserva = new Reserva(espacio, horario, "Alex", "reserva");
+		this.reserva = new Reserva(new Espacio(), horario, "Alex", "reserva");
+		List<Reserva> listaReservas = new ArrayList<Reserva>();
+		listaReservas.add(this.reserva);
+		final RepositorioReservas repositorioReservas = Mockito.mock(RepositorioReservas.class);
+		// test_HACER_RESERVA, test_GET_RESERVAS_ESPACIO, test_GET_RESERVAS_ESPACIO_ESTADO, test_GET_RESERVAS_USUARIO, test_GET_RESERVAS_USUARIO_ESTADO
+		Mockito.when(repositorioReservas.findByEspacio(this.espacio)).thenReturn(listaReservas);
+		Mockito.when(repositorioReservas.findByUsuario("Alex")).thenReturn(listaReservas);
+		Mockito.when(repositorioReservas.findAll()).thenReturn(listaReservas);
+		Mockito.when(repositorioReservas.save(this.reserva)).thenReturn(this.reserva);
+
+
+		funcionesReserva = new FuncionesReservaImpl(repositorioReservas);
+		
 			
 	}
 
@@ -73,7 +87,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
-	@Ignore
+	
 	public void test_GET_RESERVAS_ESPACIO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReserva(espacio);
@@ -81,7 +95,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
-	@Ignore
+	
 	public void test_GET_RESERVAS_ESPACIO_ESTADO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReservaEstado(espacio, EstadoReserva.CANCELADA);
@@ -89,7 +103,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
-	@Ignore
+	
 	public void test_GET_RESERVAS_USUARIO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReservaUsuario("Alex");
@@ -97,7 +111,7 @@ public class FuncionesReservaTest {
 	}
 
 	@Test
-	@Ignore
+
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 
 		List<ReservaDTO> reservas = funcionesReserva.buscarReservaUsuarioEstado("Alex",EstadoReserva.CANCELADA);
