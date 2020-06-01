@@ -18,6 +18,7 @@ public class EspacioDTO {
 	private int alquilable;
 	private double tarifa;
 	private Vector<EquipamientoDTO> equipamientos;
+	private int planta;
 	private double lng_center;
 	private double lat_center;
 
@@ -37,6 +38,7 @@ public class EspacioDTO {
 			equi.add(new EquipamientoDTO(equipamiento));
 		}
 		this.equipamientos = equi;
+		this.planta = es.getPlanta();
 		this.lng_center = es.getGeom().getCentroid().getX();
 		this.lat_center = es.getGeom().getCentroid().getY();
 	}
@@ -50,7 +52,7 @@ public class EspacioDTO {
 		j.put("alquilable", this.alquilable);
 		j.put("tarifa", this.tarifa);
 		j.put("id_utc", this.id_utc);
-		/* j.put("geom", this.geom.); */
+		j.put("planta", this.planta);
 		j.put("lng_center", this.lng_center);
 		j.put("lat_center", this.lat_center);
 
@@ -68,7 +70,6 @@ public class EspacioDTO {
 	public String getId_espacio() {
 		return id_espacio;
 	}
-
 
 	public String getId_edificio() {
 		return id_edificio;
@@ -94,8 +95,16 @@ public class EspacioDTO {
 		return alquilable;
 	}
 
+	public boolean esAlquilable() {
+		return alquilable == 1;
+	}
+
 	public double getTarifa() {
 		return tarifa;
+	}
+
+	public int getPlanta() {
+		return planta;
 	}
 
 	public double getLng_center() {

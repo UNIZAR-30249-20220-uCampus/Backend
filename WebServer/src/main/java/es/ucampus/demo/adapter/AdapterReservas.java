@@ -1,6 +1,5 @@
 package es.ucampus.demo.adapter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import domainObjects.request.ReservaRequest;
 
 import com.rabbitmq.client.ConnectionFactory;
@@ -13,16 +12,17 @@ import java.io.IOException;
 
 public class AdapterReservas {
 
-	@Autowired
-	private final static String QUEUE_ENVIAR = "WebASpringReservas";
-	private final static String QUEUE_RECIBIR = "SpringAWebReservas";
+	private String QUEUE_ENVIAR;
+	private String QUEUE_RECIBIR;
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
 
-	public AdapterReservas() throws IOException {
+	public AdapterReservas(String QUEUE_ENVIAR, String QUEUE_RECIBIR) throws IOException {
+		this.QUEUE_ENVIAR = QUEUE_ENVIAR;
+		this.QUEUE_RECIBIR = QUEUE_RECIBIR;
 		// Conexión al broker RabbitMQ broker (prueba en la URL de
 		// la variable de entorno que se llame como diga ENV_AMQPURL_NAME
 		// o sino en localhost)

@@ -116,18 +116,10 @@ public class Reserva {
 
 	public boolean hayColision(Reserva reserva) {
 		boolean colision = false;
-
-		if (this.horario.coincidenFechas(reserva.getHorario())) {
-			if (this.horario.coincidenSemanas(reserva.getHorario())) {
-				if (this.horario.coincidenDias(reserva.getHorario())) {
-					if (this.horario.coincidenSlots(reserva.getHorario())) {
-						if (reserva.getEstado() == EstadoReserva.ACEPTADA
-								|| reserva.getEstado() == EstadoReserva.PENDIENTEPAGO)
-							colision = true;
-					}
-				}
+		if (this.getHorario().hayColision(reserva.getHorario())) {
+			if (reserva.getEstado() == EstadoReserva.ACEPTADA || reserva.getEstado() == EstadoReserva.PENDIENTEPAGO) {
+				colision = true;
 			}
-
 		}
 		return colision;
 	}

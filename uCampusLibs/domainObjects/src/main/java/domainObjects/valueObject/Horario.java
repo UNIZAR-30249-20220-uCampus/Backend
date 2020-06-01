@@ -289,4 +289,18 @@ public class Horario {
 				+ fechaInicio + ", frecuencia=" + frecuencia + ", id=" + id + "]";
 	}
 
+	public boolean hayColision(Horario horario) {
+		boolean colision = false;
+		if (this.coincidenFechas(horario)) {
+			if (this.coincidenSemanas(horario)) {
+				if (this.coincidenDias(horario)) {
+					if (this.coincidenSlots(horario)) {
+						colision = true;
+					}
+				}
+			}
+		}
+		return colision;
+	}
+
 }
