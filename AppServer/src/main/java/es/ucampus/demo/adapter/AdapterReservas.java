@@ -6,8 +6,8 @@ import domainObjects.entity.Reserva;
 import domainObjects.request.ReservaRequest;
 import domainObjects.valueObject.EstadoReserva;
 import dtoObjects.entity.ReservaDTO;
-import es.ucampus.demo.service.FuncionesEspacio;
-import es.ucampus.demo.service.FuncionesReserva;
+import es.ucampus.demo.service.ServiciosEspacio;
+import es.ucampus.demo.service.ServiciosReserva;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,9 +21,9 @@ import java.util.List;
 public class AdapterReservas {
 
 	@Autowired
-	private FuncionesEspacio funcionesEspacios;
+	private ServiciosEspacio funcionesEspacios;
 	@Autowired
-	private FuncionesReserva funcionesReserva;
+	private ServiciosReserva funcionesReserva;
 
 	private String QUEUE_ENVIAR;
 	private String QUEUE_RECIBIR;

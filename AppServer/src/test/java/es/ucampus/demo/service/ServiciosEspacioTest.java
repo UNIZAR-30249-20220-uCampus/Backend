@@ -25,9 +25,9 @@ import es.ucampus.demo.repository.RepositorioEspacios;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DemoApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
-public class FuncionesEspacioTest {
+public class ServiciosEspacioTest {
 
-	private FuncionesEspacio funcionesEspacios;
+	private ServiciosEspacio funcionesEspacios;
 
 	@Before
 	public void init() throws JsonMappingException, JsonProcessingException {
@@ -43,7 +43,7 @@ public class FuncionesEspacioTest {
 		Espacio espacio = objectMapper.readValue(json, Espacio.class);
 		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(espacio));
 */
-		funcionesEspacios = new FuncionesEspacioImpl(repositorioEspacios);
+		funcionesEspacios = new ServiciosEspacioImpl(repositorioEspacios);
 
 
 	}

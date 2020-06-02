@@ -29,13 +29,13 @@ import es.ucampus.demo.DemoApplication;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DemoApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
-public class FuncionesReservaTest {
+public class ServiciosReservaTest {
 
 	@Autowired
-	private FuncionesReserva funcionesReserva;
+	private ServiciosReserva funcionesReserva;
 
 	@Autowired
-	private FuncionesEspacio funcionesEspacio;
+	private ServiciosEspacio funcionesEspacio;
 
 	Espacio espacio;
 

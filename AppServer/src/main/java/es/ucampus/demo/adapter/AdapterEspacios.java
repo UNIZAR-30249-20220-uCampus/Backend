@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
-import es.ucampus.demo.service.FuncionesEspacio;
+import es.ucampus.demo.service.ServiciosEspacio;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -23,7 +23,7 @@ import java.util.List;
 public class AdapterEspacios {
 
 	@Autowired
-	private FuncionesEspacio funcionesEspacios;
+	private ServiciosEspacio funcionesEspacios;
 	
 	private String QUEUE_ENVIAR;
 	private String QUEUE_RECIBIR;
