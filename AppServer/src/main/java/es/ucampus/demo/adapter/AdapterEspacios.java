@@ -143,7 +143,6 @@ public class AdapterEspacios {
 
                         EspacioDTO espacio1 = serviciosEspacio.getEspacioDTOId(criterios.getNombre());
                         String jsonEspacio = mapper.writeValueAsString(espacio1);
-						System.out.println(jsonEspacio);
 						//enviar espacio
                         emisorAMQP(jsonEspacio);
                     }

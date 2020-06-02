@@ -156,8 +156,6 @@ public class ServiciosReservaImpl implements ServiciosReserva {
 		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
 
 		for (Reserva reserva : reservas) {
-			System.out.println(reservas.toString());
-
 			ReservaDTO reservaDTO = new ReservaDTO(reserva);
 			reservasDTO.add(reservaDTO);
 		}

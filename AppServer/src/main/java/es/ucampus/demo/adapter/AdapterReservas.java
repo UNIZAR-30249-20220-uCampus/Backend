@@ -128,7 +128,6 @@ public class AdapterReservas {
 					//si id de espacio es valido
 					if (espacioReserva != null) {
 						ReservaRequest reserva = mapper.readValue(path[2], ReservaRequest.class);
-						System.out.println(reserva.toString());
 						Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario(), reserva.getTipo());
 						boolean ok = serviciosReserva.hacerReserva(r);
 						if (ok) {
@@ -214,7 +213,6 @@ public class AdapterReservas {
 					List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
 					reservasUsuario = serviciosReserva.buscarReservaUsuario(usuario);
 					String reservasUsuarioString = new Gson().toJson(reservasUsuario);
-					System.out.println(reservasUsuarioString);
 					emisorAMQP(reservasUsuarioString);
 					break;
 				// Dado un identificador de usuario y un estado, devuelve las reservas correspondientes
