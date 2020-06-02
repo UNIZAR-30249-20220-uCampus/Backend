@@ -3,7 +3,6 @@ package dtoObjects.valueObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import domainObjects.request.HorarioRequest;
 import domainObjects.request.ReservaRequest;
 import domainObjects.valueObject.Equipamiento;
 import domainObjects.valueObject.TipoEquipamiento;

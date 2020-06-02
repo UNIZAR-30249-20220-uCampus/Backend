@@ -38,7 +38,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Crea una reserva
+	 * Crea una reserva dado el identificador de un espacio y los datos de reserva
 	 */
 	@PostMapping(value = "/api/crear-reserva/{espacio}")
 	@ApiOperation(value = "Crea una reserva para un espacio", notes = "Devuelve estado de la reserva" )
@@ -50,13 +50,17 @@ public class ReservasController {
 		@ApiParam(value = "Parametros de reserva", required = true) @RequestBody ReservaRequest reserva) 
 			throws Exception {
 
+		//envia los datos
 		adapterReservas.enviarReserva(espacio,reserva);
 		
+		//recibe la respuesta del servidor
 		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.CREATED;
+		//Si hay colisión con otras reservas
 		if(res.equals("Colision")){
 			codigo = HttpStatus.BAD_REQUEST;
 		}
+		//espacio no encontrado segun ese id
 		else if(res.equals("No encontrado")){
 			codigo = HttpStatus.NOT_FOUND;
 		}
@@ -64,7 +68,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Acepta una reserva
+	 * Acepta una reserva dado su identificador
 	 */
 	@PutMapping(value = "/api/aceptar-reserva/{reserva}")
 	@ApiOperation(value = "Acepta una reserva para un espacio", notes = "Devuelve estado de la reserva" )
@@ -72,11 +76,14 @@ public class ReservasController {
 		@ApiParam(value = "Id de la reserva que se quiere aceptar", required = true) @PathVariable String reserva) 
 			throws Exception {
 
-		adapterReservas.enviarAceptarReserva(reserva);
+		//envia los datos
+		adapterReservas.enviarAccionReserva(reserva,"aceptar");
 
-		String res = adapterReservas.recibirAceptarReserva();
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.OK;
 
+		//reserva no encontrada segun ese id
 		if(res.equals("Reserva no encontrada")){
 			codigo = HttpStatus.NOT_FOUND;
 		}
@@ -84,7 +91,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Paga una reserva
+	 * Paga una reserva dado su identificador
 	 */
 	@PutMapping(value = "/api/pagar-reserva/{reserva}")
 	@ApiOperation(value = "Paga una reserva para un espacio", notes = "Devuelve estado de la reserva" )
@@ -92,11 +99,14 @@ public class ReservasController {
 		@ApiParam(value = "Id de la reserva que se quiere pagar", required = true) @PathVariable String reserva) 
 			throws Exception {
 
-		adapterReservas.enviarPagarReserva(reserva);
+		//envia los datos
+		adapterReservas.enviarAccionReserva(reserva,"pagar");
 
-		String res = adapterReservas.recibirPagarReserva();
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.OK;
 
+		//reserva no encontrada segun ese id
 		if(res.equals("Reserva no encontrada")){
 			codigo = HttpStatus.NOT_FOUND;
 		}
@@ -104,7 +114,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Cancela una reserva
+	 * Cancela una reserva dado su identificador
 	 */
 	@PutMapping(value = "/api/cancelar-reserva/{reserva}")
 	@ApiOperation(value = "Cancela una reserva para un espacio", notes = "Devuelve estado de la reserva" )
@@ -112,11 +122,14 @@ public class ReservasController {
 		@ApiParam(value = "Id de la reserva que se quiere cancelar", required = true) @PathVariable String reserva) 
 			throws Exception {
 
-		adapterReservas.enviarCancelarReserva(reserva);
+		//envia los datos
+		adapterReservas.enviarAccionReserva(reserva,"cancelar");
 
-		String res = adapterReservas.recibirCancelarReserva();
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.OK;
 
+		//reserva no encontrada segun ese id
 		if(res.equals("Reserva no encontrada")){
 			codigo = HttpStatus.NOT_FOUND;
 		}
@@ -124,7 +137,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Obtiene las reservas de un espacio dado su id
+	 * Dado el identificador de un espacio devuelve sus reservas
 	 */
 	@GetMapping(value = "/api/reservas/{espacio}")
 	@ApiOperation(value = "Busqueda de reservas correspondientes a un espacio", notes = "Devuelve lista de reservas correspondientes a un espacio")
@@ -132,11 +145,14 @@ public class ReservasController {
 		@ApiParam(value = "Id del espacio", required = true) @PathVariable String espacio) 
 			throws Exception {
 
+		//envia los datos
 		adapterReservas.enviarGetReservas(espacio);
 
-		String res = adapterReservas.recibirGetReservas();
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.OK;
 
+		//espacio no encontrado segun ese id
 		if(res.equals("No encontrado")){
 			codigo = HttpStatus.NOT_FOUND;
 			return ResponseEntity.status(codigo).body(null);
@@ -148,7 +164,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Obtiene las reservas de un espacio dado su id
+	 * Dado el identificador de un espacio y el estado de una reserva devuelve sus reservas con ese estado
 	 */
 	@GetMapping(value = "/api/reservas/{espacio}/{estado}")
 	@ApiOperation(value = "Busqueda de reservas correspondientes a un espacio", notes = "Devuelve lista de reservas correspondientes a un espacio")
@@ -157,11 +173,14 @@ public class ReservasController {
 		@ApiParam(value = "Estado de la reserva (PENDIENTE, PENDIENTEPAGO, ACEPTADA, CANCELADA)", required = true) @PathVariable String estado) 
 			throws Exception {
 
+		//envia los datos
 		adapterReservas.enviarGetReservas(espacio, estado);
 
-		String res = adapterReservas.recibirGetReservas();
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.OK;
 
+		//espacio no encontrado segun ese id
 		if(res.equals("No encontrado")){
 			codigo = HttpStatus.NOT_FOUND;
 			return ResponseEntity.status(codigo).body(null);
@@ -173,7 +192,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Obtiene las reservas de un usuario dado su id
+	 * Dado el identificador de un usuario devuelve sus reservas
 	 */
 	@GetMapping(value = "/api/reservas-usuario/{usuario}")
 	@ApiOperation(value = "Busqueda de reservas correspondientes a un usuario", notes = "Devuelve lista de reservas correspondientes a un usuario")
@@ -181,10 +200,13 @@ public class ReservasController {
 		@ApiParam(value = "Id del usuario", required = true) @PathVariable String usuario) 
 			throws Exception {
 
+		//envia los datos
 		adapterReservas.enviarGetReservasUsuario(usuario);
 
-		String res = adapterReservas.recibirGetReservasUsuario();
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.OK;
+		//crea el json
 		JSONParser parser = new JSONParser();
 		JSONArray json = (JSONArray) parser.parse(res);
 
@@ -192,7 +214,7 @@ public class ReservasController {
 	}
 
 	/*
-	 * Obtiene las reservas de un usuario dado su id
+	 * Dado el identificador de un usuario y el estado de una reserva devuelve sus reservas con ese estado
 	 */
 	@GetMapping(value = "/api/reservas-usuario/{usuario}/{estado}")
 	@ApiOperation(value = "Busqueda de reservas correspondientes a un usuario", notes = "Devuelve lista de reservas correspondientes a un usuario")
@@ -201,10 +223,13 @@ public class ReservasController {
 		@ApiParam(value = "Estado de la reserva (PENDIENTE, PENDIENTEPAGO, ACEPTADA, CANCELADA)", required = true) @PathVariable String estado) 
 			throws Exception {
 
+		//envia los datos
 		adapterReservas.enviarGetReservasUsuario(usuario, estado);
 
-		String res = adapterReservas.recibirGetReservasUsuario();
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.OK;
+		//crea el json
 		JSONParser parser = new JSONParser();
 		JSONArray json = (JSONArray) parser.parse(res);
 

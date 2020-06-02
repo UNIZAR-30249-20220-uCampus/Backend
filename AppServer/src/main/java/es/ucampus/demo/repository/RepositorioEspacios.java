@@ -15,9 +15,8 @@ import javax.transaction.Transactional;
 @Repository
 public interface RepositorioEspacios extends JpaRepository<Espacio, String>{
 
-	//@Query("SELECT id_espacio FROM public.espaciosgeneral as espacio WHERE ST_Contains(espacio.geom, ST_SetSRID(ST_Point(:x, :y),25830))")
 	@Query(value="SELECT id_espacio FROM public.espaciosgeneral as espacio WHERE espacio.planta = :planta AND ST_Contains(espacio.geom, ST_SetSRID(ST_Point(:x, :y),25830))", nativeQuery = true)
-    public String findByCoordenadas(@Param ("planta") int planta, @Param ("x") double x, @Param ("y") double y);
+    String findByCoordenadas(@Param ("planta") int planta, @Param ("x") double x, @Param ("y") double y);
 
     List<Espacio> findByPlazasGreaterThanEqual(int nmro_plazas);
 
@@ -27,14 +26,13 @@ public interface RepositorioEspacios extends JpaRepository<Espacio, String>{
     @Transactional
     @Modifying
     @Query(value = "UPDATE public.espaciosgeneral SET canyon_fijo = :canyon, pantalla_proyector= :proyector, equipo_de_sonido= :sonido, tv= :tv, video= :video, dvd= :dvd, fotocopiadoras= :fotocopiadora, impresoras= :impresora, ordenadores= :ord, faxes= :fax, telefonos= :tlf, pizarra= :pizarra, nmro_extintores_polvo= :extpol, nmro_extintores_co2= :extco2 WHERE id_espacio = :espacio", nativeQuery = true)
-    public int establecerEquipamiento(@Param("espacio") String espacio, @Param("canyon") int canyon,
+    int establecerEquipamiento(@Param("espacio") String espacio, @Param("canyon") int canyon,
             @Param("proyector") int proyector, @Param("sonido") int sonido, @Param("tv") String tv,
             @Param("video") int video, @Param("dvd") int dvd, @Param("fotocopiadora") int fotocopiadora,
             @Param("impresora") int impresora, @Param("ord") int ord, @Param("fax") int fax, @Param("tlf") int tlf,
             @Param("pizarra") int pizarra, @Param("extpol") int extpol, @Param("extco2") int extco2);
 
 	//Devuelve los espacios que son alquilables en la planta "planta"
-	/* @Query(value="SELECT id_espacio FROM public.espaciosgeneral as espacio WHERE espacio.planta = 0 AND espacio.alquilable = 1", nativeQuery = true) */
 	@Query(value="SELECT id_espacio FROM public.espaciosgeneral as espacio WHERE espacio.planta = :planta AND espacio.alquilable = 1", nativeQuery = true)
-	public List<String> findEspaciosAlquilables(@Param ("planta") int planta);
+	List<String> findEspaciosAlquilables(@Param ("planta") int planta);
 }

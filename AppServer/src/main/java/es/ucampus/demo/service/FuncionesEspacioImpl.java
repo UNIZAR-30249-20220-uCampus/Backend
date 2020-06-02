@@ -10,12 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
-import domainObjects.request.HorarioRequest;
-import domainObjects.valueObject.EstadoReserva;
-import domainObjects.valueObject.Horario;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
-import dtoObjects.valueObject.HorarioDTO;
 import es.ucampus.demo.repository.RepositorioEspacios;
 import es.ucampus.demo.repository.RepositorioReservas;
 
