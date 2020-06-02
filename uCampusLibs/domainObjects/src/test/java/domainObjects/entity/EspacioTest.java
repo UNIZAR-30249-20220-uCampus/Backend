@@ -19,7 +19,7 @@ public class EspacioTest {
 
 	/*
 	 * Se define un Espacio con equipamientos y equipamientos máximos permitidos
-	 * para los posteriores test
+	 * para los posteriores test.
 	 */
 	@Before
 	public void before() {
