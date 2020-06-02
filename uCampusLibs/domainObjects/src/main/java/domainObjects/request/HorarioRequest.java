@@ -3,6 +3,7 @@ package domainObjects.request;
 import java.util.Date;
 import java.util.List;
 
+/* Clase necesaria para construir Horario a partir de un body de una petición http */
 public class HorarioRequest {
 
 	private Date fechaInicio;
@@ -11,7 +12,8 @@ public class HorarioRequest {
 
 	private List<ConjuntoDiaSlotsRequest> conjuntoDiaSlots;
 
-	public HorarioRequest(){}
+	public HorarioRequest() {
+	}
 
 	public Date getFechaInicio() {
 		return fechaInicio;
