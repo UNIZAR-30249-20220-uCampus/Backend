@@ -1,5 +1,7 @@
 package domainObjects.entity;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,6 +35,7 @@ public class Reserva {
 	}
 
 	public Reserva(Espacio espacio, Horario horario, String usuario, String tipo) {
+		assert (tipo.equals("reserva") || tipo.equals("alquiler"));
 		this.espacio = espacio;
 		this.horario = horario;
 		this.usuario = usuario;
@@ -41,6 +44,7 @@ public class Reserva {
 	}
 
 	public Reserva(Espacio espacio, HorarioRequest horario, String usuario, String tipo) {
+		assert (tipo.equals("reserva") || tipo.equals("alquiler"));
 		this.espacio = espacio;
 		this.horario = new Horario(horario);
 		this.usuario = usuario;
@@ -131,7 +135,8 @@ public class Reserva {
 	 */
 	public boolean hayColision(Reserva reserva) {
 		boolean colision = false;
-		if (reserva.getEstado() == EstadoReserva.ACEPTADA || reserva.getEstado() == EstadoReserva.PENDIENTEPAGO) {
+		if (reserva.getEstado() == EstadoReserva.ACEPTADA || reserva.getEstado() == EstadoReserva.PENDIENTEPAGO
+				|| this.estado == EstadoReserva.ACEPTADA || this.estado == EstadoReserva.PENDIENTEPAGO) {
 			if (this.getHorario().hayColision(reserva.getHorario())) {
 				colision = true;
 			}
