@@ -53,123 +53,91 @@ public class AdapterReservas {
 		consumer = new QueueingConsumer(channel);
 	}
 
+	/*
+	 *	Cierra la conexion con Rabbitmq
+	 */
 	public void cerrarConexionAMQP() throws IOException {
 		channel.close();
 		connection.close();
 	}
 
-	////////////////// ENVIAR ///////////////////////////
-
-
+	/*
+	 * Envia id de un espacio y una reserva a traves de Rabbitmq
+	 */
 	public void enviarReserva(String espacio, ReservaRequest reserva) throws IOException {
 		System.out.println(reserva.toString());
 		ObjectMapper mapper = new ObjectMapper();
 		// Java object to JSON string
 		String jsonString = mapper.writeValueAsString(reserva);
-		System.out.println(jsonString);
 		String messageString = "crear-reserva/" + espacio + "/" + jsonString;
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
-	public void enviarAceptarReserva(String reserva) throws IOException {
-		String messageString = "aceptar-reserva/" + reserva;
+	/*
+	 * Envia id de una reserva y la accion a realizar a traves de Rabbitmq
+	 */
+	public void enviarAccionReserva(String reserva, String accion) throws IOException {
+		String messageString = accion + "-reserva/" + reserva;
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
-	public void enviarPagarReserva(String reserva) throws IOException {
-		String messageString = "pagar-reserva/" + reserva;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
-	public void enviarCancelarReserva(String reserva) throws IOException {
-		String messageString = "cancelar-reserva/" + reserva;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		System.out.println(" [x] Enviado '" + messageString + "'");
-	}
-
+	/*
+	 * Envia id de un espacio a traves de Rabbitmq
+	 */
 	public void enviarGetReservas(String espacio) throws IOException {
-		// Java object to JSON string
+		//Java object to JSON string
 		String messageString = "reservas/" + espacio;
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
+	/*
+	 * Envia id de un espacio y el estado de una reserva a traves de Rabbitmq
+	 */
 	public void enviarGetReservas(String espacio, String estado) throws IOException {
-		// Java object to JSON string
+		//Java object to JSON string
 		String messageString = "reservas-estado/" + espacio + "/" + estado;
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
+	/*
+	 * Envia id de un usuario a traves de Rabbitmq
+	 */
 	public void enviarGetReservasUsuario(String usuario) throws IOException {
-		// Java object to JSON string
+		//Java object to JSON string
 		String messageString = "reservas-usuario/" + usuario;
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
+	/*
+	 * Envia id de un usuario y el estado de una reserva a traves de Rabbitmq
+	 */
 	public void enviarGetReservasUsuario(String espacio, String estado) throws IOException {
-		// Java object to JSON string
+		//Java object to JSON string
 		String messageString = "reservas-usuario-estado/" + espacio + "/" + estado;
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
-
-	////////////////// RECIBIR ///////////////////////////
-
+	/*
+	 * Recibe la respuesta del servidor de aplicaciones
+	 */
 	public String recibirReserva() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
+		//recibe mensaje
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 		String message = new String(delivery.getBody());
 
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-	public String recibirAceptarReserva() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-	public String recibirPagarReserva() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-	public String recibirCancelarReserva() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-	public String recibirGetReservas() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
-		System.out.println(" [x] Recibido '" + message + "'");
-		return message;
-	}
-
-
-	public String recibirGetReservasUsuario() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-		String message = new String(delivery.getBody());
 		System.out.println(" [x] Recibido '" + message + "'");
 		return message;
 	}

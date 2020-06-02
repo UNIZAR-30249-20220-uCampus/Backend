@@ -5,13 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import domainObjects.entity.Espacio;
-import domainObjects.request.HorarioRequest;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
-import es.ucampus.demo.repository.RepositorioEspacios;
 
 @Service
-public interface FuncionesEspacio {
+public interface ServiciosEspacio {
 
 	/**
 	 * Dado un identificador devuelve su Espacio correspondiente en formato EspacioDTO.

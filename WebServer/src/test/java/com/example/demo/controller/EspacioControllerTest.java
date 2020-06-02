@@ -23,7 +23,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.QueueingConsumer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { ServidorWebSpringApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -36,10 +35,12 @@ public class EspacioControllerTest {
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
-	private QueueingConsumer consumer;
 
 	private AdapterEspacios adapterEspacios;
 
+	/*
+	 * Se realiza la conexion con Rabbitmq
+	 */
 	@Before
 	public void beforeEveryTest() throws Exception {
 		adapterEspacios = new AdapterEspacios(QUEUE_ENVIAR, QUEUE_RECIBIR);
@@ -57,28 +58,36 @@ public class EspacioControllerTest {
 		channel = connection.createChannel();
 		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuarÃ¡ de emisor
 		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
-
-		// El objeto consumer guardará los mensajes que lleguen
-		// a la cola QUEUE_RECIBIR hasta que los usemos
-		consumer = new QueueingConsumer(channel);
 	}
 
+	/*
+	 * Se cierra la conexion con Rabbitmq
+	 */
 	@After
 	public void afterEveryTest() throws IOException {
 		adapterEspacios.cerrarConexionAMQP();
 	}
 
+	/*
+	 *	Se verifica que la clase es no nula
+	 */
 	@Test
 	public void contexLoads() throws Exception {
 		assertThat(espacioController).isNotNull();
 	}
 
+	/*
+	 *	Se verifica la conexion del servidor
+	 */
 	@Test
 	public void test_GET_CONEXION() throws Exception {
 		ResponseEntity<String> result = espacioController.conexion1();
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica la obtencion de un espacio dada una planta y sus coordenadas
+	 */
 	@Test
 	public void test_GET_ESPACIOS() throws Exception {
 		EspacioDTO espacioDTO = new EspacioDTO();
@@ -90,6 +99,9 @@ public class EspacioControllerTest {
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica el error a la hora de obetener un espacio dada una planta y coordenadas erroneas
+	 */
 	@Test
 	public void test_GET_ESPACIOS_ERROR() throws Exception {
 		String msg = "No encontrado";

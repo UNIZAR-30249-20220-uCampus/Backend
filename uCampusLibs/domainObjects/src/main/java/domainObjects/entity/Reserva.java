@@ -1,5 +1,7 @@
 package domainObjects.entity;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,17 +22,12 @@ public class Reserva {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-
 	@ManyToOne
 	private Espacio espacio;
-
 	@OneToOne(cascade = CascadeType.ALL)
 	private Horario horario;
-
 	private String usuario;
-
 	private EstadoReserva estado;
-
 	private String tipo;
 
 	public Reserva() {
@@ -38,6 +35,7 @@ public class Reserva {
 	}
 
 	public Reserva(Espacio espacio, Horario horario, String usuario, String tipo) {
+		assert (tipo.equals("reserva") || tipo.equals("alquiler"));
 		this.espacio = espacio;
 		this.horario = horario;
 		this.usuario = usuario;
@@ -46,6 +44,7 @@ public class Reserva {
 	}
 
 	public Reserva(Espacio espacio, HorarioRequest horario, String usuario, String tipo) {
+		assert (tipo.equals("reserva") || tipo.equals("alquiler"));
 		this.espacio = espacio;
 		this.horario = new Horario(horario);
 		this.usuario = usuario;
@@ -73,6 +72,10 @@ public class Reserva {
 		return horario;
 	}
 
+	/*
+	 * Devuelve TRUE si la Reserva es aceptada. Devuelve FALSE en cualquier otro
+	 * caso.
+	 */
 	public boolean aceptarReserva() {
 		if (estado == EstadoReserva.PENDIENTE && tipo.equals("alquiler")) {
 			estado = EstadoReserva.PENDIENTEPAGO;
@@ -85,6 +88,9 @@ public class Reserva {
 		}
 	}
 
+	/*
+	 * Devuelve TRUE si la Reserva es pagada. Devuelve FALSE en cualquier otro caso.
+	 */
 	public boolean pagarReserva() {
 		if (estado == EstadoReserva.PENDIENTEPAGO && tipo.equals("alquiler")) {
 			estado = EstadoReserva.ACEPTADA;
@@ -94,6 +100,10 @@ public class Reserva {
 		}
 	}
 
+	/*
+	 * Devuelve TRUE si la Reserva es cancelada. Devuelve FALSE en cualquier otro
+	 * caso.
+	 */
 	public boolean cancelarReserva() {
 		estado = EstadoReserva.CANCELADA;
 		return true;
@@ -107,6 +117,10 @@ public class Reserva {
 		return tipo;
 	}
 
+	/*
+	 * Dada una Reserva como parámetro, devuelve TRUE si ambas Reserva están
+	 * asociadas al mismo Espacio. Devuelve FALSE en cualquier otro caso.
+	 */
 	public boolean mismoEspacio(Reserva reserva) {
 		if (this.espacio.getId_espacio().equals(reserva.getIdEspacio())) {
 			return true;
@@ -114,10 +128,16 @@ public class Reserva {
 		return false;
 	}
 
+	/*
+	 * Dada una Reserva como parámetro, devuelve TRUE si los Horario de ambas
+	 * Reserva colisionan y la Reserva dada está aceptada o pendiente de pago.
+	 * Devuelve FALSE en cualquier otro caso.
+	 */
 	public boolean hayColision(Reserva reserva) {
 		boolean colision = false;
-		if (this.getHorario().hayColision(reserva.getHorario())) {
-			if (reserva.getEstado() == EstadoReserva.ACEPTADA || reserva.getEstado() == EstadoReserva.PENDIENTEPAGO) {
+		if (reserva.getEstado() == EstadoReserva.ACEPTADA || reserva.getEstado() == EstadoReserva.PENDIENTEPAGO
+				|| this.estado == EstadoReserva.ACEPTADA || this.estado == EstadoReserva.PENDIENTEPAGO) {
+			if (this.getHorario().hayColision(reserva.getHorario())) {
 				colision = true;
 			}
 		}

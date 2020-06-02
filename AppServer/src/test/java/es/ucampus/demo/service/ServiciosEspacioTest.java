@@ -4,43 +4,30 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import domainObjects.entity.Espacio;
 import dtoObjects.entity.EspacioDTO;
-import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.DemoApplication;
 import es.ucampus.demo.repository.RepositorioEspacios;
 
-import org.json.simple.JSONArray;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DemoApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
-public class FuncionesEspacioTest {
+public class ServiciosEspacioTest {
 
-	private FuncionesEspacio funcionesEspacios;
+	private ServiciosEspacio serviciosEspacio;
 
 	@Before
 	public void init() throws JsonMappingException, JsonProcessingException {
@@ -56,7 +43,7 @@ public class FuncionesEspacioTest {
 		Espacio espacio = objectMapper.readValue(json, Espacio.class);
 		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(espacio));
 */
-		funcionesEspacios = new FuncionesEspacioImpl(repositorioEspacios);
+		serviciosEspacio = new ServiciosEspacioImpl(repositorioEspacios);
 
 
 	}
@@ -64,20 +51,20 @@ public class FuncionesEspacioTest {
 	@Test
 	@Ignore
 	public void contexLoads() throws Exception {
-		assertThat(funcionesEspacios).isNotNull();
+		assertThat(serviciosEspacio).isNotNull();
 	}
 
 	@Test
 	public void test_GET_ESPACIO_ID() throws Exception {
 
-		Espacio espacio = funcionesEspacios.getEspacioId("\"CRE.1200.01.050\"");
+		Espacio espacio = serviciosEspacio.getEspacioId("\"CRE.1200.01.050\"");
 		assertNotNull(espacio);
 	}
 
 	@Test
 	public void test_GET_ESPACIO_ERROR() throws Exception {
 
-		Espacio espacio = funcionesEspacios.getEspacioId("\"CRE.1065.00.021\"");
+		Espacio espacio = serviciosEspacio.getEspacioId("\"CRE.1065.00.021\"");
 		assertNull(espacio);
 	}
 
@@ -85,7 +72,7 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_EspacioDTO_ID() throws Exception {
 
-		EspacioDTO espacio = funcionesEspacios.getEspacioDTOId("\"CRE.1200.01.050\"");
+		EspacioDTO espacio = serviciosEspacio.getEspacioDTOId("\"CRE.1200.01.050\"");
 		assertNotNull(espacio);
 	}
 
@@ -93,7 +80,7 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_EspacioDTO_ERROR() throws Exception {
 
-		EspacioDTO espacio = funcionesEspacios.getEspacioDTOId("\"CRE.1065.00.021\"");
+		EspacioDTO espacio = serviciosEspacio.getEspacioDTOId("\"CRE.1065.00.021\"");
 		assertNull(espacio);
 	}
 
@@ -101,7 +88,7 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_ESPACIO_COOR() throws Exception {
 
-		EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(1, 675745.92064, 4616800.60363);
+		EspacioDTO espacio = serviciosEspacio.getEspacioCoordenadas(1, 675745.92064, 4616800.60363);
 		assertNotNull(espacio);
 	}
 
@@ -109,7 +96,7 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_ESPACIO_COOR_ERROR() throws Exception {
 
-		EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(7, 675745.92064, 4616800.60363);
+		EspacioDTO espacio = serviciosEspacio.getEspacioCoordenadas(7, 675745.92064, 4616800.60363);
 		assertNull(espacio);
 	}
 
@@ -117,7 +104,7 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_ESPACIOS_AFORO() throws Exception {
 
-		List<EspacioDTO> espacios = funcionesEspacios.buscarEspacioPorAforo(5);
+		List<EspacioDTO> espacios = serviciosEspacio.buscarEspacioPorAforo(5);
 		assertNotNull(espacios);
 	}
 
@@ -125,10 +112,10 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_ESPACIOS_ALQUILABLES() throws Exception {
 
-		List<EspacioDTO> espaciosAlquilables0 = funcionesEspacios.getEspaciosAlquilables(0);
+		List<EspacioDTO> espaciosAlquilables0 = serviciosEspacio.getEspaciosAlquilables(0);
 		assertNotNull(espaciosAlquilables0);
 
-		List<EspacioDTO> espaciosAlquilables1 = funcionesEspacios.getEspaciosAlquilables(1);
+		List<EspacioDTO> espaciosAlquilables1 = serviciosEspacio.getEspaciosAlquilables(1);
 		assertNotNull(espaciosAlquilables1);
 	}
 
@@ -136,7 +123,7 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_TARIFA_ESPACIO() throws Exception {
 
-		double tarifa = funcionesEspacios.calcularTarifaEspacioAlquilable("\"CRE.1200.01.050\"");
+		double tarifa = serviciosEspacio.calcularTarifaEspacioAlquilable("\"CRE.1200.01.050\"");
 		assertNotEquals(0, tarifa, "No son iguales");
 	}
 
@@ -144,7 +131,7 @@ public class FuncionesEspacioTest {
 	@Ignore
 	public void test_GET_TARIFA_ESPACIO_ERROR() throws Exception {
 
-		double tarifa = funcionesEspacios.calcularTarifaEspacioAlquilable("\"CRE.1065.00.021\"");
+		double tarifa = serviciosEspacio.calcularTarifaEspacioAlquilable("\"CRE.1065.00.021\"");
 		assertEquals(0, tarifa, 0);
 	}
 }

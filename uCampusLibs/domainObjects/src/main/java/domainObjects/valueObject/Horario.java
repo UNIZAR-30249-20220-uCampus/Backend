@@ -62,6 +62,10 @@ public class Horario {
 		this.conjuntoDiaSlots = conjuntoDiaSlots;
 	}
 
+	/*
+	 * Dada una lista de ConjuntoDiaSlots, devuelve TRUE si no hay conflictos entre
+	 * ellos. Devuelve FALSE en cualquier otro caso.
+	 */
 	private boolean esValidaListaConjuntoDiaSlots(List<ConjuntoDiaSlots> conjuntoDiaSlots) {
 		for (ConjuntoDiaSlots c1 : conjuntoDiaSlots) {
 			for (ConjuntoDiaSlots c2 : conjuntoDiaSlots) {
@@ -289,18 +293,21 @@ public class Horario {
 				+ fechaInicio + ", frecuencia=" + frecuencia + ", id=" + id + "]";
 	}
 
+	/*
+	 * Dado un Horario como parámetro, devuelve TRUE si existe alguna colisión entre
+	 * ambos Horario. Devuelve FALSE en cualquier otro caso.
+	 */
 	public boolean hayColision(Horario horario) {
-		boolean colision = false;
 		if (this.coincidenFechas(horario)) {
 			if (this.coincidenSemanas(horario)) {
 				if (this.coincidenDias(horario)) {
 					if (this.coincidenSlots(horario)) {
-						colision = true;
+						return true;
 					}
 				}
 			}
 		}
-		return colision;
+		return false;
 	}
 
 }

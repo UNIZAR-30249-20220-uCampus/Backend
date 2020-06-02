@@ -16,7 +16,7 @@ import es.ucampus.demo.repository.RepositorioReservas;
 
 @Service
 @Transactional
-public class FuncionesReservaImpl implements FuncionesReserva {
+public class ServiciosReservaImpl implements ServiciosReserva {
 
 	@Autowired
 	private RepositorioReservas repositorioReservas;
@@ -45,8 +45,16 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 			aceptada = reserva.get().aceptarReserva();
 			if (aceptada) {
 				repositorioReservas.save(reserva.get());
+				List<Reserva> reservas = repositorioReservas.findByEspacio(reserva.get().getEspacio());
+				for (Reserva reserva2 : reservas) {
+					if (reserva.get().hayColision(reserva2)) {
+						reserva2.cancelarReserva();
+						repositorioReservas.save(reserva2);
+					}
+				}
 			}
 		}
+
 		return aceptada;
 	}
 

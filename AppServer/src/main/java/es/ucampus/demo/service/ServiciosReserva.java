@@ -10,7 +10,7 @@ import domainObjects.valueObject.EstadoReserva;
 import dtoObjects.entity.ReservaDTO;
 
 @Service
-public interface FuncionesReserva {
+public interface ServiciosReserva {
 
     boolean hacerReserva(Reserva reserva);
     boolean aceptarReserva(Long idReserva);

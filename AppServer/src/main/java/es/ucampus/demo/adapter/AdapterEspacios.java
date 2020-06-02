@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
-import es.ucampus.demo.service.FuncionesEspacio;
+import es.ucampus.demo.service.ServiciosEspacio;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -22,7 +22,7 @@ import java.util.List;
 public class AdapterEspacios {
 
 	@Autowired
-	private FuncionesEspacio funcionesEspacios;
+	private ServiciosEspacio serviciosEspacio;
 	
 	// Declaración de las colas utilizadas para la comunicación mediante Broker
 	private String QUEUE_ENVIAR;
@@ -85,6 +85,7 @@ public class AdapterEspacios {
 	 * 		"QUEUE_ENVIAR", destinada para enviar desde el AppServer al WebServer
 	 */
 	public void emisorAMQP(JSONObject obj) throws IOException {
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.toJSONString().getBytes());
 		System.out.println(" [x] Enviado '" + obj.toJSONString() + "'");
 	}
@@ -94,6 +95,7 @@ public class AdapterEspacios {
 	 * 		desde el AppServer al WebServer
 	 */
 	public void emisorAMQP(String obj) throws IOException {
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.getBytes());
 		System.out.println(" [x] Enviado '" + obj + "'");
 	}
@@ -119,7 +121,10 @@ public class AdapterEspacios {
 			switch (path[0]) {
 				// Buscar espacio por coordenadas (planta, x, y)
 				case "espacios":
-					EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(Integer.parseInt(path[1]),Double.parseDouble(path[2]),Double.parseDouble(path[3]));
+					int planta = Integer.parseInt(path[1]);
+					double x = Double.parseDouble(path[2]);
+					double y = Double.parseDouble(path[3]);
+					EspacioDTO espacio = serviciosEspacio.getEspacioCoordenadas(planta,x,y);
 					if(espacio != null){
 						// Se transforma el espacio a JSON y se envía al broker.
 						emisorAMQP(espacio.toJson());
@@ -132,30 +137,29 @@ public class AdapterEspacios {
 				// Dentro de esta opción se divide en posibilidad de búsqueda por identificador de espacio o por
 				//		criterios de búsqueda
                 case "buscar-espacio":
-                
-                    CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-                    System.out.println(criterios);
-                    
+                    CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);	
+					//Si la busqueda es dado el id de un espacio
                     if(criterios.busquedaPorId()){
 
-                        EspacioDTO espacio1 = funcionesEspacios.getEspacioDTOId(criterios.getNombre());
+                        EspacioDTO espacio1 = serviciosEspacio.getEspacioDTOId(criterios.getNombre());
                         String jsonEspacio = mapper.writeValueAsString(espacio1);
-                        System.out.println(jsonEspacio);
+						System.out.println(jsonEspacio);
+						//enviar espacio
                         emisorAMQP(jsonEspacio);
                     }
                     else{
 						List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
 						// Búsqueda según criterios elegidos y horarios.
 						if(criterios.busquedaPorHorario()){
-							espacios = funcionesEspacios.buscarEspaciosPorCriteriosYHorario(criterios);
+							espacios = serviciosEspacio.buscarEspaciosPorCriteriosYHorario(criterios);
 						}
 						// Búsqueda según los criterios elegidos sin horario
 						else{
-							espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
+							espacios = serviciosEspacio.buscarEspacioPorCriterios(criterios);
 						}
 						// Búsqueda de los espacios que cumplen los criterios y además son alguilables.
 						if(criterios.busquedaAlquilables()){
-							espacios = funcionesEspacios.getEspaciosAlquilables(espacios);
+							espacios = serviciosEspacio.getEspaciosAlquilables(espacios);
 						}
 						// Se publica en el broker el resultado de la búsqueda.
                         String espacios2 = new Gson().toJson(espacios);

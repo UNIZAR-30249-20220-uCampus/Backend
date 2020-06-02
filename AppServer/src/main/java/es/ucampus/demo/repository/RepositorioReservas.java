@@ -22,4 +22,5 @@ public interface RepositorioReservas extends JpaRepository<Reserva, Long>{
 	 * @return List<Reserva>
 	 */
 	List<Reserva> findByUsuario(String usuario);
+	
 }

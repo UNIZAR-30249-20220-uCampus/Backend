@@ -22,7 +22,7 @@ public interface RepositorioEspacios extends JpaRepository<Espacio, String>{
      * @return String 
      */
 	@Query(value="SELECT id_espacio FROM public.espaciosgeneral as espacio WHERE espacio.planta = :planta AND ST_Contains(espacio.geom, ST_SetSRID(ST_Point(:x, :y),25830))", nativeQuery = true)
-    public String findByCoordenadas(@Param ("planta") int planta, @Param ("x") double x, @Param ("y") double y);
+    String findByCoordenadas(@Param ("planta") int planta, @Param ("x") double x, @Param ("y") double y);
 
     /**
      * Dado un numero de plazas minimo, devuelve la lista de espacios disponibles que cumplen 
@@ -77,7 +77,7 @@ public interface RepositorioEspacios extends JpaRepository<Espacio, String>{
     @Transactional
     @Modifying
     @Query(value = "UPDATE public.espaciosgeneral SET canyon_fijo = :canyon, pantalla_proyector= :proyector, equipo_de_sonido= :sonido, tv= :tv, video= :video, dvd= :dvd, fotocopiadoras= :fotocopiadora, impresoras= :impresora, ordenadores= :ord, faxes= :fax, telefonos= :tlf, pizarra= :pizarra, nmro_extintores_polvo= :extpol, nmro_extintores_co2= :extco2 WHERE id_espacio = :espacio", nativeQuery = true)
-    public int establecerEquipamiento(@Param("espacio") String espacio, @Param("canyon") int canyon,
+    int establecerEquipamiento(@Param("espacio") String espacio, @Param("canyon") int canyon,
             @Param("proyector") int proyector, @Param("sonido") int sonido, @Param("tv") String tv,
             @Param("video") int video, @Param("dvd") int dvd, @Param("fotocopiadora") int fotocopiadora,
             @Param("impresora") int impresora, @Param("ord") int ord, @Param("fax") int fax, @Param("tlf") int tlf,
@@ -90,5 +90,5 @@ public interface RepositorioEspacios extends JpaRepository<Espacio, String>{
      */
 	//Devuelve los espacios que son alquilables en la planta "planta"
 	@Query(value="SELECT id_espacio FROM public.espaciosgeneral as espacio WHERE espacio.planta = :planta AND espacio.alquilable = 1", nativeQuery = true)
-	public List<String> findEspaciosAlquilables(@Param ("planta") int planta);
+	List<String> findEspaciosAlquilables(@Param ("planta") int planta);
 }

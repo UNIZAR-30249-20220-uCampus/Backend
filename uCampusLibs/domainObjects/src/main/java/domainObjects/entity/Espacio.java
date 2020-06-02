@@ -18,14 +18,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import domainObjects.valueObject.Equipamiento;
 import domainObjects.valueObject.TipoEquipamiento;
 
-
 @Entity
 @Table(name = "espaciosgeneral")
 public class Espacio {
 
 	@Id
 	private String id_espacio;
-
 	private String id_edificio;
 	private String id_utc;
 	private String id_centro;
@@ -33,6 +31,8 @@ public class Espacio {
 	private String superficie;
 	private int reservable;
 	private int alquilable;
+	
+	// Euros por hora a pagar para alquilar el Espacio
 	@Transient
 	private double tarifa;
 	@Column(name = "nmro_plazas")
@@ -63,6 +63,8 @@ public class Espacio {
 	private Geometry geom;
 	private int planta;
 
+	// La etiqueta Transient indica que no tienen relación directa con ninguna
+	// columna en la BD
 	@Transient
 	private Vector<Equipamiento> equipamientos;
 	@Transient
@@ -80,6 +82,8 @@ public class Espacio {
 		this.equipamientos = equipamiento;
 	}
 
+	// Una vez el Espacio se ha construido, se definen los equipamientos y
+	// equipamientos máximos permitidos. Además se calcula su tarifa.
 	@PostLoad
 	private void build() {
 		definirEquipamientosMaximos();
@@ -112,7 +116,7 @@ public class Espacio {
 	}
 
 	// Dado un tipo de equipamiento y su cantidad, lo incluye en los equipamientos
-	// máximos permitidos del espacio
+	// máximos permitidos del Espacio
 	private void definirEquipamientosMaximosAUX(TipoEquipamiento tipo, int cantidad) {
 		this.maximoDeEquipamientos.add(new Equipamiento(tipo, cantidad));
 	}
@@ -137,16 +141,12 @@ public class Espacio {
 	}
 
 	// Dado un tipo de equipamiento y su cantidad, lo incluye en los equipamientos
-	// del espacio
+	// del Espacio
 	private void definirEquipamientosExistentesAUX(TipoEquipamiento tipo, int cantidad) {
 		if (cantidad > 0 || tipo == TipoEquipamiento.NMRO_PLAZAS) {
 			this.equipamientos.add(new Equipamiento(tipo, cantidad));
 		}
 	}
-
-	/*
-	 * private void definirCoordenadas(){ this.coordX = ; this.coordY = ; }
-	 */
 
 	public Vector<Equipamiento> getEquipamientos() {
 		return this.equipamientos;
@@ -202,28 +202,27 @@ public class Espacio {
 	}
 
 	/*
-	 * Devuelve TRUE si el espacio contiene al menos los equipamientos dados como
-	 * parámetro Devuelve FALSE en cualquier otro caso
+	 * Devuelve TRUE si el Espacio contiene al menos los equipamientos dados como
+	 * parámetro. Devuelve FALSE en cualquier otro caso
 	 */
 	public boolean comprobarEquipamientoMinimoNecesario(Vector<Equipamiento> eq) {
-		boolean minimoNecesario = true;
-		int i = 0, j = 0;
-		while (minimoNecesario && i < this.equipamientos.size()) {
-			// Hay equipamiento del mismo tipo en el espacio
-			if (this.equipamientos.elementAt(i).getTipo() == eq.elementAt(j).getTipo()) {
-				if (this.equipamientos.elementAt(i).getCantidad() >= eq.elementAt(j).getCantidad()) {
-					return true;
+		int equipamientosQueCumplenMinimo = 0;
+		for (int i = 0; i < this.equipamientos.size(); i++) {
+			for (int j = 0; j < eq.size(); j++) {
+				if (this.equipamientos.elementAt(i).getTipo() == eq.elementAt(j).getTipo()) {
+					if (this.equipamientos.elementAt(i).getCantidad() >= eq.elementAt(j).getCantidad()) {
+						equipamientosQueCumplenMinimo++;
+					}
 				}
 			}
-			i++;
 		}
-		return false;
+		return equipamientosQueCumplenMinimo == eq.size();
 	}
 
 	/*
 	 * Devuelve valor TRUE si el equipamiento dado como parametro se agrega
-	 * correctamente a la lista de equipamientos del espacio Devuelve valor FALSE en
-	 * cualquier otro caso
+	 * correctamente a la lista de equipamientos del Espacio. Devuelve valor FALSE
+	 * en cualquier otro caso
 	 */
 	public boolean agregarEquipamiento(TipoEquipamiento tipo, int cantidad) {
 		if (cantidad > 0) {
@@ -231,7 +230,7 @@ public class Espacio {
 			boolean encontrado = false;
 			int i = 0;
 			while (!encontrado && i < this.equipamientos.size()) {
-				// Hay equipamiento del mismo tipo en el espacio
+				// Hay equipamiento del mismo tipo en el Espacio
 				if ((this.equipamientos.elementAt(i)).getTipo() == tipo) {
 					encontrado = true;
 					int cantidadPrevia = this.equipamientos.elementAt(i).getCantidad();
@@ -244,7 +243,7 @@ public class Espacio {
 				}
 				i++;
 			}
-			// No hay equipamiento del mismo tipo en el espacio
+			// No hay equipamiento del mismo tipo en el Espacio
 			if (!encontrado) {
 				Equipamiento eq = new Equipamiento(tipo, cantidad);
 				// La cantidad de equipamiento respeta los máximos
@@ -262,8 +261,8 @@ public class Espacio {
 	}
 
 	/*
-	 * Dado un equipamiento, si corresponde con alguno del espacio se modifica su
-	 * cantidad asociada Devuelve TRUE si se modifica la cantidad correctamente
+	 * Dado un equipamiento, si corresponde con alguno del Espacio se modifica su
+	 * cantidad asociada. Devuelve TRUE si se modifica la cantidad correctamente.
 	 * Devuelve FALSE en cualquier otro caso
 	 */
 	public boolean editarEquipamiento(TipoEquipamiento tipo, int cantidad) {
@@ -271,7 +270,7 @@ public class Espacio {
 		boolean encontrado = false;
 		int i = 0;
 		while (!encontrado && i < this.equipamientos.size()) {
-			// Hay equipamiento del mismo tipo en el espacio
+			// Hay equipamiento del mismo tipo en el Espacio
 			if (this.equipamientos.elementAt(i).getTipo() == tipo) {
 				encontrado = true;
 				Equipamiento eq = new Equipamiento(tipo, cantidad);
@@ -287,20 +286,21 @@ public class Espacio {
 	}
 
 	/*
-	 * Dado un equipamiento, si corresponde con alguno del espacio se reduce su
-	 * cantidad Devuelve TRUE si se elimina correctamente el numero de equipamiento
-	 * dado Devuelve FALSE en cualquier otro caso
+	 * Dado un equipamiento, si corresponde con alguno del Espacio se reduce su
+	 * cantidad. Devuelve TRUE si se elimina correctamente el numero de equipamiento
+	 * dado. Devuelve FALSE en cualquier otro caso
 	 */
 	public boolean eliminarEquipamiento(TipoEquipamiento tipo, int cantidad) {
 		boolean eliminado = false;
 		boolean encontrado = false;
 		int i = 0;
 		while (!encontrado && i < this.equipamientos.size()) {
-			// Hay equipamiento del mismo tipo en el espacio
+			// Hay equipamiento del mismo tipo en el Espacio
 			if (this.equipamientos.elementAt(i).getTipo() == tipo) {
 				encontrado = true;
+				// El equipamiento coincide con la cantidad
 				if (this.equipamientos.elementAt(i).getCantidad() == cantidad) {
-
+					this.equipamientos.remove(i);
 					eliminado = true;
 				}
 			}
@@ -310,9 +310,8 @@ public class Espacio {
 	}
 
 	/*
-	 * Dadpo un equipamiento, devuelve TRUE si no supera la cantidad máxima
-	 * permitida para ese equipamiento en el espacio Devuelve FALSE en cualquier
-	 * otro caso
+	 * Dado un equipamiento, devuelve TRUE si no supera la cantidad máxima permitida
+	 * para ese equipamiento en el Espacio. Devuelve FALSE en cualquier otro caso
 	 */
 	private boolean comprobarEquipamientoMaximoPermitido(Equipamiento eq) {
 		boolean permitido = false;
@@ -339,12 +338,13 @@ public class Espacio {
 		return alquilable;
 	}
 
+	// Devuelve el precio por hora de un Espacio
 	public double calcularTarifa() {
 		double tarifa = 0;
 		if (alquilable == 1) {
-			tarifa += plazas * 5;
-			tarifa += ordenadores * 5;
-			tarifa += geom.getArea() * 5;
+			tarifa += plazas * 3; // 3 euros/hora por plaza
+			tarifa += ordenadores * 5; // 5 euros/hora por ordenador
+			tarifa += geom.getArea() * 1; // 1 euro/hora por metro cuadrado
 		}
 		return tarifa;
 	}
