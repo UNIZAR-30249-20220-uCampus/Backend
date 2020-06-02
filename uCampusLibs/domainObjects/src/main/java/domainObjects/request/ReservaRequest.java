@@ -1,15 +1,16 @@
 package domainObjects.request;
 
-
+/* Clase necesaria para construir Reserva a partir de un body de una petición http */
 public class ReservaRequest {
-	
+
 	private HorarioRequest horario;
 
 	private String usuario;
 
 	private String tipo;
 
-	public ReservaRequest() {}
+	public ReservaRequest() {
+	}
 
 	public HorarioRequest getHorario() {
 		return horario;
