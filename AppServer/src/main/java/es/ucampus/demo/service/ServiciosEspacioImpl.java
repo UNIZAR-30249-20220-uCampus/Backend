@@ -17,14 +17,14 @@ import es.ucampus.demo.repository.RepositorioReservas;
 
 @Service
 @Transactional
-public class FuncionesEspacioImpl implements FuncionesEspacio {
+public class ServiciosEspacioImpl implements ServiciosEspacio {
 
 	@Autowired
 	private RepositorioEspacios espaciosRepository;
 	@Autowired
 	private RepositorioReservas repositorioReservas;
 
-	FuncionesEspacioImpl(RepositorioEspacios espaciosRepository) {
+	ServiciosEspacioImpl(RepositorioEspacios espaciosRepository) {
 		this.espaciosRepository = espaciosRepository;
 	}
 

@@ -16,7 +16,7 @@ import es.ucampus.demo.repository.RepositorioReservas;
 
 @Service
 @Transactional
-public class FuncionesReservaImpl implements FuncionesReserva {
+public class ServiciosReservaImpl implements ServiciosReserva {
 
 	@Autowired
 	private RepositorioReservas repositorioReservas;

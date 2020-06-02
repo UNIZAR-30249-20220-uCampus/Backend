@@ -9,7 +9,7 @@ import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 @Service
-public interface FuncionesEspacio {
+public interface ServiciosEspacio {
 
 	EspacioDTO getEspacioDTOId(String id);
 
