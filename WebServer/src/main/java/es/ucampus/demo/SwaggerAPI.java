@@ -14,6 +14,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Configuration
 public class SwaggerAPI {                                    
+    
+    /** 
+     * @return Docket
+     */
     @Bean
     public Docket api() { 
         return new Docket(DocumentationType.SWAGGER_2)
@@ -24,10 +28,12 @@ public class SwaggerAPI {
           	.build();                                           
     }
 
+    
+    /** 
+     * @return ApiInfo
+     */
     private ApiInfo apiInfo() {
-
         return new ApiInfoBuilder()
-
 				.title("uCampus API")
 				.description("Api de la aplicacion uCampus")
                 .license("Apache 2.0")

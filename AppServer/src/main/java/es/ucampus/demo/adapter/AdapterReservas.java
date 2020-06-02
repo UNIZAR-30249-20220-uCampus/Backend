@@ -1,25 +1,19 @@
 package es.ucampus.demo.adapter;
 
-import org.json.simple.JSONObject;
-//import org.postgresql.core.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
 import domainObjects.request.ReservaRequest;
 import domainObjects.valueObject.EstadoReserva;
 import dtoObjects.entity.ReservaDTO;
-
 import es.ucampus.demo.service.FuncionesEspacio;
 import es.ucampus.demo.service.FuncionesReserva;
-
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,21 +66,25 @@ public class AdapterReservas {
 		consumer = new QueueingConsumer(channel);
 	}
 
+	/*
+	 *	Cierra la conexion con Rabbitmq
+	 */
 	public void cerrarConexionAMQP() throws IOException {
 		channel.close();
 		connection.close();
 	}
 
-	public void emisorAMQP(JSONObject obj) throws IOException {
-		channel.basicPublish("", QUEUE_ENVIAR, null, obj.toJSONString().getBytes());
-		System.out.println(" [x] Enviado '" + obj.toJSONString() + "'");
-	}
-
+	/*
+	 * Envia mensaje a traves de Rabbitmq
+	 */
 	public void emisorAMQP(String obj) throws IOException {
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.getBytes());
 		System.out.println(" [x] Enviado '" + obj + "'");
 	}
 
+	/*
+	 * Recibe mensajes del servidor web
+	 */
 	public void receptorAMQP() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		while (true) {
@@ -102,8 +100,10 @@ public class AdapterReservas {
 			String reservasString;
 
 			switch (path[0]) {
+				//Crear reserva
 				case "crear-reserva":
 					Espacio espacioReserva = funcionesEspacios.getEspacioId(path[1]);
+					//si id de espacio es valido
 					if (espacioReserva != null) {
 						ReservaRequest reserva = mapper.readValue(path[2], ReservaRequest.class);
 						System.out.println(reserva.toString());
@@ -118,6 +118,7 @@ public class AdapterReservas {
 						emisorAMQP("No encontrado");
 					}
 					break;
+				//Aceptar reserva
 				case "aceptar-reserva":
 					idReserva = Long.parseLong(path[1]);
 					boolean aceptar = funcionesReserva.aceptarReserva(idReserva);
@@ -127,6 +128,7 @@ public class AdapterReservas {
 						emisorAMQP("Reserva no encontrada");
 					}
 					break;
+				//Pagar reserva
 				case "pagar-reserva":
 					idReserva = Long.parseLong(path[1]);
 					boolean pagar = funcionesReserva.pagarReserva(idReserva);
@@ -136,6 +138,7 @@ public class AdapterReservas {
 						emisorAMQP("Reserva no encontrada");
 					}
 					break;
+				//Cancelar reserva
 				case "cancelar-reserva":
 					idReserva = Long.parseLong(path[1]);
 					boolean canceled = funcionesReserva.cancelarReserva(idReserva);
@@ -145,6 +148,7 @@ public class AdapterReservas {
 						emisorAMQP("Reserva no encontrada");
 					}
 					break;
+				//Obtener reservas de un espacio
 				case "reservas":
 					Espacio espacioReservas = funcionesEspacios.getEspacioId(path[1]);
 					if (espacioReservas != null) {
@@ -157,6 +161,7 @@ public class AdapterReservas {
 						emisorAMQP("No encontrado");
 					}
 					break;
+				//Obtener reservas segun estado de un espacio
 				case "reservas-estado":
 					espacioReservas = funcionesEspacios.getEspacioId(path[1]);
 					if (espacioReservas != null) {
@@ -171,6 +176,7 @@ public class AdapterReservas {
 						emisorAMQP("No encontrado");
 					}
 					break;
+				//Obtener reservas de un usuario
 				case "reservas-usuario":
 					String usuario = path[1];
 					List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
@@ -179,6 +185,7 @@ public class AdapterReservas {
 					System.out.println(reservasUsuarioString);
 					emisorAMQP(reservasUsuarioString);
 					break;
+				//Obtener reservas segun estado de un usuario
 				case "reservas-usuario-estado":
 					String usuarioEstado = path[1];
 					String estado = path[2];

@@ -26,7 +26,6 @@ import org.json.simple.JSONArray;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.QueueingConsumer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { ServidorWebSpringApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -39,10 +38,12 @@ public class ReservasControllerTest {
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
-	private QueueingConsumer consumer;
 
 	private AdapterReservas adapterReservas;
 
+	/*
+	 * Se realiza la conexion con Rabbitmq
+	 */
 	@Before
 	public void beforeEveryTest() throws Exception {
 		adapterReservas = new AdapterReservas(QUEUE_ENVIAR, QUEUE_RECIBIR);
@@ -60,22 +61,27 @@ public class ReservasControllerTest {
 		channel = connection.createChannel();
 		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuarÃ¡ de emisor
 		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
-
-		// El objeto consumer guardará los mensajes que lleguen
-		// a la cola QUEUE_RECIBIR hasta que los usemos
-		consumer = new QueueingConsumer(channel);
 	}
 
+	/*
+	 * Se cierra la conexion con Rabbitmq
+	 */
 	@After
 	public void afterEveryTest() throws IOException {
 		adapterReservas.cerrarConexionAMQP();
 	}
 
+	/*
+	 *	Se verifica que la clase es no nula
+	 */
 	@Test
 	public void contexLoads() throws Exception {
 		assertThat(reservasController).isNotNull();
 	}
 
+	/*
+	 *	Se verifica la correcta creacion de una reserva
+	 */
 	@Test
 	public void test_GET_CREAR_RESERVA() throws Exception {
 		String msg = "Reservada";
@@ -93,6 +99,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.CREATED, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica la correcta obtencion de todas las reserva de un espacio
+	 */
 	@Test
 	public void test_GET_RESERVAS() throws Exception {
 		JSONArray jsonArray = new JSONArray();
@@ -103,6 +112,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica la correcta obtencion de las reserva pendientes de un espacio
+	 */
 	@Test
 	public void test_GET_RESERVAS_ESTADO() throws Exception {
 		JSONArray jsonArray = new JSONArray();
@@ -113,6 +125,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica que dado un espacio no existente no se obtienen reservas
+	 */
 	@Test
 	public void test_GET_RESERVAS_ERROR() throws Exception {
 		String msg = "No encontrado";
@@ -122,6 +137,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica que dado un espacio no existente y un estado de reserva no se obtienen reservas
+	 */
 	@Test
 	public void test_GET_RESERVAS_ESTADO_ERROR() throws Exception {
 		String msg = "No encontrado";
@@ -131,6 +149,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica la correcta obtencion de todas las reserva de un usuario
+	 */
 	@Test
 	public void test_GET_RESERVAS_USUARIO() throws Exception {
 		JSONArray jsonArray = new JSONArray();
@@ -141,6 +162,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica la correcta obtencion de las reserva pendientes de un usuario
+	 */
 	@Test
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 		JSONArray jsonArray = new JSONArray();
@@ -151,6 +175,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.OK, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica que dada un id de reserva no existente no se puede aceptar una reserva
+	 */
 	@Test
 	public void test_ACEPTAR_RESERVA_ERROR() throws Exception {
 		String msg = "Reserva no encontrada";
@@ -159,6 +186,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica que dada un id de reserva no existente no se puede cancelar una reserva
+	 */
 	@Test
 	public void test_CANCELAR_RESERVA_ERROR() throws Exception {
 		String msg = "Reserva no encontrada";
@@ -167,6 +197,9 @@ public class ReservasControllerTest {
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
 
+	/*
+	 *	Se verifica que dada un id de reserva no existente no se puede pagar una reserva
+	 */
 	@Test
 	public void test_PAGAR_RESERVA_ERROR() throws Exception {
 		String msg = "Reserva no encontrada";

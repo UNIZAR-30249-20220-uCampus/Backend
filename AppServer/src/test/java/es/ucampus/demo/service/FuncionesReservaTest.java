@@ -1,45 +1,30 @@
 package es.ucampus.demo.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
 import domainObjects.valueObject.EstadoReserva;
 import domainObjects.valueObject.Horario;
-import dtoObjects.entity.EspacioDTO;
 import dtoObjects.entity.ReservaDTO;
-import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.DemoApplication;
 import es.ucampus.demo.repository.RepositorioReservas;
 
-
-import org.json.simple.JSONArray;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DemoApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)

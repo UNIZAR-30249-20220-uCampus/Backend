@@ -14,4 +14,5 @@ public interface RepositorioReservas extends JpaRepository<Reserva, Long>{
 	
 	List<Reserva> findByEspacio(Espacio espacio);
 	List<Reserva> findByUsuario(String usuario);
+	
 }

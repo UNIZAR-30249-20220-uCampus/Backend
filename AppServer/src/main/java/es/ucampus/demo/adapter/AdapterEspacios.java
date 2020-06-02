@@ -66,21 +66,35 @@ public class AdapterEspacios {
 		consumer = new QueueingConsumer(channel);
 	}
 
+	/*
+	 *	Cierra la conexion con Rabbitmq
+	 */
 	public void cerrarConexionAMQP() throws IOException {
 		channel.close();
 		connection.close();
 	}
 
+	/*
+	 * Envia mensaje a traves de Rabbitmq
+	 */
 	public void emisorAMQP(JSONObject obj) throws IOException {
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.toJSONString().getBytes());
 		System.out.println(" [x] Enviado '" + obj.toJSONString() + "'");
 	}
 
+	/*
+	 * Envia mensaje a traves de Rabbitmq
+	 */
 	public void emisorAMQP(String obj) throws IOException {
+		//publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.getBytes());
 		System.out.println(" [x] Enviado '" + obj + "'");
 	}
 
+	/*
+	 * Recibe mensajes del servidor web
+	 */
 	public void receptorAMQP() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		while (true) {
@@ -93,45 +107,52 @@ public class AdapterEspacios {
 			ObjectMapper mapper = new ObjectMapper();
 
 			switch (path[0]) {
+				//Obtener espacio dado planta y coordenadas
 				case "espacios":
-					EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(Integer.parseInt(path[1]),Double.parseDouble(path[2]),Double.parseDouble(path[3]));
+					int planta = Integer.parseInt(path[1]);
+					double x = Double.parseDouble(path[2]);
+					double y = Double.parseDouble(path[3]);
+					EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(planta,x,y);
 					if(espacio != null){
 						emisorAMQP(espacio.toJson());
 					}
 					else{
 						emisorAMQP("No encontrado");
 					}
-                break;
+				break;
+				//Buscar espacios segun criterios
                 case "buscar-espacio":
-                
-                    CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-                    System.out.println(criterios);
-                    
+                    CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);	
+					//Si la busqueda es dado el id de un espacio
                     if(criterios.busquedaPorId()){
 
                         EspacioDTO espacio1 = funcionesEspacios.getEspacioDTOId(criterios.getNombre());
                         String jsonEspacio = mapper.writeValueAsString(espacio1);
-                        System.out.println(jsonEspacio);
+						System.out.println(jsonEspacio);
+						//enviar espacio
                         emisorAMQP(jsonEspacio);
                     }
                     else{
 						List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
+						//Si se buscan espacios dado un horario
 						if(criterios.busquedaPorHorario()){
 							espacios = funcionesEspacios.buscarEspaciosPorCriteriosYHorario(criterios);
 						}
 						else{
 							espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
 						}
-
+						//Si se buscan los espacios alquilables
 						if(criterios.busquedaAlquilables()){
 							espacios = funcionesEspacios.getEspaciosAlquilables(espacios);
 						}
 						
                         String espacios2 = new Gson().toJson(espacios);
-                        System.out.println(espacios2);
+						System.out.println(espacios2);
+						//enviar espacios
                         emisorAMQP(espacios2);
                     }
-                break;
+				break;
+				//Gestionar equipamientos
                 case "equipamiento":
                     CriteriosBusquedaDTO cambiosEquip = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
 					System.out.println("CAMBIO EQUIPAMIENTO: ");
