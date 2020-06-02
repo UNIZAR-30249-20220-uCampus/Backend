@@ -32,10 +32,10 @@ import es.ucampus.demo.DemoApplication;
 public class ServiciosReservaTest {
 
 	@Autowired
-	private ServiciosReserva funcionesReserva;
+	private ServiciosReserva serviciosReserva;
 
 	@Autowired
-	private ServiciosEspacio funcionesEspacio;
+	private ServiciosEspacio serviciosEspacio;
 
 	Espacio espacio;
 
@@ -44,7 +44,7 @@ public class ServiciosReservaTest {
 	@Before
 	@Ignore
     public void before() {
-		espacio = funcionesEspacio.getEspacioId("\"CRE.1200.01.050\"");
+		espacio = serviciosEspacio.getEspacioId("\"CRE.1200.01.050\"");
 		Horario horario = new Horario(new Date(), new Date(), 2);
 		reserva = new Reserva(espacio, horario, "Alex", "reserva");
 			
@@ -53,14 +53,14 @@ public class ServiciosReservaTest {
 	@Test
 	@Ignore
 	public void contexLoads() throws Exception {
-		assertThat(funcionesReserva).isNotNull();
+		assertThat(serviciosReserva).isNotNull();
 	}
 
 	@Test
 	@Ignore
 	public void test_HACER_RESERVA() throws Exception {
 
-		boolean ok = funcionesReserva.hacerReserva(reserva);
+		boolean ok = serviciosReserva.hacerReserva(reserva);
 		assertTrue(ok);
 	}
 
@@ -68,7 +68,7 @@ public class ServiciosReservaTest {
 	@Ignore
 	public void test_GET_RESERVAS_ESPACIO() throws Exception {
 
-		List<ReservaDTO> reservas = funcionesReserva.buscarReserva(espacio);
+		List<ReservaDTO> reservas = serviciosReserva.buscarReserva(espacio);
 		assertNotNull(reservas);
 	}
 
@@ -76,7 +76,7 @@ public class ServiciosReservaTest {
 	@Ignore
 	public void test_GET_RESERVAS_ESPACIO_ESTADO() throws Exception {
 
-		List<ReservaDTO> reservas = funcionesReserva.buscarReservaEstado(espacio, EstadoReserva.CANCELADA);
+		List<ReservaDTO> reservas = serviciosReserva.buscarReservaEstado(espacio, EstadoReserva.CANCELADA);
 		assertNotNull(reservas);
 	}
 
@@ -84,7 +84,7 @@ public class ServiciosReservaTest {
 	@Ignore
 	public void test_GET_RESERVAS_USUARIO() throws Exception {
 
-		List<ReservaDTO> reservas = funcionesReserva.buscarReservaUsuario("Alex");
+		List<ReservaDTO> reservas = serviciosReserva.buscarReservaUsuario("Alex");
 		assertNotNull(reservas);
 	}
 
@@ -92,7 +92,7 @@ public class ServiciosReservaTest {
 	@Ignore
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 
-		List<ReservaDTO> reservas = funcionesReserva.buscarReservaUsuarioEstado("Alex",EstadoReserva.CANCELADA);
+		List<ReservaDTO> reservas = serviciosReserva.buscarReservaUsuarioEstado("Alex",EstadoReserva.CANCELADA);
 		assertNotNull(reservas);
 	}
 	

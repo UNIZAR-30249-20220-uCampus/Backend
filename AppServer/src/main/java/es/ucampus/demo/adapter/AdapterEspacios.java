@@ -23,7 +23,7 @@ import java.util.List;
 public class AdapterEspacios {
 
 	@Autowired
-	private ServiciosEspacio funcionesEspacios;
+	private ServiciosEspacio serviciosEspacio;
 	
 	private String QUEUE_ENVIAR;
 	private String QUEUE_RECIBIR;
@@ -112,7 +112,7 @@ public class AdapterEspacios {
 					int planta = Integer.parseInt(path[1]);
 					double x = Double.parseDouble(path[2]);
 					double y = Double.parseDouble(path[3]);
-					EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(planta,x,y);
+					EspacioDTO espacio = serviciosEspacio.getEspacioCoordenadas(planta,x,y);
 					if(espacio != null){
 						emisorAMQP(espacio.toJson());
 					}
@@ -126,7 +126,7 @@ public class AdapterEspacios {
 					//Si la busqueda es dado el id de un espacio
                     if(criterios.busquedaPorId()){
 
-                        EspacioDTO espacio1 = funcionesEspacios.getEspacioDTOId(criterios.getNombre());
+                        EspacioDTO espacio1 = serviciosEspacio.getEspacioDTOId(criterios.getNombre());
                         String jsonEspacio = mapper.writeValueAsString(espacio1);
 						System.out.println(jsonEspacio);
 						//enviar espacio
@@ -136,14 +136,14 @@ public class AdapterEspacios {
 						List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
 						//Si se buscan espacios dado un horario
 						if(criterios.busquedaPorHorario()){
-							espacios = funcionesEspacios.buscarEspaciosPorCriteriosYHorario(criterios);
+							espacios = serviciosEspacio.buscarEspaciosPorCriteriosYHorario(criterios);
 						}
 						else{
-							espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
+							espacios = serviciosEspacio.buscarEspacioPorCriterios(criterios);
 						}
 						//Si se buscan los espacios alquilables
 						if(criterios.busquedaAlquilables()){
-							espacios = funcionesEspacios.getEspaciosAlquilables(espacios);
+							espacios = serviciosEspacio.getEspaciosAlquilables(espacios);
 						}
 						
                         String espacios2 = new Gson().toJson(espacios);
@@ -157,7 +157,7 @@ public class AdapterEspacios {
                     CriteriosBusquedaDTO cambiosEquip = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
 					System.out.println("CAMBIO EQUIPAMIENTO: ");
 					System.out.println(cambiosEquip);
-                    boolean resultado = funcionesEspacios.setEquipamiento(cambiosEquip);
+                    boolean resultado = serviciosEspacio.setEquipamiento(cambiosEquip);
                     if(resultado) {
                         emisorAMQP("OK");
                     }
