@@ -1,7 +1,6 @@
 package es.ucampus.demo.adapter;
 
 import org.json.simple.JSONObject;
-//import org.postgresql.core.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dtoObjects.entity.EspacioDTO;
@@ -25,14 +24,21 @@ public class AdapterEspacios {
 	@Autowired
 	private FuncionesEspacio funcionesEspacios;
 	
+	// Declaración de las colas utilizadas para la comunicación mediante Broker
 	private String QUEUE_ENVIAR;
 	private String QUEUE_RECIBIR;
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
+	// Credenciales para la conexión a CloudAMQP
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
-
+	/**
+	 * Método constructor para gestionar la comunicación con el broker dedicada a los espacios.
+	 * @param QUEUE_ENVIAR
+	 * @param QUEUE_RECIBIR
+	 * @throws IOException
+	 */
 	public AdapterEspacios(String QUEUE_ENVIAR, String QUEUE_RECIBIR) throws IOException {
 		this.QUEUE_ENVIAR = QUEUE_ENVIAR;
 		this.QUEUE_RECIBIR = QUEUE_RECIBIR;
@@ -65,22 +71,40 @@ public class AdapterEspacios {
 		// a la cola QUEUE_RECIBIR hasta que los usemos
 		consumer = new QueueingConsumer(channel);
 	}
-
+	
+	/*
+	 * Se cierra el canal y la conexión con el broker.
+	 */
 	public void cerrarConexionAMQP() throws IOException {
 		channel.close();
 		connection.close();
 	}
 
+	/*
+	 * Dado un JSONObject se publica su contenido en formato String en la cola del broker 
+	 * 		"QUEUE_ENVIAR", destinada para enviar desde el AppServer al WebServer
+	 */
 	public void emisorAMQP(JSONObject obj) throws IOException {
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.toJSONString().getBytes());
 		System.out.println(" [x] Enviado '" + obj.toJSONString() + "'");
 	}
 
+	/*
+	 * Dado un String se publica en la cola del broker "QUEUE_ENVIAR", destinada para enviar
+	 * 		desde el AppServer al WebServer
+	 */
 	public void emisorAMQP(String obj) throws IOException {
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.getBytes());
 		System.out.println(" [x] Enviado '" + obj + "'");
 	}
 
+	/*
+	 * Cuando haya disponible un mensaje en QUEUE_RECIBIR, cola destinada a enviar Espacios desde el WebServer 
+	 * 		al AppServer, se consumirá y se tratará su contenido. Las opciones posibles son "espacios",
+	 * 		donde se buscará un espacio por coordenadas, "buscar-espacios", donde se buscarán los espacios
+	 * 		que cumplan los criterios, ya sea de equipamiento o de identificador y "equipamiento", donde se
+	 * 		modificará la información referente a un espacio.
+	 */
 	public void receptorAMQP() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		while (true) {
@@ -91,17 +115,22 @@ public class AdapterEspacios {
 
 			String[] path = message.split("/");
 			ObjectMapper mapper = new ObjectMapper();
-
+			// Se analiza el mensaje recibido y se implementan los posibles casos.
 			switch (path[0]) {
+				// Buscar espacio por coordenadas (planta, x, y)
 				case "espacios":
 					EspacioDTO espacio = funcionesEspacios.getEspacioCoordenadas(Integer.parseInt(path[1]),Double.parseDouble(path[2]),Double.parseDouble(path[3]));
 					if(espacio != null){
+						// Se transforma el espacio a JSON y se envía al broker.
 						emisorAMQP(espacio.toJson());
 					}
 					else{
+						// La búsqueda no ha dado resultados y se notifica.
 						emisorAMQP("No encontrado");
 					}
-                break;
+				break;
+				// Dentro de esta opción se divide en posibilidad de búsqueda por identificador de espacio o por
+				//		criterios de búsqueda
                 case "buscar-espacio":
                 
                     CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
@@ -116,34 +145,38 @@ public class AdapterEspacios {
                     }
                     else{
 						List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
+						// Búsqueda según criterios elegidos y horarios.
 						if(criterios.busquedaPorHorario()){
 							espacios = funcionesEspacios.buscarEspaciosPorCriteriosYHorario(criterios);
 						}
+						// Búsqueda según los criterios elegidos sin horario
 						else{
 							espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
 						}
-
+						// Búsqueda de los espacios que cumplen los criterios y además son alguilables.
 						if(criterios.busquedaAlquilables()){
 							espacios = funcionesEspacios.getEspaciosAlquilables(espacios);
 						}
-						
+						// Se publica en el broker el resultado de la búsqueda.
                         String espacios2 = new Gson().toJson(espacios);
-                        System.out.println(espacios2);
                         emisorAMQP(espacios2);
                     }
-                break;
+				break;
+				// Equipamiento es donde se modificará el equipamiento de un espacio. Los criterios a cambiar
+				//		se envían de la misma forma que se envían los criterios de búsqueda.
                 case "equipamiento":
                     CriteriosBusquedaDTO cambiosEquip = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-					System.out.println("CAMBIO EQUIPAMIENTO: ");
-					System.out.println(cambiosEquip);
                     boolean resultado = funcionesEspacios.setEquipamiento(cambiosEquip);
                     if(resultado) {
+						// Notifica que el resultado ha sido satisfactorio
                         emisorAMQP("OK");
                     }
                     else {
+						// Ocurrió algún error
                         emisorAMQP("FALLO");
                     }
 				break;
+				// El mensaje recibido no corresponde con ninguna operación del servidor.
 				default:
 					emisorAMQP("Error");
             }

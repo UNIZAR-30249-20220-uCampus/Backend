@@ -1,7 +1,6 @@
 package es.ucampus.demo.adapter;
 
 import org.json.simple.JSONObject;
-//import org.postgresql.core.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import domainObjects.entity.Espacio;
@@ -31,14 +30,21 @@ public class AdapterReservas {
 	@Autowired
 	private FuncionesReserva funcionesReserva;
 
+	// Declaración de las colas utilizadas para la comunicación mediante Broker
 	private String QUEUE_ENVIAR;
 	private String QUEUE_RECIBIR;
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
+	// Credenciales para la conexión a CloudAMQP
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
-
+	/**
+	 * Método constructor para gestionar la comunicación con el broker dedicada a las reservas.
+	 * @param QUEUE_ENVIAR
+	 * @param QUEUE_RECIBIR
+	 * @throws IOException
+	 */
 	public AdapterReservas(String QUEUE_ENVIAR, String QUEUE_RECIBIR) throws IOException {
 		this.QUEUE_ENVIAR = QUEUE_ENVIAR;
 		this.QUEUE_RECIBIR = QUEUE_RECIBIR;
@@ -72,21 +78,38 @@ public class AdapterReservas {
 		consumer = new QueueingConsumer(channel);
 	}
 
+	/*
+	 * Se cierra el canal y la conexión con el broker.
+	 */
 	public void cerrarConexionAMQP() throws IOException {
 		channel.close();
 		connection.close();
 	}
 
+	/*
+	 * Dado un JSONObject se publica su contenido en formato String en la cola del broker 
+	 * 		"QUEUE_ENVIAR", destinada para enviar desde el AppServer al WebServer
+	 */
 	public void emisorAMQP(JSONObject obj) throws IOException {
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.toJSONString().getBytes());
 		System.out.println(" [x] Enviado '" + obj.toJSONString() + "'");
 	}
 
+	/*
+	 * Dado un String se publica en la cola del broker "QUEUE_ENVIAR", destinada para enviar
+	 * 		desde el AppServer al WebServer
+	 */
 	public void emisorAMQP(String obj) throws IOException {
 		channel.basicPublish("", QUEUE_ENVIAR, null, obj.getBytes());
 		System.out.println(" [x] Enviado '" + obj + "'");
 	}
 
+	/*
+	 * Cuando haya disponible un mensaje en QUEUE_RECIBIR, cola destinada a enviar Reservas desde el WebServer 
+	 * 		al AppServer, se consumirá y se tratará su contenido. Las opciones posibles son "crear-reservas",
+	 * 		"aceptar-reserva", "cancelar-reserva", "pagar-reserva", "reservas", "reservas-estado", 
+	 * 		"reservas-usuario", "reservas-usuario-estado"
+	 */
 	public void receptorAMQP() throws Exception {
 		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
 		while (true) {
@@ -100,8 +123,10 @@ public class AdapterReservas {
 
 			Long idReserva;
 			String reservasString;
-
+			// Se analiza el mensaje recibido y se implementan los posibles casos.
 			switch (path[0]) {
+				// Se analiza la solicitud de reserva, si no existe colisión se crea. Si no, notifica del error.
+				// Existe la posibilidad de no encontrar el espacio que se solicita reservar.
 				case "crear-reserva":
 					Espacio espacioReserva = funcionesEspacios.getEspacioId(path[1]);
 					if (espacioReserva != null) {
@@ -118,6 +143,8 @@ public class AdapterReservas {
 						emisorAMQP("No encontrado");
 					}
 					break;
+				// Dado el identificador de una reserva, se acepta la solicitud.
+				// Existe la posibilidad de no encontrar la reserva.
 				case "aceptar-reserva":
 					idReserva = Long.parseLong(path[1]);
 					boolean aceptar = funcionesReserva.aceptarReserva(idReserva);
@@ -127,6 +154,9 @@ public class AdapterReservas {
 						emisorAMQP("Reserva no encontrada");
 					}
 					break;
+				// Dado el identificador de una reserva, se paga cambiando asi el estado 
+				//		de la reserva
+				// Existe la posibilidad de no encontrar la reserva solicitada
 				case "pagar-reserva":
 					idReserva = Long.parseLong(path[1]);
 					boolean pagar = funcionesReserva.pagarReserva(idReserva);
@@ -136,6 +166,9 @@ public class AdapterReservas {
 						emisorAMQP("Reserva no encontrada");
 					}
 					break;
+				// Dado el identificador de una reserva, se cancela cambiando asi el estado 
+				//		de la reserva
+				// Existe la posibilidad de no encontrar la reserva solicitada
 				case "cancelar-reserva":
 					idReserva = Long.parseLong(path[1]);
 					boolean canceled = funcionesReserva.cancelarReserva(idReserva);
@@ -145,6 +178,8 @@ public class AdapterReservas {
 						emisorAMQP("Reserva no encontrada");
 					}
 					break;
+				// Dado el identificador de un espacio, devuelve las reservas correspondientes
+				// Existe la posibilidad de no encontrar el espacio solicitado
 				case "reservas":
 					Espacio espacioReservas = funcionesEspacios.getEspacioId(path[1]);
 					if (espacioReservas != null) {
@@ -157,6 +192,9 @@ public class AdapterReservas {
 						emisorAMQP("No encontrado");
 					}
 					break;
+				// Dados el identificador de un espacio y un estado, devuelve las reservas correspondientes
+				//		con el estado solicitado.
+				// Existe la posibilidad de no encontrar el espacio solicitado
 				case "reservas-estado":
 					espacioReservas = funcionesEspacios.getEspacioId(path[1]);
 					if (espacioReservas != null) {
@@ -171,6 +209,8 @@ public class AdapterReservas {
 						emisorAMQP("No encontrado");
 					}
 					break;
+				// Dado el identificador de un usuario, devuelve las reservas correspondientes
+				//		a ese usuario.
 				case "reservas-usuario":
 					String usuario = path[1];
 					List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
@@ -179,6 +219,8 @@ public class AdapterReservas {
 					System.out.println(reservasUsuarioString);
 					emisorAMQP(reservasUsuarioString);
 					break;
+				// Dado un identificador de usuario y un estado, devuelve las reservas correspondientes
+				//		a ese usuario con ese estado concreto.
 				case "reservas-usuario-estado":
 					String usuarioEstado = path[1];
 					String estado = path[2];

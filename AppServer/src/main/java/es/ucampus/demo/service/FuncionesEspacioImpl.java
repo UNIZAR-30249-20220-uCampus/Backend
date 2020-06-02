@@ -28,10 +28,18 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 	@Autowired
 	private RepositorioReservas repositorioReservas;
 
+	/**
+	 * Constructor del repositorio de espacios
+	 * @param espaciosRepository
+	 */
 	FuncionesEspacioImpl(RepositorioEspacios espaciosRepository) {
 		this.espaciosRepository = espaciosRepository;
 	}
 
+	/**
+	 * Dado un identificador devuelve su Espacio correspondiente en formato EspacioDTO.
+	 * Devuelve null si no existe.
+	 */
 	public EspacioDTO getEspacioDTOId(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
 		// Transformar a DTO
@@ -43,6 +51,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		}
 	}
 
+	/**
+	 * Dado un identificador devuelve su Espacio correspondiente
+	 * Devuelve null si no existe.
+	 */
 	public Espacio getEspacioId(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
 		// Transformar a DTO
@@ -53,6 +65,11 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		}
 	}
 
+	/**
+	 * Dada una planta y las coordenadas 'x' e 'y' devuelve el Espacio correspondiente
+	 * 		en formato EspacioDTO.
+	 * Devuelve null si no existe.
+	 */
 	public EspacioDTO getEspacioCoordenadas(int planta, double x, double y) {
 		EspacioDTO espacioDTO = new EspacioDTO();
 		String id = espaciosRepository.findByCoordenadas(planta, x, y);
@@ -70,6 +87,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return espacioDTO;
 	}
 
+	/**
+	 * Dado un aforo minimo devuelve una lista de Espacios en formato EspacioDTO con
+	 * 		un aforo igual o superior al requerido.
+	 */
 	public List<EspacioDTO> buscarEspacioPorAforo(int aforo) {
 		List<Espacio> espacios = espaciosRepository.findByPlazasGreaterThanEqual(aforo);
 		List<EspacioDTO> espaciosDTO = new ArrayList<EspacioDTO>();
@@ -81,6 +102,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return espaciosDTO;
 	}
 
+	/**
+	 * Dados unos criterios de búsqueda devuelve una lista de Espacios en formato EspacioDTO
+	 * 		que cumplen con los requisitos.
+	 */
 	public List<EspacioDTO> buscarEspacioPorCriterios(CriteriosBusquedaDTO criterios) {
 
 		List<Integer> numEq = criterios.cantidadEquipamientos();
@@ -102,6 +127,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return espaciosDTO;
 	}
 
+	/**
+	 * Dados unos criterios de búsqueda y horario devuelve una lista de Espacios en formato EspacioDTO
+	 * 		que cumplen con estos requisitos y tiene el horario disponible.
+	 */
 	public List<EspacioDTO> buscarEspaciosPorCriteriosYHorario(CriteriosBusquedaDTO criterios) {
 		Reserva miReserva;
 		// Almacena los Espacio que cumplen los criterios de equipamientos y son
@@ -141,6 +170,9 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return espaciosResultantesDTO;
 	}
 
+	/**
+	 * Devuelve true si y solo si ha modificado con exito el equipamiento de un Espacio.
+	 */
 	public boolean setEquipamiento(CriteriosBusquedaDTO cambios) {
 		List<Integer> numEq = cambios.cantidadEquipamientos();
 		String nombreEspacio = "\"" + cambios.getNombre() + "\"";
@@ -152,6 +184,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return i > 0;
 	}
 
+	/**
+	 * Dada la planta de un Espacio devuelve la lista de Espacios alquilables en formato EspacioDTO
+	 * 		disponibles en la planta.
+	 */
 	public List<EspacioDTO> getEspaciosAlquilables(int planta) {
 		List<EspacioDTO> listaEspaciosDTO = new ArrayList<EspacioDTO>();
 		List<String> listaDeIds = espaciosRepository.findEspaciosAlquilables(planta);
@@ -163,6 +199,10 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return listaEspaciosDTO;
 	}
 
+	/**
+	 * Dada una lista de Espacios en formato EspacioDTO devuelve una lista de igual formato
+	 * 		con los Espacios alquilables.
+	 */
 	public List<EspacioDTO> getEspaciosAlquilables(List<EspacioDTO> espacios) {
 		List<EspacioDTO> listaEspaciosDTO = new ArrayList<EspacioDTO>();
 		for (EspacioDTO espacio : espacios) {
@@ -173,6 +213,9 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 		return listaEspaciosDTO;
 	}
 
+	/**
+	 * Dado el identificador de un Espacio devuelve la tarifa en función de sus caracteríristicas.
+	 */
 	public double calcularTarifaEspacioAlquilable(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
 		if (espacio.isPresent()) {
