@@ -42,8 +42,6 @@ public class FuncionesEspacioImpl implements FuncionesEspacio {
 	public Espacio getEspacioId(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
 		// Transformar a DTO
-		System.out.println("ESPACIO: ");
-		System.out.println(espacio);
 		if (espacio.isPresent()) {
 			return espacio.get();
 		} else {

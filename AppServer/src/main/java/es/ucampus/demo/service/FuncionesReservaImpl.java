@@ -21,10 +21,6 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 	@Autowired
 	private RepositorioReservas repositorioReservas;
 
-	FuncionesReservaImpl(RepositorioReservas reservasRepository){
-		this.repositorioReservas = reservasRepository;
-	}
-
 	public boolean hacerReserva(Reserva reserva) {
 
 		List<Reserva> reservas = repositorioReservas.findAll();
@@ -36,6 +32,7 @@ public class FuncionesReservaImpl implements FuncionesReserva {
 				}
 			}
 		}
+
 		repositorioReservas.save(reserva);
 
 		return true;
