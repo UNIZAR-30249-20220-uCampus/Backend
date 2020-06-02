@@ -170,7 +170,7 @@ public class AdapterEspacios {
 				//		se envían de la misma forma que se envían los criterios de búsqueda.
                 case "equipamiento":
                     CriteriosBusquedaDTO cambiosEquip = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-                    boolean resultado = funcionesEspacios.setEquipamiento(cambiosEquip);
+                    boolean resultado = serviciosEspacio.setEquipamiento(cambiosEquip);
                     if(resultado) {
 						// Notifica que el resultado ha sido satisfactorio
                         emisorAMQP("OK");
