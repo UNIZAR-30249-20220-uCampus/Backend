@@ -17,7 +17,7 @@ public class ConjuntoDiaSlots {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	// Entero de 1 a 7
+	// Entero de 1 a 7.
 	@Column(name = "diasemana")
 	private int diaSemana;
 
@@ -83,13 +83,17 @@ public class ConjuntoDiaSlots {
 				+ "]";
 	}
 
-	public boolean conflictoCon(ConjuntoDiaSlots c){
+	/*
+	 * Dado un ConjuntoDiaSlots como parámetro, devuelve TRUE si existe entre ellos
+	 * algún solapamiento temporal, o sea comparten algún slot. Devuelve FALSE en
+	 * cualquier otro caso.
+	 */
+	public boolean conflictoCon(ConjuntoDiaSlots c) {
 		boolean conflicto = false;
-		if(this.diaSemana == c.diaSemana){
-			if(this.slotInicio<=c.slotInicio && c.slotInicio <= this.slotFinal){
+		if (this.diaSemana == c.diaSemana) {
+			if (this.slotInicio <= c.slotInicio && c.slotInicio <= this.slotFinal) {
 				conflicto = true;
-			}
-			else if(c.slotInicio<=this.slotInicio && this.slotInicio <= c.slotFinal){
+			} else if (c.slotInicio <= this.slotInicio && this.slotInicio <= c.slotFinal) {
 				conflicto = true;
 			}
 		}
