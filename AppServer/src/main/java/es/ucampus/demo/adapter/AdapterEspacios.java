@@ -25,15 +25,17 @@ public class AdapterEspacios {
 	@Autowired
 	private FuncionesEspacio funcionesEspacios;
 	
-	private final static String QUEUE_ENVIAR = "SpringAWebEspacios";
-	private final static String QUEUE_RECIBIR = "WebASpringEspacios";
+	private String QUEUE_ENVIAR;
+	private String QUEUE_RECIBIR;
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
 	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
 
-	public AdapterEspacios() throws IOException {
+	public AdapterEspacios(String QUEUE_ENVIAR, String QUEUE_RECIBIR) throws IOException {
+		this.QUEUE_ENVIAR = QUEUE_ENVIAR;
+		this.QUEUE_RECIBIR = QUEUE_RECIBIR;
 		// Conexión al broker RabbitMQ broker (prueba en la URL de
 		// la variable de entorno que se llame como diga ENV_AMQPURL_NAME
 		// o sino en localhost)
@@ -113,8 +115,18 @@ public class AdapterEspacios {
                         emisorAMQP(jsonEspacio);
                     }
                     else{
-                        List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
-                        espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
+						List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
+						if(criterios.busquedaPorHorario()){
+							espacios = funcionesEspacios.buscarEspaciosPorCriteriosYHorario(criterios);
+						}
+						else{
+							espacios = funcionesEspacios.buscarEspacioPorCriterios(criterios);
+						}
+
+						if(criterios.busquedaAlquilables()){
+							espacios = funcionesEspacios.getEspaciosAlquilables(espacios);
+						}
+						
                         String espacios2 = new Gson().toJson(espacios);
                         System.out.println(espacios2);
                         emisorAMQP(espacios2);

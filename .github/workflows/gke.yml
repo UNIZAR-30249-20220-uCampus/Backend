@@ -11,7 +11,7 @@ env:
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: ucampus-cluster
-  GKE_ZONE: us-east1-b
+  GKE_ZONE: us-central1-c
   WEB_IMAGE: web-server
   APP_IMAGE: app-server
 
