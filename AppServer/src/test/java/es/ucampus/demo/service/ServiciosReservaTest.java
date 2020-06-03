@@ -10,7 +10,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -38,16 +41,23 @@ public class ServiciosReservaTest {
 
 	private ServiciosEspacio serviciosEspacio;
 
-
 	Espacio espacio;
 
 	Reserva reserva;
 
 	@Before
-    public void before() {
-		espacio = new Espacio();
+	public void before() throws JsonMappingException, JsonProcessingException {
+		this.espacio = new Espacio();
+
+		String json = "{'id_espacio':'\"CRE.1200.01.050\"'}";
+		this.espacio = new Gson().fromJson(json, Espacio.class);
+	
+
+
+
+		
 		Horario horario = new Horario(new Date(), new Date(), 2);
-		reserva = new Reserva(espacio, horario, "Alex", "reserva");
+		this.reserva = new Reserva(this.espacio, horario, "Alex", "reserva");
 		List<Reserva> listaReservas = new ArrayList<Reserva>();
 		listaReservas.add(this.reserva);
 		final RepositorioReservas repositorioReservas = Mockito.mock(RepositorioReservas.class);
@@ -69,7 +79,6 @@ public class ServiciosReservaTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_HACER_RESERVA() throws Exception {
 
 		boolean ok = serviciosReserva.hacerReserva(reserva);
