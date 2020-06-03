@@ -21,6 +21,9 @@ public class ServiciosReservaImpl implements ServiciosReserva {
 	@Autowired
 	private RepositorioReservas repositorioReservas;
 
+	ServiciosReservaImpl(RepositorioReservas repositorioReservas) {
+		this.repositorioReservas = repositorioReservas;
+	}
 	/**
      * Dada una reserva, devuelve true si y solo si no hay ningún tipo de problema de colisiones
      *      con las demás reservas almacenadas para ese mismo espacio.
