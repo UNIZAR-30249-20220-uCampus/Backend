@@ -1,16 +1,19 @@
 package es.ucampus.demo.service;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -42,14 +45,25 @@ public class ServiciosReservaTest {
 	Espacio espacio;
 
 	Reserva reserva;
+	Reserva alquiler;
 
 	@Before
     public void before() {
 		espacio = new Espacio();
 		Horario horario = new Horario(new Date(), new Date(), 2);
 		reserva = new Reserva(espacio, horario, "Alex", "reserva");
+		String json = "{" + "'id': 200," + "'tipo': 'alquiler'," + "'usuario' : 'Alex'," + "'horario' : {"
+				+ "'fechaInicio' : '2020-05-30T08:20:38.5426521-04:00',"
+				+ "'fechaFin' : '2020-05-30T08:20:38.5426521-06:00'," + "'frecuencia' : 2," + "'conjuntoDiaSlots' : [{"
+				+ "'diaSemana' : 3," + "'slotInicio' : 1," + "'slotFinal': 4" + "}]" + "}" + "}";
+
+		// Now do the magic.
+		alquiler = new Gson().fromJson(json, Reserva.class);
+		//reserva2 =  new Reserva(espacio, horario, "Jose", "reserva");
+
 		List<Reserva> listaReservas = new ArrayList<Reserva>();
 		listaReservas.add(this.reserva);
+
 		final RepositorioReservas repositorioReservas = Mockito.mock(RepositorioReservas.class);
 		Mockito.mock(RepositorioReservas.class);
 		// test_HACER_RESERVA, test_GET_RESERVAS_ESPACIO, test_GET_RESERVAS_ESPACIO_ESTADO, test_GET_RESERVAS_USUARIO, test_GET_RESERVAS_USUARIO_ESTADO
@@ -57,9 +71,12 @@ public class ServiciosReservaTest {
 		Mockito.when(repositorioReservas.findByUsuario("Alex")).thenReturn(listaReservas);
 		Mockito.when(repositorioReservas.findAll()).thenReturn(listaReservas);
 		Mockito.when(repositorioReservas.save(this.reserva)).thenReturn(this.reserva);
+		Mockito.when(repositorioReservas.findById((long) 200)).thenReturn(Optional.of(alquiler));
+
 
 
 		serviciosReserva = new ServiciosReservaImpl(repositorioReservas);
+
 			
 	}
 
@@ -102,6 +119,45 @@ public class ServiciosReservaTest {
 
 		List<ReservaDTO> reservas = serviciosReserva.buscarReservaUsuarioEstado("Alex",EstadoReserva.PENDIENTE);
 		assertNotNull(reservas);
+	}
+
+	@Test
+	public void test_ACEPTAR_RESERVA() throws Exception {
+		boolean aceptada = serviciosReserva.aceptarReserva(alquiler.getId());
+		assertTrue(aceptada);
+	}
+
+	@Test
+	public void test_ACEPTAR_RESERVA_ERROR() throws Exception {
+		boolean aceptada = serviciosReserva.aceptarReserva((long) 150);
+		assertFalse(aceptada);
+	}
+
+
+	@Test
+	public void test_CANCELAR_RESERVA() throws Exception {
+		boolean cancelada = serviciosReserva.cancelarReserva(alquiler.getId());
+		assertTrue(cancelada);
+	}
+
+	@Test
+	public void test_CANCELAR_RESERVA_ERROR() throws Exception {
+		boolean cancelada = serviciosReserva.cancelarReserva((long) 150);
+		assertFalse(cancelada);
+	}
+
+	@Test
+	public void test_PAGAR_RESERVA() throws Exception {
+		serviciosReserva.aceptarReserva(alquiler.getId());
+
+		boolean pagada = serviciosReserva.pagarReserva(alquiler.getId());
+		assertTrue(pagada);
+	}
+
+	@Test
+	public void test_PAGAR_RESERVA_ERROR() throws Exception {
+		boolean pagada = serviciosReserva.pagarReserva((long) 150);
+		assertFalse(pagada);
 	}
 	
 }

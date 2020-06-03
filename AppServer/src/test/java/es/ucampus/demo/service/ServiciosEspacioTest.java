@@ -11,6 +11,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,15 +38,14 @@ public class ServiciosEspacioTest {
 		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(new Espacio()));
 		Mockito.when(repositorioEspacios.findById("\"CRE.1065.00.021\"")).thenReturn(Optional.empty());
 
-/** 
-		String json = "{'alquilable':0,'tarifa':0.0,'id_espacio':'\"CRE.1200.01.050\"','id_edificio':'\"CRE.1200.\"','superficie':'\"118,9\"','reservable':0," +
-		"'id_centro':'C2 0 11','tipo_de_uso':55,'plazas':10,'canyon':1,'proyector':1,'sonido':1,'tv':'2','video':1,'dvd':1,'fotocopiadora':2,'impresora':1,'ord':6,'fax':0,'tlf':1,'pizarra':1,'extpol':1,'extco2':1,'planta':1" +
-		"'geom':{'type':'MultiPolygon','coordinates':[[[[675753.4046471276,4616803.309851324],[675752.5670859177,4616797.44354297],[675740.0214798884,4616797.129582856],[675740.0033504894,4616798.8876227215],[675739.0772226081,4616798.864438486],[675739.0233523329,4616804.088334341],[675739.9494802142,4616804.111518576],[675739.931350805,4616805.869559445],[675755.5322469125,4616806.260008225],[675753.4046471276,4616803.309851324]]]]},'equipamientos':[{'tipo':'CANYON_FIJO','cantidad':1},{'tipo':'NMRO_PLAZAS','cantidad':80}],'id_utc':'01.050'}";
-		//Espacio espacio = new Gson().fromJson(json, Espacio.class);
-		ObjectMapper objectMapper = new ObjectMapper();
-		Espacio espacio = objectMapper.readValue(json, Espacio.class);
+ 
+		String json = "{'id_espacio':'\"CRE.1200.01.050\"'}";
+		Espacio espacio = new Gson().fromJson(json, Espacio.class);
+		//ObjectMapper objectMapper = new ObjectMapper();
+		//Espacio espacio = objectMapper.readValue(json, Espacio.class);
+		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(espacio));
 		
-		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(espacio));*/
+		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(espacio));
 
 		serviciosEspacio = new ServiciosEspacioImpl(repositorioEspacios);
 
@@ -73,7 +73,6 @@ public class ServiciosEspacioTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_GET_EspacioDTO_ID() throws Exception {
 
 		EspacioDTO espacio = serviciosEspacio.getEspacioDTOId("\"CRE.1200.01.050\"");
