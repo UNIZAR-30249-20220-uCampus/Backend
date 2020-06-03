@@ -39,8 +39,10 @@ public class EspacioDTO {
 		}
 		this.equipamientos = equi;
 		this.planta = es.getPlanta();
-		this.lng_center = es.getGeom().getCentroid().getX();
-		this.lat_center = es.getGeom().getCentroid().getY();
+		if(es.getGeom() != null){
+			this.lng_center = es.getGeom().getCentroid().getX();
+			this.lat_center = es.getGeom().getCentroid().getY();
+		}
 	}
 
 	public JSONObject toJson() {

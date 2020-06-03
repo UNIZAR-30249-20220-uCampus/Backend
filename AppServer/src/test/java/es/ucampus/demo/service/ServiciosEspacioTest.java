@@ -1,16 +1,16 @@
 package es.ucampus.demo.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import org.junit.Before;
@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
 import domainObjects.entity.Espacio;
 import dtoObjects.entity.EspacioDTO;
+import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.DemoApplication;
 import es.ucampus.demo.repository.RepositorioEspacios;
 
@@ -32,20 +33,42 @@ public class ServiciosEspacioTest {
 
 	private ServiciosEspacio serviciosEspacio;
 
+	private CriteriosBusquedaDTO criteriosBusquedaDTO;
+
 	@Before
 	public void init() throws JsonMappingException, JsonProcessingException {
-		RepositorioEspacios repositorioEspacios = Mockito.mock(RepositorioEspacios.class);
-		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(new Espacio()));
-		Mockito.when(repositorioEspacios.findById("\"CRE.1065.00.021\"")).thenReturn(Optional.empty());
-
- 
-		String json = "{'id_espacio':'\"CRE.1200.01.050\"'}";
-		Espacio espacio = new Gson().fromJson(json, Espacio.class);
-		//ObjectMapper objectMapper = new ObjectMapper();
-		//Espacio espacio = objectMapper.readValue(json, Espacio.class);
-		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(espacio));
 		
+		String json = "{'alquilable':0,'tarifa':0.0,'id_espacio':'\"CRE.1200.01.050\"','id_edificio':'\"CRE.1200.\"','superficie':'\"118,9\"','reservable':0," +
+		"'equipamientos':[{'tipo':'CANYON_FIJO','cantidad':1},{'tipo':'NMRO_PLAZAS','cantidad':80}],'id_utc':'01.050'}";
+		Espacio espacio = new Gson().fromJson(json, Espacio.class);
+
+		List<Espacio> espacios = new ArrayList<Espacio>();
+		espacios.add(espacio);
+
+		String criteriosJson = "{'nombre':'\"CRE.1200.01.050\"','aforo':5, 'filtrosActivos': ['AFORO','PANTALLA_PROYECTOR','PIZARRA']," +
+		"'equipamientos':[{'tipo':'CANYON_FIJO','cantidad':1},{'tipo':'NMRO_PLAZAS','cantidad':80}], " + "'horarioRequest': { 'horario' : {"
+		+ "'fechaInicio' : '2020-05-30T08:20:38.5426521-04:00',"
+		+ "'fechaFin' : '2020-05-30T08:20:38.5426521-06:00'," + "'frecuencia' : 2," + "'conjuntoDiaSlots' : [{"
+		+ "'diaSemana' : 3," + "'slotInicio' : 1," + "'slotFinal': 4" + "}]" + "}" +"}}";
+		criteriosBusquedaDTO = new Gson().fromJson(criteriosJson, CriteriosBusquedaDTO.class);
+		
+		List<Integer> numEq = criteriosBusquedaDTO.cantidadEquipamientos();
+		String nombreEspacio = "\"" + criteriosBusquedaDTO.getNombre() + "\"";
+
+		RepositorioEspacios repositorioEspacios = Mockito.mock(RepositorioEspacios.class);
+
+		Mockito.when(repositorioEspacios.findById("\"CRE.1065.00.021\"")).thenReturn(Optional.empty());
 		Mockito.when(repositorioEspacios.findById("\"CRE.1200.01.050\"")).thenReturn(Optional.of(espacio));
+		Mockito.when(repositorioEspacios.findByCoordenadas(1, 675745.92064, 4616800.60363)).thenReturn("\"CRE.1200.01.050\"");
+		Mockito.when(repositorioEspacios.findByCoordenadas(7, 675745.92064, 4616800.60363)).thenReturn(null);
+		Mockito.when(repositorioEspacios.establecerEquipamiento(nombreEspacio, numEq.get(0), numEq.get(1), numEq.get(2),
+			Integer.toString(numEq.get(3)), numEq.get(4), numEq.get(5), numEq.get(6), numEq.get(7), numEq.get(8),
+			numEq.get(9), numEq.get(10), numEq.get(11), numEq.get(12), numEq.get(13))).thenReturn(5);
+		Mockito.when(repositorioEspacios
+					.findByPlazasGreaterThanEqualAndCanyonGreaterThanEqualAndProyectorGreaterThanEqualAndSonidoGreaterThanEqualAndTvGreaterThanEqualAndVideoGreaterThanEqualAndDvdGreaterThanEqualAndFotocopiadorasGreaterThanEqualAndImpresorasGreaterThanEqualAndOrdenadoresGreaterThanEqualAndFaxesGreaterThanEqualAndTelefonosGreaterThanEqualAndPizarraGreaterThanEqualAndExtpolvoGreaterThanEqualAndExtco2(
+						criteriosBusquedaDTO.getAforo(), numEq.get(0), numEq.get(1), numEq.get(2), Integer.toString(numEq.get(3)),
+							numEq.get(4), numEq.get(5), numEq.get(6), numEq.get(7), numEq.get(8), numEq.get(9),
+							numEq.get(10), numEq.get(11), numEq.get(12), numEq.get(13))).thenReturn(espacios);
 
 		serviciosEspacio = new ServiciosEspacioImpl(repositorioEspacios);
 
@@ -80,7 +103,6 @@ public class ServiciosEspacioTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_GET_EspacioDTO_ERROR() throws Exception {
 
 		EspacioDTO espacio = serviciosEspacio.getEspacioDTOId("\"CRE.1065.00.021\"");
@@ -88,7 +110,6 @@ public class ServiciosEspacioTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_GET_ESPACIO_COOR() throws Exception {
 
 		EspacioDTO espacio = serviciosEspacio.getEspacioCoordenadas(1, 675745.92064, 4616800.60363);
@@ -96,7 +117,6 @@ public class ServiciosEspacioTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_GET_ESPACIO_COOR_ERROR() throws Exception {
 
 		EspacioDTO espacio = serviciosEspacio.getEspacioCoordenadas(7, 675745.92064, 4616800.60363);
@@ -104,7 +124,6 @@ public class ServiciosEspacioTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_GET_ESPACIOS_AFORO() throws Exception {
 
 		List<EspacioDTO> espacios = serviciosEspacio.buscarEspacioPorAforo(5);
@@ -112,7 +131,6 @@ public class ServiciosEspacioTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_GET_ESPACIOS_ALQUILABLES() throws Exception {
 
 		List<EspacioDTO> espaciosAlquilables0 = serviciosEspacio.getEspaciosAlquilables(0);
@@ -123,18 +141,24 @@ public class ServiciosEspacioTest {
 	}
 
 	@Test
-	@Ignore
-	public void test_GET_TARIFA_ESPACIO() throws Exception {
-
-		double tarifa = serviciosEspacio.calcularTarifaEspacioAlquilable("\"CRE.1200.01.050\"");
-		assertNotEquals(0, tarifa, "No son iguales");
-	}
-
-	@Test
-	@Ignore
 	public void test_GET_TARIFA_ESPACIO_ERROR() throws Exception {
 
 		double tarifa = serviciosEspacio.calcularTarifaEspacioAlquilable("\"CRE.1065.00.021\"");
 		assertEquals(0, tarifa, 0);
 	}
+
+	@Test
+	public void test_SET_EQUIPAMIENTOS() throws Exception {
+
+		boolean ok = serviciosEspacio.setEquipamiento(criteriosBusquedaDTO);
+		assertTrue(ok);
+	}
+
+	@Test
+	public void test_BUSQUEDA_CRITERIOS() throws Exception {
+
+		List<EspacioDTO> espacios = serviciosEspacio.buscarEspacioPorCriterios(criteriosBusquedaDTO);
+		assertNotNull(espacios);
+	}
+
 }
