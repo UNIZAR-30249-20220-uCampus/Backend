@@ -12,6 +12,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
@@ -39,41 +41,36 @@ public class ServiciosReservaTest {
 
 	private ServiciosReserva serviciosReserva;
 
-	private ServiciosEspacio serviciosEspacio;
-
-
 	Espacio espacio;
-
 	Reserva reserva;
 	Reserva alquiler;
 
 	@Before
-    public void before() {
-		espacio = new Espacio();
+	public void before() throws JsonMappingException, JsonProcessingException {
+		this.espacio = new Espacio();
+
+		String json = "{'id_espacio':'\"CRE.1200.01.050\"'}";
+		this.espacio = new Gson().fromJson(json, Espacio.class);
+	
 		Horario horario = new Horario(new Date(), new Date(), 2);
 		reserva = new Reserva(espacio, horario, "Alex", "reserva");
-		String json = "{" + "'id': 200," + "'tipo': 'alquiler'," + "'usuario' : 'Alex'," + "'horario' : {"
+		String jsonReserva = "{" + "'id': 200," + "'tipo': 'alquiler'," + "'usuario' : 'Alex'," + "'horario' : {"
 				+ "'fechaInicio' : '2020-05-30T08:20:38.5426521-04:00',"
 				+ "'fechaFin' : '2020-05-30T08:20:38.5426521-06:00'," + "'frecuencia' : 2," + "'conjuntoDiaSlots' : [{"
 				+ "'diaSemana' : 3," + "'slotInicio' : 1," + "'slotFinal': 4" + "}]" + "}" + "}";
-
 		// Now do the magic.
-		alquiler = new Gson().fromJson(json, Reserva.class);
-		//reserva2 =  new Reserva(espacio, horario, "Jose", "reserva");
+		alquiler = new Gson().fromJson(jsonReserva, Reserva.class);
 
 		List<Reserva> listaReservas = new ArrayList<Reserva>();
 		listaReservas.add(this.reserva);
 
-		final RepositorioReservas repositorioReservas = Mockito.mock(RepositorioReservas.class);
-		Mockito.mock(RepositorioReservas.class);
+		RepositorioReservas repositorioReservas = Mockito.mock(RepositorioReservas.class);
 		// test_HACER_RESERVA, test_GET_RESERVAS_ESPACIO, test_GET_RESERVAS_ESPACIO_ESTADO, test_GET_RESERVAS_USUARIO, test_GET_RESERVAS_USUARIO_ESTADO
 		Mockito.when(repositorioReservas.findByEspacio(this.espacio)).thenReturn(listaReservas);
 		Mockito.when(repositorioReservas.findByUsuario("Alex")).thenReturn(listaReservas);
 		Mockito.when(repositorioReservas.findAll()).thenReturn(listaReservas);
 		Mockito.when(repositorioReservas.save(this.reserva)).thenReturn(this.reserva);
 		Mockito.when(repositorioReservas.findById((long) 200)).thenReturn(Optional.of(alquiler));
-
-
 
 		serviciosReserva = new ServiciosReservaImpl(repositorioReservas);
 
@@ -86,7 +83,6 @@ public class ServiciosReservaTest {
 	}
 
 	@Test
-	@Ignore
 	public void test_HACER_RESERVA() throws Exception {
 
 		boolean ok = serviciosReserva.hacerReserva(reserva);
