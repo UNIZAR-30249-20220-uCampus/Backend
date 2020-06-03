@@ -86,7 +86,7 @@ public class ServiciosReservaTest {
 	@Test
 	public void test_GET_RESERVAS_ESPACIO_ESTADO() throws Exception {
 
-		List<ReservaDTO> reservas = serviciosReserva.buscarReservaEstado(espacio, EstadoReserva.CANCELADA);
+		List<ReservaDTO> reservas = serviciosReserva.buscarReservaEstado(espacio, EstadoReserva.PENDIENTE);
 		assertNotNull(reservas);
 	}
 
@@ -100,7 +100,7 @@ public class ServiciosReservaTest {
 	@Test
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 
-		List<ReservaDTO> reservas = serviciosReserva.buscarReservaUsuarioEstado("Alex",EstadoReserva.CANCELADA);
+		List<ReservaDTO> reservas = serviciosReserva.buscarReservaUsuarioEstado("Alex",EstadoReserva.PENDIENTE);
 		assertNotNull(reservas);
 	}
 	
