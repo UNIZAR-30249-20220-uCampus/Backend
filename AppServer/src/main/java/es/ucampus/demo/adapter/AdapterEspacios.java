@@ -9,6 +9,7 @@ import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.service.ServiciosEspacio;
 
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -64,8 +65,9 @@ public class AdapterEspacios {
 		// idempotente: solo se creará si no existe ya)
 		// Se crea tanto en el servidorWeb como en spring, porque no
 		// sabemos cuál se lanzará antes.
-		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuará de emisor
-		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_ENVIAR, durable, false, false, null); // Cola donde se actuará de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, durable, false, false, null); // Cola donde se actuará de receptor
 
 		// El objeto consumer guardará los mensajes que lleguen
 		// a la cola QUEUE_RECIBIR hasta que los usemos
@@ -86,7 +88,7 @@ public class AdapterEspacios {
 	 */
 	public void emisorAMQP(JSONObject obj) throws IOException {
 		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, obj.toJSONString().getBytes());
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, obj.toJSONString().getBytes());
 		System.out.println(" [x] Enviado '" + obj.toJSONString() + "'");
 	}
 
@@ -96,7 +98,7 @@ public class AdapterEspacios {
 	 */
 	public void emisorAMQP(String obj) throws IOException {
 		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, obj.getBytes());
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, obj.getBytes());
 		System.out.println(" [x] Enviado '" + obj + "'");
 	}
 
@@ -108,12 +110,17 @@ public class AdapterEspacios {
 	 * 		modificará la información referente a un espacio.
 	 */
 	public void receptorAMQP() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
+		boolean autoAck = false;
+		channel.basicConsume(QUEUE_RECIBIR, autoAck, consumer);
 		while (true) {
 			// bloquea hasta que llege un mensaje
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 			String message = new String(delivery.getBody());
 			System.out.println(" [x] Recibido '" + message + "'");
+			//Hacemos el ACK explicito cuando hemos procesado el mensaje
+			//false indica que el ACK no es multiple: solo cuenta para un mensaje concreto
+			channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+
 
 			String[] path = message.split("/");
 			ObjectMapper mapper = new ObjectMapper();

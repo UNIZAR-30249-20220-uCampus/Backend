@@ -17,12 +17,12 @@ public class DemoApplication implements CommandLineRunner {
 
 	@Bean
 	AdapterEspacios listenerAdapterEspacios() throws IOException {
-		return new AdapterEspacios("SpringAWebEspacios", "WebASpringEspacios");
+		return new AdapterEspacios("SpringAWebEspacios","WebASpringEspacios");
 	}
 
 	@Bean
 	AdapterReservas listenerAdapterReservas() throws IOException {
-		return new AdapterReservas("SpringAWebReservas", "WebASpringReservas");
+		return new AdapterReservas("SpringAWebReservas","WebASpringReservas");
 	}
 
 	public static void main(String[] args) {
@@ -31,7 +31,7 @@ public class DemoApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws IOException, Exception {
-
+		
 		Thread threadEspacios = new Thread("New threadEspacios") {
 			public void run() {
 				try {
@@ -51,7 +51,7 @@ public class DemoApplication implements CommandLineRunner {
 				}
 			}
 		};
-
+	  
 		threadEspacios.start();
 		threadReservas.start();
 		System.out.println("[Application] Recibiendo el mensaje...");

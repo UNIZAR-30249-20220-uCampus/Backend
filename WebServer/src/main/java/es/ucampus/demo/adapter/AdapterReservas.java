@@ -3,6 +3,7 @@ package es.ucampus.demo.adapter;
 import domainObjects.request.ReservaRequest;
 
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
@@ -45,8 +46,9 @@ public class AdapterReservas {
 		// idempotente: solo se creará si no existe ya)
 		// Se crea tanto en el servidorWeb como en spring, porque no
 		// sabemos cuál se lanzará antes.
-		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuará de emisor
-		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_ENVIAR, durable, false, false, null); // Cola donde se actuará de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, durable, false, false, null); // Cola donde se actuará de receptor
 
 		// El objeto consumer guardará los mensajes que lleguen
 		// a la cola QUEUE_RECIBIR hasta que los usemos
@@ -70,8 +72,8 @@ public class AdapterReservas {
 		// Java object to JSON string
 		String jsonString = mapper.writeValueAsString(reserva);
 		String messageString = "crear-reserva/" + espacio + "/" + jsonString;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -80,8 +82,8 @@ public class AdapterReservas {
 	 */
 	public void enviarAccionReserva(String reserva, String accion) throws IOException {
 		String messageString = accion + "-reserva/" + reserva;
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
-		//publica mensaje en la cola
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -91,8 +93,8 @@ public class AdapterReservas {
 	public void enviarGetReservas(String espacio) throws IOException {
 		//Java object to JSON string
 		String messageString = "reservas/" + espacio;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -102,8 +104,8 @@ public class AdapterReservas {
 	public void enviarGetReservas(String espacio, String estado) throws IOException {
 		//Java object to JSON string
 		String messageString = "reservas-estado/" + espacio + "/" + estado;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -113,8 +115,8 @@ public class AdapterReservas {
 	public void enviarGetReservasUsuario(String usuario) throws IOException {
 		//Java object to JSON string
 		String messageString = "reservas-usuario/" + usuario;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -124,8 +126,8 @@ public class AdapterReservas {
 	public void enviarGetReservasUsuario(String espacio, String estado) throws IOException {
 		//Java object to JSON string
 		String messageString = "reservas-usuario-estado/" + espacio + "/" + estado;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -133,12 +135,16 @@ public class AdapterReservas {
 	 * Recibe la respuesta del servidor de aplicaciones
 	 */
 	public String recibirReserva() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
+		boolean autoAck = false;
+		channel.basicConsume(QUEUE_RECIBIR, autoAck, consumer);
 		//recibe mensaje
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 		String message = new String(delivery.getBody());
-
 		System.out.println(" [x] Recibido '" + message + "'");
+		//Hacemos el ACK explicito cuando hemos procesado el mensaje
+		//false indica que el ACK no es multiple: solo cuenta para un mensaje concreto
+		channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+		
 		return message;
 	}
 

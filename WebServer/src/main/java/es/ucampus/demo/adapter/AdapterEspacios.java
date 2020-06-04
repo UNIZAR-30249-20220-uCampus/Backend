@@ -3,6 +3,7 @@ package es.ucampus.demo.adapter;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
@@ -45,8 +46,9 @@ public class AdapterEspacios {
 		// idempotente: solo se creará si no existe ya)
 		// Se crea tanto en el servidorWeb como en spring, porque no
 		// sabemos cuál se lanzará antes.
-		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuará de emisor
-		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_ENVIAR, durable, false, false, null); // Cola donde se actuará de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, durable, false, false, null); // Cola donde se actuará de receptor
 
 		// El objeto consumer guardará los mensajes que lleguen
 		// a la cola QUEUE_RECIBIR hasta que los usemos
@@ -66,8 +68,8 @@ public class AdapterEspacios {
 	 */
 	public void enviarGetEspacio(int planta, double x, double y) throws IOException {
 		String messageString = "espacios/" + planta + "/" + x + "/" + y;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -79,8 +81,8 @@ public class AdapterEspacios {
 		// Java object to JSON string
 		String jsonString = mapper.writeValueAsString(criterios);
 		String messageString = "buscar-espacio/" + jsonString;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -92,8 +94,8 @@ public class AdapterEspacios {
 		// Java object to JSON string
 		String jsonString = mapper.writeValueAsString(equipRequest);
 		String messageString = "equipamiento/" + jsonString;
-		//publica mensaje en la cola
-		channel.basicPublish("", QUEUE_ENVIAR, null, messageString.getBytes());
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
 		System.out.println(" [x] Enviado '" + messageString + "'");
 	}
 
@@ -101,11 +103,14 @@ public class AdapterEspacios {
 	 * Recibe la respuesta del servidor de aplicaciones
 	 */
 	public String recibirEspacio() throws Exception {
-		channel.basicConsume(QUEUE_RECIBIR, true, consumer);
+		boolean autoAck = false;
+		channel.basicConsume(QUEUE_RECIBIR, autoAck, consumer);
 		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 		String message = new String(delivery.getBody());
-
 		System.out.println(" [x] Recibido '" + message + "'");
+		//Hacemos el ACK explicito cuando hemos procesado el mensaje
+		//false indica que el ACK no es multiple: solo cuenta para un mensaje concreto
+		channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 		return message;
 	}
 }

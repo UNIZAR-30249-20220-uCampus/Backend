@@ -24,6 +24,7 @@ import es.ucampus.demo.controller.ReservasController;
 import org.json.simple.JSONArray;
 
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 
@@ -59,8 +60,9 @@ public class ReservasControllerTest {
 		}
 		connection = factory.newConnection();
 		channel = connection.createChannel();
-		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuarÃ¡ de emisor
-		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_ENVIAR, durable, false, false, null); // Cola donde se actuarÃ¡ de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, durable, false, false, null); // Cola donde se actuará de receptor
 	}
 
 	/*
@@ -85,7 +87,7 @@ public class ReservasControllerTest {
 	@Test
 	public void test_GET_CREAR_RESERVA() throws Exception {
 		String msg = "Reservada";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		String json = "{" + "'tipo': 'reserva'," + "'usuario' : 'Alex'," + "'horario' : {"
 				+ "'fechaInicio' : '2020-05-30T08:20:38.5426521-04:00',"
@@ -106,7 +108,7 @@ public class ReservasControllerTest {
 	public void test_GET_RESERVAS() throws Exception {
 		JSONArray jsonArray = new JSONArray();
 		String msg = jsonArray.toJSONString();
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<JSONArray> result = reservasController.getReservas("\"CRE.1200.01.050\"");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -119,7 +121,7 @@ public class ReservasControllerTest {
 	public void test_GET_RESERVAS_ESTADO() throws Exception {
 		JSONArray jsonArray = new JSONArray();
 		String msg = jsonArray.toJSONString();
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<JSONArray> result = reservasController.getReservas("\"CRE.1200.01.050\"", "PENDIENTE");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -131,7 +133,7 @@ public class ReservasControllerTest {
 	@Test
 	public void test_GET_RESERVAS_ERROR() throws Exception {
 		String msg = "No encontrado";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<JSONArray> result = reservasController.getReservas("CRE.1065.00.021");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
@@ -143,7 +145,7 @@ public class ReservasControllerTest {
 	@Test
 	public void test_GET_RESERVAS_ESTADO_ERROR() throws Exception {
 		String msg = "No encontrado";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<JSONArray> result = reservasController.getReservas("CRE.1065.00.021", "PENDIENTE");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
@@ -156,7 +158,7 @@ public class ReservasControllerTest {
 	public void test_GET_RESERVAS_USUARIO() throws Exception {
 		JSONArray jsonArray = new JSONArray();
 		String msg = jsonArray.toJSONString();
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<JSONArray> result = reservasController.getReservasUsuario("Alex");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -169,7 +171,7 @@ public class ReservasControllerTest {
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 		JSONArray jsonArray = new JSONArray();
 		String msg = jsonArray.toJSONString();
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<JSONArray> result = reservasController.getReservasUsuarioEstado("Alex", "PENDIENTE");
 		assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -181,7 +183,7 @@ public class ReservasControllerTest {
 	@Test
 	public void test_ACEPTAR_RESERVA_ERROR() throws Exception {
 		String msg = "Reserva no encontrada";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 		ResponseEntity<String> result = reservasController.aceptarReserva("-1");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
@@ -192,7 +194,7 @@ public class ReservasControllerTest {
 	@Test
 	public void test_CANCELAR_RESERVA_ERROR() throws Exception {
 		String msg = "Reserva no encontrada";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 		ResponseEntity<String> result = reservasController.cancelarReserva("-1");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
@@ -203,7 +205,7 @@ public class ReservasControllerTest {
 	@Test
 	public void test_PAGAR_RESERVA_ERROR() throws Exception {
 		String msg = "Reserva no encontrada";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 		ResponseEntity<String> result = reservasController.pagarReserva("-1");
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}

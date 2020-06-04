@@ -17,8 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import es.ucampus.demo.DemoApplication;
 
-
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
@@ -52,9 +52,10 @@ public class AdapterEspacioTest {
             System.exit(-1);
         }
         connection = factory.newConnection();
-        channel = connection.createChannel();
-		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuarÃ¡ de emisor
-		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+		channel = connection.createChannel();
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_ENVIAR, durable, false, false, null); // Cola donde se actuarÃ¡ de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, durable, false, false, null); // Cola donde se actuará de receptor
 
 		// El objeto consumer guardará los mensajes que lleguen
 		// a la cola QUEUE_RECIBIR hasta que los usemos
@@ -75,14 +76,16 @@ public class AdapterEspacioTest {
 		JSONObject json = new JSONObject();
 		adapterEspacios.emisorAMQP(json);
 
-		channel.basicConsume(QUEUE_ENVIAR, true, consumer);
+		boolean autoAck = false;
+		channel.basicConsume(QUEUE_ENVIAR, autoAck, consumer);
 		delivery = consumer.nextDelivery();
 		String actual = new String(delivery.getBody());
-		
+		channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 		assertEquals(msg, actual);
 
 		delivery = consumer.nextDelivery();
 		String actualJson = new String(delivery.getBody());
+		channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
 		assertEquals(json.toJSONString(), actualJson);
 		
@@ -93,7 +96,7 @@ public class AdapterEspacioTest {
 	public void test_GET_ESPACIO_ID() throws Exception {
 
 		String msg = "espacios/\"CRE.1200.01.050\"";
-		channel.basicPublish("", QUEUE_ENVIAR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 	}
 
 	@After

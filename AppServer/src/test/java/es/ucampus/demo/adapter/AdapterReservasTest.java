@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
 import es.ucampus.demo.DemoApplication;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
@@ -47,9 +48,10 @@ public class AdapterReservasTest {
             System.exit(-1);
         }
         connection = factory.newConnection();
-        channel = connection.createChannel();
-		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuarÃ¡ de emisor
-		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+		channel = connection.createChannel();
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_ENVIAR, durable, false, false, null); // Cola donde se actuarÃ¡ de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, durable, false, false, null); // Cola donde se actuará de receptor
 
 		consumer = new QueueingConsumer(channel);
 
@@ -66,9 +68,11 @@ public class AdapterReservasTest {
 		String msg = "listaReservas";
 		adapterReservas.emisorAMQP(msg);
 
-		channel.basicConsume(QUEUE_ENVIAR, true, consumer);
+		boolean autoAck = false;
+		channel.basicConsume(QUEUE_ENVIAR, autoAck, consumer);
 		delivery = consumer.nextDelivery();
 		String actual = new String(delivery.getBody());
+		channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 		
 		assertEquals(msg, actual);
 	}
@@ -78,7 +82,7 @@ public class AdapterReservasTest {
 	public void test_GET_RESERVAS_ESPACIO() throws Exception {
 
 		String msg = "reservas/\"CRE.1200.01.050\"";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 	}
 
@@ -87,7 +91,7 @@ public class AdapterReservasTest {
 	public void test_GET_RESERVAS_ESPACIO_ESTADO() throws Exception {
 
 		String msg = "reservas-estado/\"CRE.1200.01.050\"/PENDIENTE";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 	}
 
 	@Test
@@ -95,7 +99,7 @@ public class AdapterReservasTest {
 	public void test_GET_RESERVAS_USUARIO() throws Exception {
 
 		String msg = "reservas-usuario/Alex";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 	}
 
 	@Test
@@ -103,7 +107,7 @@ public class AdapterReservasTest {
 	public void test_GET_RESERVAS_USUARIO_ESTADO() throws Exception {
 
 		String msg = "reservas-usuario-estado/Alex/PENDIENTE";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 	}
 
 	@After

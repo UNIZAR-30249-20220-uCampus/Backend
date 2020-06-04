@@ -20,6 +20,7 @@ import es.ucampus.demo.ServidorWebSpringApplication;
 import es.ucampus.demo.adapter.AdapterEspacios;
 import es.ucampus.demo.controller.EspacioController;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.Connection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
@@ -56,8 +57,9 @@ public class EspacioControllerTest {
 		}
 		connection = factory.newConnection();
 		channel = connection.createChannel();
-		channel.queueDeclare(QUEUE_ENVIAR, false, false, false, null); // Cola donde se actuarÃ¡ de emisor
-		channel.queueDeclare(QUEUE_RECIBIR, false, false, false, null); // Cola donde se actuará de receptor
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_ENVIAR, durable, false, false, null); // Cola donde se actuarÃ¡ de emisor
+		channel.queueDeclare(QUEUE_RECIBIR, durable, false, false, null); // Cola donde se actuará de receptor
 	}
 
 	/*
@@ -93,7 +95,7 @@ public class EspacioControllerTest {
 		EspacioDTO espacioDTO = new EspacioDTO();
 		ObjectMapper mapper = new ObjectMapper();
 		String msg = mapper.writeValueAsString(espacioDTO);
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<EspacioDTO> result = espacioController.getEspacio(1, 675745.92064, 4616800.60363);
 		assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -105,7 +107,7 @@ public class EspacioControllerTest {
 	@Test
 	public void test_GET_ESPACIOS_ERROR() throws Exception {
 		String msg = "No encontrado";
-		channel.basicPublish("", QUEUE_RECIBIR, null, msg.getBytes());
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
 
 		ResponseEntity<EspacioDTO> result = espacioController.getEspacio(7, 675745.92064, 4616800.60363);
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
