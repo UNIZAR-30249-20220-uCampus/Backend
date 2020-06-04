@@ -26,7 +26,7 @@ public class EspacioController {
 	private AdapterEspacios adapterEspacios;
 
 	public EspacioController() throws IOException {
-		adapterEspacios = new AdapterEspacios("WebASpringEspaciosSergio", "SpringAWebEspaciosSergio");
+		adapterEspacios = new AdapterEspacios("WebASpringEspacios", "SpringAWebEspacios");
 	}
 
 	public EspacioController(AdapterEspacios adapterEspacios) throws IOException{

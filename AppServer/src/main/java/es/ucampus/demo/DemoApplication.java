@@ -17,12 +17,12 @@ public class DemoApplication implements CommandLineRunner {
 
 	@Bean
 	AdapterEspacios listenerAdapterEspacios() throws IOException {
-		return new AdapterEspacios("SpringAWebEspaciosSergio","WebASpringEspaciosSergio");
+		return new AdapterEspacios("SpringAWebEspacios","WebASpringEspacios");
 	}
 
 	@Bean
 	AdapterReservas listenerAdapterReservas() throws IOException {
-		return new AdapterReservas("SpringAWebReservasSergio","WebASpringReservasSergio");
+		return new AdapterReservas("SpringAWebReservas","WebASpringReservas");
 	}
 
 	public static void main(String[] args) {
