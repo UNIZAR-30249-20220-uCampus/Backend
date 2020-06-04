@@ -82,6 +82,10 @@ public class Horario {
 	}
 
 	public Horario(HorarioRequest horario) {
+		if (horario.getFechaInicio().compareTo(horario.getFechaFin()) > 0)
+			throw new IllegalArgumentException("fechaInicio no puede ser posterior a fechaFin");
+		if (horario.getFrecuencia() < 0)
+			throw new IllegalArgumentException("frecuencia no puede ser menor que 0");
 		this.fechaInicio = horario.getFechaInicio();
 		this.fechaFin = horario.getFechaFin();
 		this.frecuencia = horario.getFrecuencia();
