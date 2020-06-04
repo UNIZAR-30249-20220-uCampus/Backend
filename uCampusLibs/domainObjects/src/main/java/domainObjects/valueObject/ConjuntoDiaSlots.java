@@ -34,8 +34,8 @@ public class ConjuntoDiaSlots {
 	}
 
 	public ConjuntoDiaSlots(int diaSemana, int slotInicio, int slotFinal) {
-		if (slotInicio >= slotFinal)
-			throw new IllegalArgumentException("slotInicio no puede ser mayor o igual que slotFinal");
+		if (slotInicio > slotFinal)
+			throw new IllegalArgumentException("slotInicio no puede ser mayor que slotFinal");
 		if (slotInicio < 1)
 			throw new IllegalArgumentException("slotInicio no puede ser menor que 1");
 		if (slotFinal > 48)
@@ -50,8 +50,8 @@ public class ConjuntoDiaSlots {
 	}
 
 	public ConjuntoDiaSlots(ConjuntoDiaSlotsRequest conjuntoDiaSlots) {
-		if (conjuntoDiaSlots.getSlotInicio() >= conjuntoDiaSlots.getSlotFinal())
-			throw new IllegalArgumentException("slotInicio no puede ser mayor o igual que slotFinal");
+		if (conjuntoDiaSlots.getSlotInicio() > conjuntoDiaSlots.getSlotFinal())
+			throw new IllegalArgumentException("slotInicio no puede ser mayor que slotFinal");
 		if (conjuntoDiaSlots.getSlotInicio() < 1)
 			throw new IllegalArgumentException("slotInicio no puede ser menor que 1");
 		if (conjuntoDiaSlots.getSlotFinal() > 48)

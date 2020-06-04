@@ -57,7 +57,7 @@ public class ReservasController {
 		String res = adapterReservas.recibirReserva();
 		HttpStatus codigo = HttpStatus.CREATED;
 		//Si hay colisión con otras reservas
-		if(res.equals("Colision")){
+		if(res.equals("Colision") || res.equals("Argumentos no validos")){
 			codigo = HttpStatus.BAD_REQUEST;
 		}
 		//espacio no encontrado segun ese id

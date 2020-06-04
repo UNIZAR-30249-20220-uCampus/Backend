@@ -36,8 +36,11 @@ public class AdapterReservas {
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
+
 	/**
-	 * Método constructor para gestionar la comunicación con el broker dedicada a las reservas.
+	 * Método constructor para gestionar la comunicación con el broker dedicada a
+	 * las reservas.
+	 * 
 	 * @param QUEUE_ENVIAR
 	 * @param QUEUE_RECIBIR
 	 * @throws IOException
@@ -85,8 +88,8 @@ public class AdapterReservas {
 	}
 
 	/*
-	 * Dado un JSONObject se publica su contenido en formato String en la cola del broker 
-	 * 		"QUEUE_ENVIAR", destinada para enviar desde el AppServer al WebServer
+	 * Dado un JSONObject se publica su contenido en formato String en la cola del
+	 * broker "QUEUE_ENVIAR", destinada para enviar desde el AppServer al WebServer
 	 */
 	public void emisorAMQP(JSONObject obj) throws IOException {
 		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, obj.toJSONString().getBytes());
@@ -94,8 +97,8 @@ public class AdapterReservas {
 	}
 
 	/*
-	 * Dado un String se publica en la cola del broker "QUEUE_ENVIAR", destinada para enviar
-	 * 		desde el AppServer al WebServer
+	 * Dado un String se publica en la cola del broker "QUEUE_ENVIAR", destinada
+	 * para enviar desde el AppServer al WebServer
 	 */
 	public void emisorAMQP(String obj) throws IOException {
 		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, obj.getBytes());
@@ -103,135 +106,143 @@ public class AdapterReservas {
 	}
 
 	/*
-	 * Cuando haya disponible un mensaje en QUEUE_RECIBIR, cola destinada a enviar Reservas desde el WebServer 
-	 * 		al AppServer, se consumirá y se tratará su contenido. Las opciones posibles son "crear-reservas",
-	 * 		"aceptar-reserva", "cancelar-reserva", "pagar-reserva", "reservas", "reservas-estado", 
-	 * 		"reservas-usuario", "reservas-usuario-estado"
+	 * Cuando haya disponible un mensaje en QUEUE_RECIBIR, cola destinada a enviar
+	 * Reservas desde el WebServer al AppServer, se consumirá y se tratará su
+	 * contenido. Las opciones posibles son "crear-reservas", "aceptar-reserva",
+	 * "cancelar-reserva", "pagar-reserva", "reservas", "reservas-estado",
+	 * "reservas-usuario", "reservas-usuario-estado"
 	 */
 	public void receptorAMQP() throws Exception {
 		boolean autoAck = false;
 		channel.basicConsume(QUEUE_RECIBIR, autoAck, consumer);
 		while (true) {
-			// bloquea hasta que llege un mensaje
-			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-			String message = new String(delivery.getBody());
-			System.out.println(" [x] Recibido '" + message + "'");
-			//Hacemos el ACK explicito cuando hemos procesado el mensaje
-			//false indica que el ACK no es multiple: solo cuenta para un mensaje concreto
-			channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+			try {
+				// bloquea hasta que llege un mensaje
+				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+				String message = new String(delivery.getBody());
+				System.out.println(" [x] Recibido '" + message + "'");
+				//Hacemos el ACK explicito cuando hemos procesado el mensaje
+				//false indica que el ACK no es multiple: solo cuenta para un mensaje concreto
+				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
-			String[] path = message.split("/");
-			ObjectMapper mapper = new ObjectMapper();
+				String[] path = message.split("/");
+				ObjectMapper mapper = new ObjectMapper();
 
-			Long idReserva;
-			String reservasString;
-			// Se analiza el mensaje recibido y se implementan los posibles casos.
-			switch (path[0]) {
-				// Se analiza la solicitud de reserva, si no existe colisión se crea. Si no, notifica del error.
-				// Existe la posibilidad de no encontrar el espacio que se solicita reservar.
-				case "crear-reserva":
-					Espacio espacioReserva = serviciosEspacio.getEspacioId(path[1]);
-					//si id de espacio es valido
-					if (espacioReserva != null) {
-						ReservaRequest reserva = mapper.readValue(path[2], ReservaRequest.class);
-						Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario(), reserva.getTipo());
-						boolean ok = serviciosReserva.hacerReserva(r);
-						if (ok) {
-							emisorAMQP("Reservada");
+				Long idReserva;
+				String reservasString;
+				// Se analiza el mensaje recibido y se implementan los posibles casos.
+				switch (path[0]) {
+					// Se analiza la solicitud de reserva, si no existe colisión se crea. Si no,
+					// notifica del error.
+					// Existe la posibilidad de no encontrar el espacio que se solicita reservar.
+					case "crear-reserva":
+						Espacio espacioReserva = serviciosEspacio.getEspacioId(path[1]);
+						// si id de espacio es valido
+						if (espacioReserva != null) {
+							ReservaRequest reserva = mapper.readValue(path[2], ReservaRequest.class);
+							Reserva r = new Reserva(espacioReserva, reserva.getHorario(), reserva.getUsuario(),
+									reserva.getTipo());
+							boolean ok = serviciosReserva.hacerReserva(r);
+							if (ok) {
+								emisorAMQP("Reservada");
+							} else {
+								emisorAMQP("Colision");
+							}
 						} else {
-							emisorAMQP("Colision");
+							emisorAMQP("No encontrado");
 						}
-					} else {
-						emisorAMQP("No encontrado");
-					}
-					break;
-				// Dado el identificador de una reserva, se acepta la solicitud.
-				// Existe la posibilidad de no encontrar la reserva.
-				case "aceptar-reserva":
-					idReserva = Long.parseLong(path[1]);
-					boolean aceptar = serviciosReserva.aceptarReserva(idReserva);
-					if (aceptar) {
-						emisorAMQP("Aceptada");
-					} else {
-						emisorAMQP("Reserva no encontrada");
-					}
-					break;
-				// Dado el identificador de una reserva, se paga cambiando asi el estado 
-				//		de la reserva
-				// Existe la posibilidad de no encontrar la reserva solicitada
+						break;
+					// Dado el identificador de una reserva, se acepta la solicitud.
+					// Existe la posibilidad de no encontrar la reserva.
+					case "aceptar-reserva":
+						idReserva = Long.parseLong(path[1]);
+						boolean aceptar = serviciosReserva.aceptarReserva(idReserva);
+						if (aceptar) {
+							emisorAMQP("Aceptada");
+						} else {
+							emisorAMQP("Reserva no encontrada");
+						}
+						break;
+					// Dado el identificador de una reserva, se paga cambiando asi el estado
+					// de la reserva
+					// Existe la posibilidad de no encontrar la reserva solicitada
 
-				case "pagar-reserva":
-					idReserva = Long.parseLong(path[1]);
-					boolean pagar = serviciosReserva.pagarReserva(idReserva);
-					if (pagar) {
-						emisorAMQP("Pagada");
-					} else {
-						emisorAMQP("Reserva no encontrada");
-					}
-					break;
-				// Dado el identificador de una reserva, se cancela cambiando asi el estado 
-				//		de la reserva
-				// Existe la posibilidad de no encontrar la reserva solicitada
-				case "cancelar-reserva":
-					idReserva = Long.parseLong(path[1]);
-					boolean canceled = serviciosReserva.cancelarReserva(idReserva);
-					if (canceled) {
-						emisorAMQP("Cancelada");
-					} else {
-						emisorAMQP("Reserva no encontrada");
-					}
-					break;
-				// Dado el identificador de un espacio, devuelve las reservas correspondientes
-				// Existe la posibilidad de no encontrar el espacio solicitado
-				case "reservas":
-					Espacio espacioReservas = serviciosEspacio.getEspacioId(path[1]);
-					if (espacioReservas != null) {
-						List<ReservaDTO> reservas = new ArrayList<ReservaDTO>();
-						reservas = serviciosReserva.buscarReserva(espacioReservas);
-						reservasString = new Gson().toJson(reservas);
-						emisorAMQP(reservasString);
-					}
-					else{
-						emisorAMQP("No encontrado");
-					}
-					break;
-				// Dados el identificador de un espacio y un estado, devuelve las reservas correspondientes
-				//		con el estado solicitado.
-				// Existe la posibilidad de no encontrar el espacio solicitado
-				case "reservas-estado":
-					espacioReservas = serviciosEspacio.getEspacioId(path[1]);
-					if (espacioReservas != null) {
+					case "pagar-reserva":
+						idReserva = Long.parseLong(path[1]);
+						boolean pagar = serviciosReserva.pagarReserva(idReserva);
+						if (pagar) {
+							emisorAMQP("Pagada");
+						} else {
+							emisorAMQP("Reserva no encontrada");
+						}
+						break;
+					// Dado el identificador de una reserva, se cancela cambiando asi el estado
+					// de la reserva
+					// Existe la posibilidad de no encontrar la reserva solicitada
+					case "cancelar-reserva":
+						idReserva = Long.parseLong(path[1]);
+						boolean canceled = serviciosReserva.cancelarReserva(idReserva);
+						if (canceled) {
+							emisorAMQP("Cancelada");
+						} else {
+							emisorAMQP("Reserva no encontrada");
+						}
+						break;
+					// Dado el identificador de un espacio, devuelve las reservas correspondientes
+					// Existe la posibilidad de no encontrar el espacio solicitado
+					case "reservas":
+						Espacio espacioReservas = serviciosEspacio.getEspacioId(path[1]);
+						if (espacioReservas != null) {
+							List<ReservaDTO> reservas = new ArrayList<ReservaDTO>();
+							reservas = serviciosReserva.buscarReserva(espacioReservas);
+							reservasString = new Gson().toJson(reservas);
+							emisorAMQP(reservasString);
+						} else {
+							emisorAMQP("No encontrado");
+						}
+						break;
+					// Dados el identificador de un espacio y un estado, devuelve las reservas
+					// correspondientes
+					// con el estado solicitado.
+					// Existe la posibilidad de no encontrar el espacio solicitado
+					case "reservas-estado":
+						espacioReservas = serviciosEspacio.getEspacioId(path[1]);
+						if (espacioReservas != null) {
+							String estado = path[2];
+							EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
+							List<ReservaDTO> reservasEstado = new ArrayList<ReservaDTO>();
+							reservasEstado = serviciosReserva.buscarReservaEstado(espacioReservas, estadoreserva);
+							reservasString = new Gson().toJson(reservasEstado);
+							emisorAMQP(reservasString);
+						} else {
+							emisorAMQP("No encontrado");
+						}
+						break;
+					// Dado el identificador de un usuario, devuelve las reservas correspondientes
+					// a ese usuario.
+					case "reservas-usuario":
+						String usuario = path[1];
+						List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
+						reservasUsuario = serviciosReserva.buscarReservaUsuario(usuario);
+						String reservasUsuarioString = new Gson().toJson(reservasUsuario);
+						emisorAMQP(reservasUsuarioString);
+						break;
+					// Dado un identificador de usuario y un estado, devuelve las reservas
+					// correspondientes
+					// a ese usuario con ese estado concreto.
+					case "reservas-usuario-estado":
+						String usuarioEstado = path[1];
 						String estado = path[2];
 						EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
-						List<ReservaDTO> reservasEstado = new ArrayList<ReservaDTO>();
-						reservasEstado = serviciosReserva.buscarReservaEstado(espacioReservas, estadoreserva);
-						reservasString = new Gson().toJson(reservasEstado);
-						emisorAMQP(reservasString);
-					}
-					else{
-						emisorAMQP("No encontrado");
-					}
-					break;
-				// Dado el identificador de un usuario, devuelve las reservas correspondientes
-				//		a ese usuario.
-				case "reservas-usuario":
-					String usuario = path[1];
-					List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
-					reservasUsuario = serviciosReserva.buscarReservaUsuario(usuario);
-					String reservasUsuarioString = new Gson().toJson(reservasUsuario);
-					emisorAMQP(reservasUsuarioString);
-					break;
-				// Dado un identificador de usuario y un estado, devuelve las reservas correspondientes
-				//		a ese usuario con ese estado concreto.
-				case "reservas-usuario-estado":
-					String usuarioEstado = path[1];
-					String estado = path[2];
-					EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
-					List<ReservaDTO> reservasUsuarioEstado = new ArrayList<ReservaDTO>();
-					reservasUsuarioEstado = serviciosReserva.buscarReservaUsuarioEstado(usuarioEstado,estadoreserva);
-					String reservasUsuarioEstadoString = new Gson().toJson(reservasUsuarioEstado);
-					emisorAMQP(reservasUsuarioEstadoString);
-					break;
+						List<ReservaDTO> reservasUsuarioEstado = new ArrayList<ReservaDTO>();
+						reservasUsuarioEstado = serviciosReserva.buscarReservaUsuarioEstado(usuarioEstado,
+								estadoreserva);
+						String reservasUsuarioEstadoString = new Gson().toJson(reservasUsuarioEstado);
+						emisorAMQP(reservasUsuarioEstadoString);
+						break;
+				}
+			} catch (IllegalArgumentException exception) {
+				emisorAMQP("Argumentos no validos");
 			}
 		}
 	}
