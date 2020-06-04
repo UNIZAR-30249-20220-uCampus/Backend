@@ -30,7 +30,7 @@ public class ReservasController {
 	private AdapterReservas adapterReservas;
 
 	public ReservasController() throws IOException{
-		adapterReservas = new AdapterReservas("WebASpringReservas","SpringAWebReservas");
+		adapterReservas = new AdapterReservas("WebASpringReservasSergio","SpringAWebReservasSergio");
 	} 
 
 	public ReservasController(AdapterReservas adapterReservas) throws IOException{

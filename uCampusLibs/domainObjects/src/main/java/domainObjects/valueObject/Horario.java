@@ -39,6 +39,8 @@ public class Horario {
 	}
 
 	public Horario(Date fechaInicio, Date fechaFin, int frecuencia) {
+		if (fechaInicio == null || fechaFin == null)
+			throw new IllegalArgumentException("Ningun campo puede ser null");
 		if (fechaInicio.compareTo(fechaFin) > 0)
 			throw new IllegalArgumentException("fechaInicio no puede ser posterior a fechaFin");
 		if (frecuencia < 0)
@@ -50,6 +52,8 @@ public class Horario {
 	}
 
 	public Horario(Date fechaInicio, Date fechaFin, int frecuencia, List<ConjuntoDiaSlots> conjuntoDiaSlots) {
+		if (fechaInicio == null || fechaFin == null)
+			throw new IllegalArgumentException("Ningun campo puede ser null");
 		if (fechaInicio.compareTo(fechaFin) > 0)
 			throw new IllegalArgumentException("fechaInicio no puede ser posterior a fechaFin");
 		if (frecuencia < 0)
