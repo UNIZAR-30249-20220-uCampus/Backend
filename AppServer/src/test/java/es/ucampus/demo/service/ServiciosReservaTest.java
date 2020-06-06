@@ -90,6 +90,20 @@ public class ServiciosReservaTest {
 	}
 
 	@Test
+	public void test_GET_RESERVAS() throws Exception {
+
+		List<ReservaDTO> reservas = serviciosReserva.buscarReserva();
+		assertNotNull(reservas);
+	}
+
+	@Test
+	public void test_GET_RESERVAS_ESTADO() throws Exception {
+
+		List<ReservaDTO> reservas = serviciosReserva.buscarReservaEstado(EstadoReserva.PENDIENTE);
+		assertNotNull(reservas);
+	}
+
+	@Test
 	public void test_GET_RESERVAS_ESPACIO() throws Exception {
 
 		List<ReservaDTO> reservas = serviciosReserva.buscarReserva(espacio);

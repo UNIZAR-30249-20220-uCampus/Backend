@@ -137,6 +137,47 @@ public class ReservasController {
 	}
 
 	/*
+	 *  Devuelve todas las reservas reservas
+	 */
+	@GetMapping(value = "/api/reservas-sistema")
+	@ApiOperation(value = "Busqueda de todas las reservas del sistema", notes = "Devuelve lista de reservas")
+	public ResponseEntity<JSONArray> getAllReservas() 
+			throws Exception {
+
+		//envia los datos
+		adapterReservas.enviarGetReservas();
+
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
+		HttpStatus codigo = HttpStatus.OK;
+
+		JSONParser parser = new JSONParser();
+		JSONArray json = (JSONArray) parser.parse(res);
+		return ResponseEntity.status(codigo).body(json);
+	}
+
+	/*
+	 *  Devuelve todas las reservas reservas
+	 */
+	@GetMapping(value = "/api/reservas-sistema/{estado}")
+	@ApiOperation(value = "Busqueda de todas las reservas del sistema dado un estado", notes = "Devuelve lista de reservas con ese estado")
+	public ResponseEntity<JSONArray> getAllReservasEstado(
+		@ApiParam(value = "Estado de la reserva (PENDIENTE, PENDIENTEPAGO, ACEPTADA, CANCELADA)", required = true) @PathVariable String estado) 
+			throws Exception {
+
+		//envia los datos
+		adapterReservas.enviarGetReservasEstado(estado);
+
+		//recibe la respuesta del servidor
+		String res = adapterReservas.recibirReserva();
+		HttpStatus codigo = HttpStatus.OK;
+
+		JSONParser parser = new JSONParser();
+		JSONArray json = (JSONArray) parser.parse(res);
+		return ResponseEntity.status(codigo).body(json);
+	}
+
+	/*
 	 * Dado el identificador de un espacio devuelve sus reservas
 	 */
 	@GetMapping(value = "/api/reservas/{espacio}")

@@ -74,7 +74,7 @@ public class EspacioController {
 	/*
 	 * Busqueda de espacios segun criterios
 	 */
-	@GetMapping(value = "/api/buscar-espacio")
+	@PostMapping(value = "/api/buscar-espacio")
 	@ApiOperation(value = "Busqueda de espacios segun criterios", notes = "Devuelve lista de espacios con esas características")
 	public ResponseEntity<JSONArray> buscarEspacio(
 			@ApiParam(value = "Criterios de busqueda", required = true) @RequestBody CriteriosBusquedaDTO busquedaRequest)

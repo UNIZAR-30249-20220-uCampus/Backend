@@ -63,7 +63,7 @@ public class ServiciosReservaImpl implements ServiciosReserva {
 				repositorioReservas.save(reserva.get());
 				List<Reserva> reservas = repositorioReservas.findByEspacio(reserva.get().getEspacio());
 				for (Reserva reserva2 : reservas) {
-					if (reserva.get().hayColision(reserva2)) {
+					if (reserva.get().hayColision(reserva2) && reserva2.getEstado() == EstadoReserva.PENDIENTE) {
 						reserva2.cancelarReserva();
 						repositorioReservas.save(reserva2);
 					}
@@ -108,6 +108,42 @@ public class ServiciosReservaImpl implements ServiciosReserva {
 			}
 		}
 		return cancelada;
+	}
+
+	/**
+     * Dado un espacio, devuelve una lista de Reservas en formato ReservaDTO con todas las reservas del sistema
+     * @return List<ReservaDTO>
+     */
+	public List<ReservaDTO> buscarReserva() {
+		List<Reserva> reservas = repositorioReservas.findAll();
+		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
+
+		for (Reserva reserva : reservas) {
+			ReservaDTO reservaDTO = new ReservaDTO(reserva);
+			reservasDTO.add(reservaDTO);
+		}
+
+		return reservasDTO;
+	}
+
+	/**
+     * Dado un EstadoReserva, devuelve una lista de Reservas con el estado correspondiente
+     *      en formato ReservaDTO
+     * @param estado
+     * @return List<ReservaDTO>
+     */
+	public List<ReservaDTO> buscarReservaEstado(EstadoReserva estado) {
+		List<Reserva> reservas = repositorioReservas.findAll();
+		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
+
+		for (Reserva reserva : reservas) {
+			if (reserva.getEstado().equals(estado)) {
+				ReservaDTO reservaDTO = new ReservaDTO(reserva);
+				reservasDTO.add(reservaDTO);
+			}
+		}
+
+		return reservasDTO;
 	}
 
 	/**

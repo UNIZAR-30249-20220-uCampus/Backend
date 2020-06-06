@@ -149,8 +149,15 @@ public class AdapterEspacios {
 					// criterios de búsqueda
 					case "buscar-espacio":
 						CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
+						//filtros no activos
+						if(criterios.getFiltrosActivos().isEmpty()){
+							List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
+							// Se publica en el broker el resultado de la búsqueda.
+							String espacios2 = new Gson().toJson(espacios);
+							emisorAMQP(espacios2);
+						}
 						// Si la busqueda es dado el id de un espacio
-						if (criterios.busquedaPorId()) {
+						else if (criterios.busquedaPorId()) {
 
 							EspacioDTO espacio1 = serviciosEspacio.getEspacioDTOId(criterios.getNombre());
 							String jsonEspacio = mapper.writeValueAsString(espacio1);
