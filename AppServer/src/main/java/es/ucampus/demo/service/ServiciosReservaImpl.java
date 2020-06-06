@@ -63,7 +63,7 @@ public class ServiciosReservaImpl implements ServiciosReserva {
 				repositorioReservas.save(reserva.get());
 				List<Reserva> reservas = repositorioReservas.findByEspacio(reserva.get().getEspacio());
 				for (Reserva reserva2 : reservas) {
-					if (reserva.get().hayColision(reserva2)) {
+					if (reserva.get().hayColision(reserva2) && reserva2.getEstado() == EstadoReserva.PENDIENTE) {
 						reserva2.cancelarReserva();
 						repositorioReservas.save(reserva2);
 					}
