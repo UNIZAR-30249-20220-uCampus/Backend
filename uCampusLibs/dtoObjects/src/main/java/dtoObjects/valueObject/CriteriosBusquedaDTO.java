@@ -102,8 +102,8 @@ public class CriteriosBusquedaDTO {
 	}
 
 	public boolean equipamientoActivo(String equipamiento) {
-		for (String filtro : filtrosActivos) {
-			if (filtro.equals(equipamiento)) {
+		for (Equipamiento equi : equipamientos) {
+			if (equi.getTipo().name().equals(equipamiento)) {
 				return true;
 			}
 		}
