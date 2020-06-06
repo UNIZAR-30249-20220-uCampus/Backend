@@ -255,6 +255,9 @@ public class AdapterReservas {
 			} catch (IllegalArgumentException exception) {
 				emisorAMQP("Argumentos no validos");
 			}
+			catch (Exception ex) {
+				emisorAMQP("Server caido");
+		   	} 
 		}
 	}
 }

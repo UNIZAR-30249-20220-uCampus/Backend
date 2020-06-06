@@ -203,6 +203,9 @@ public class AdapterEspacios {
 			} catch (IllegalArgumentException exception) {
 				emisorAMQP("Argumentos no validos");
 			}
+			catch (Exception ex) {
+				emisorAMQP("Server caido");
+		   } 
 		}
 	}
 }
