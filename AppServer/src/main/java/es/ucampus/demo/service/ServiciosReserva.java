@@ -46,6 +46,20 @@ public interface ServiciosReserva {
     boolean cancelarReserva(Long idReserva);
 
     /**
+     * Dado un espacio, devuelve una lista de Reservas en formato ReservaDTO con todas las reservas
+     * @return List<ReservaDTO>
+     */
+    List<ReservaDTO> buscarReserva();
+
+    /**
+     * Dado un EstadoReserva, devuelve una lista de Reservas con el estado correspondiente
+     *      en formato ReservaDTO
+     * @param estado
+     * @return List<ReservaDTO>
+     */
+    List<ReservaDTO> buscarReservaEstado(EstadoReserva estado);
+
+    /**
      * Dado un espacio, devuelve una lista de Reservas en formato ReservaDTO con las reservas
      *      asociadas al espacio.
      * @param espacio

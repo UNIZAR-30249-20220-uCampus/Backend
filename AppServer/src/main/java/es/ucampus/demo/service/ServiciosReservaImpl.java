@@ -111,6 +111,42 @@ public class ServiciosReservaImpl implements ServiciosReserva {
 	}
 
 	/**
+     * Dado un espacio, devuelve una lista de Reservas en formato ReservaDTO con todas las reservas del sistema
+     * @return List<ReservaDTO>
+     */
+	public List<ReservaDTO> buscarReserva() {
+		List<Reserva> reservas = repositorioReservas.findAll();
+		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
+
+		for (Reserva reserva : reservas) {
+			ReservaDTO reservaDTO = new ReservaDTO(reserva);
+			reservasDTO.add(reservaDTO);
+		}
+
+		return reservasDTO;
+	}
+
+	/**
+     * Dado un EstadoReserva, devuelve una lista de Reservas con el estado correspondiente
+     *      en formato ReservaDTO
+     * @param estado
+     * @return List<ReservaDTO>
+     */
+	public List<ReservaDTO> buscarReservaEstado(EstadoReserva estado) {
+		List<Reserva> reservas = repositorioReservas.findAll();
+		List<ReservaDTO> reservasDTO = new ArrayList<ReservaDTO>();
+
+		for (Reserva reserva : reservas) {
+			if (reserva.getEstado().equals(estado)) {
+				ReservaDTO reservaDTO = new ReservaDTO(reserva);
+				reservasDTO.add(reservaDTO);
+			}
+		}
+
+		return reservasDTO;
+	}
+
+	/**
      * Dado un espacio, devuelve una lista de Reservas en formato ReservaDTO con las reservas
      *      asociadas al espacio.
      * @param espacio

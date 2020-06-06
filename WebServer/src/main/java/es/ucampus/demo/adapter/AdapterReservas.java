@@ -90,6 +90,28 @@ public class AdapterReservas {
 	/*
 	 * Envia id de un espacio a traves de Rabbitmq
 	 */
+	public void enviarGetReservas() throws IOException {
+		//Java object to JSON string
+		String messageString = "reservas-sistema/";
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
+		System.out.println(" [x] Enviado '" + messageString + "'");
+	}
+
+	/*
+	 * Envia id de un espacio a traves de Rabbitmq
+	 */
+	public void enviarGetReservasEstado(String estado) throws IOException {
+		//Java object to JSON string
+		String messageString = "reservas-sistema-estado/" + estado;
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
+		System.out.println(" [x] Enviado '" + messageString + "'");
+	}
+
+	/*
+	 * Envia id de un espacio a traves de Rabbitmq
+	 */
 	public void enviarGetReservas(String espacio) throws IOException {
 		//Java object to JSON string
 		String messageString = "reservas/" + espacio;

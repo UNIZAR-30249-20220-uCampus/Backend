@@ -188,6 +188,20 @@ public class AdapterReservas {
 							emisorAMQP("Reserva no encontrada");
 						}
 						break;
+					// Devuelve todas las reservas del sistema
+					case "reservas-sistema":
+						List<ReservaDTO> reservasSistema = serviciosReserva.buscarReserva();
+						reservasString = new Gson().toJson(reservasSistema);
+						emisorAMQP(reservasString);
+					break;
+					// Devuelve todas las reservas del sistema con estado
+					case "reservas-sistema-estado":
+						String estado = path[1];
+						EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
+						List<ReservaDTO> reservasEstadoSistema = serviciosReserva.buscarReservaEstado(estadoreserva);
+						reservasString = new Gson().toJson(reservasEstadoSistema);
+						emisorAMQP(reservasString);
+					break;
 					// Dado el identificador de un espacio, devuelve las reservas correspondientes
 					// Existe la posibilidad de no encontrar el espacio solicitado
 					case "reservas":
@@ -200,7 +214,7 @@ public class AdapterReservas {
 						} else {
 							emisorAMQP("No encontrado");
 						}
-						break;
+					break;
 					// Dados el identificador de un espacio y un estado, devuelve las reservas
 					// correspondientes
 					// con el estado solicitado.
@@ -208,10 +222,9 @@ public class AdapterReservas {
 					case "reservas-estado":
 						espacioReservas = serviciosEspacio.getEspacioId(path[1]);
 						if (espacioReservas != null) {
-							String estado = path[2];
-							EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
-							List<ReservaDTO> reservasEstado = new ArrayList<ReservaDTO>();
-							reservasEstado = serviciosReserva.buscarReservaEstado(espacioReservas, estadoreserva);
+							String estadoEspacio = path[2];
+							EstadoReserva estadoreservaEspacio = EstadoReserva.valueOf(estadoEspacio);
+							List<ReservaDTO> reservasEstado = serviciosReserva.buscarReservaEstado(espacioReservas, estadoreservaEspacio);
 							reservasString = new Gson().toJson(reservasEstado);
 							emisorAMQP(reservasString);
 						} else {
@@ -222,8 +235,7 @@ public class AdapterReservas {
 					// a ese usuario.
 					case "reservas-usuario":
 						String usuario = path[1];
-						List<ReservaDTO> reservasUsuario = new ArrayList<ReservaDTO>();
-						reservasUsuario = serviciosReserva.buscarReservaUsuario(usuario);
+						List<ReservaDTO> reservasUsuario = serviciosReserva.buscarReservaUsuario(usuario);
 						String reservasUsuarioString = new Gson().toJson(reservasUsuario);
 						emisorAMQP(reservasUsuarioString);
 						break;
@@ -232,11 +244,10 @@ public class AdapterReservas {
 					// a ese usuario con ese estado concreto.
 					case "reservas-usuario-estado":
 						String usuarioEstado = path[1];
-						String estado = path[2];
-						EstadoReserva estadoreserva = EstadoReserva.valueOf(estado);
-						List<ReservaDTO> reservasUsuarioEstado = new ArrayList<ReservaDTO>();
-						reservasUsuarioEstado = serviciosReserva.buscarReservaUsuarioEstado(usuarioEstado,
-								estadoreserva);
+						String estadoU = path[2];
+						EstadoReserva estadoreservaUsuario = EstadoReserva.valueOf(estadoU);
+						List<ReservaDTO>reservasUsuarioEstado = serviciosReserva.buscarReservaUsuarioEstado(usuarioEstado,
+						estadoreservaUsuario);
 						String reservasUsuarioEstadoString = new Gson().toJson(reservasUsuarioEstado);
 						emisorAMQP(reservasUsuarioEstadoString);
 						break;
