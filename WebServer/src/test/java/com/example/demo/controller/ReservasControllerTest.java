@@ -102,6 +102,32 @@ public class ReservasControllerTest {
 	}
 
 	/*
+	 *	Se verifica la correcta obtencion de todas las reserva
+	 */
+	@Test
+	public void test_GET_RESERVAS_SISTEMA() throws Exception {
+		JSONArray jsonArray = new JSONArray();
+		String msg = jsonArray.toJSONString();
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+
+		ResponseEntity<JSONArray> result = reservasController.getAllReservas();
+		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+
+	/*
+	 *	Se verifica la correcta obtencion de todas las reserva segun un estado
+	 */
+	@Test
+	public void test_GET_RESERVAS_SISTEMA_ESTADO() throws Exception {
+		JSONArray jsonArray = new JSONArray();
+		String msg = jsonArray.toJSONString();
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+
+		ResponseEntity<JSONArray> result = reservasController.getAllReservasEstado("PENDIENTE");
+		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+
+	/*
 	 *	Se verifica la correcta obtencion de todas las reserva de un espacio
 	 */
 	@Test
