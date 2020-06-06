@@ -182,16 +182,25 @@ public class Horario {
 		int semanaAux;
 
 		// semanas1 almacenará los números de semana que tiene el primer horario
-		semanaAux = horario1Inicio.get(Calendar.WEEK_OF_YEAR);
-		while (semanaAux <= horario1Fin.get(Calendar.WEEK_OF_YEAR)) {
-			semanas1.add(semanaAux);
-			semanaAux += this.frecuencia;
+		if (this.frecuencia != 0) {
+			semanaAux = horario1Inicio.get(Calendar.WEEK_OF_YEAR);
+			while (semanaAux <= horario1Fin.get(Calendar.WEEK_OF_YEAR)) {
+				semanas1.add(semanaAux);
+				semanaAux += this.frecuencia;
+			}
+		} else {
+			semanas1.add(horario1Inicio.get(Calendar.WEEK_OF_YEAR));
 		}
+
 		// semanas2 almacenará los números de semana que tiene el segundo horario
-		semanaAux = horario2Inicio.get(Calendar.WEEK_OF_YEAR);
-		while (semanaAux <= horario2Fin.get(Calendar.WEEK_OF_YEAR)) {
-			semanas2.add(semanaAux);
-			semanaAux += horario2.getFrecuencia();
+		if (horario2.getFrecuencia() != 0) {
+			semanaAux = horario2Inicio.get(Calendar.WEEK_OF_YEAR);
+			while (semanaAux <= horario2Fin.get(Calendar.WEEK_OF_YEAR)) {
+				semanas2.add(semanaAux);
+				semanaAux += horario2.getFrecuencia();
+			}
+		} else {
+			semanas2.add(horario2Inicio.get(Calendar.WEEK_OF_YEAR));
 		}
 
 		Vector<Integer> unionSemanas = findUnion(semanas1, semanas2);
