@@ -28,7 +28,7 @@ public class AdapterReservasTest {
 	private String QUEUE_ENVIAR = "AppServerTestReservasEnviar";
 	private String QUEUE_RECIBIR = "AppServerTestReservasRecibir";
 	private final static String ENV_AMQPURL_NAME = "CLOUDAMQP_URL";
-	private final static String CredencialCloudAMQP = "amqp://laxmuumj:ivRgGMHAsnl088kdlEWhskufGJSGsbkf@stingray.rmq.cloudamqp.com/laxmuumj";
+	private final static String CredencialCloudAMQP = "amqp://atyfvbtb:0k8H_vr2RIrXbzEq6dXwKNXF3Xu4J5F3@chinook.rmq.cloudamqp.com/atyfvbtb";
 	private Connection connection;
 	private Channel channel;
 	private QueueingConsumer consumer;
