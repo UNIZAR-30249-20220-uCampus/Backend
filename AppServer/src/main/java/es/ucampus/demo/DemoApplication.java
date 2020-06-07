@@ -54,6 +54,7 @@ public class DemoApplication implements CommandLineRunner {
 	  
 		threadEspacios.start();
 		threadReservas.start();
+		
 		System.out.println("[Application] Recibiendo el mensaje...");
 
 	}
