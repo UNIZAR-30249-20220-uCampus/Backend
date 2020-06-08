@@ -26,6 +26,7 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 
 	/**
 	 * Constructor del repositorio de espacios
+	 * 
 	 * @param espaciosRepository
 	 */
 	ServiciosEspacioImpl(RepositorioEspacios espaciosRepository) {
@@ -33,8 +34,8 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dado un identificador devuelve su Espacio correspondiente en formato EspacioDTO.
-	 * Devuelve null si no existe.
+	 * Dado un identificador devuelve su Espacio correspondiente en formato
+	 * EspacioDTO. Devuelve null si no existe.
 	 */
 	public EspacioDTO getEspacioDTOId(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
@@ -48,8 +49,22 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dado un identificador devuelve su Espacio correspondiente
-	 * Devuelve null si no existe.
+	 * Dado un identificador o nombre del espacio devuelve lost Espacio que incluyan
+	 * en su identificador o nombre del espacio la cadena "nombre" en formato
+	 * EspacioDTO. Devuelve null si no existe.
+	 */
+	public List<EspacioDTO> getEspaciosDTOId(String nombre) {
+		List<Espacio> espacios = espaciosRepository.findByName(nombre);
+		List<EspacioDTO> espaciosDTO = new ArrayList<EspacioDTO>();
+		for (Espacio e : espacios) {
+			espaciosDTO.add(new EspacioDTO(e));
+		}
+		return espaciosDTO;
+	}
+
+	/**
+	 * Dado un identificador devuelve su Espacio correspondiente Devuelve null si no
+	 * existe.
 	 */
 	public Espacio getEspacioId(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
@@ -62,9 +77,8 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dada una planta y las coordenadas 'x' e 'y' devuelve el Espacio correspondiente
-	 * 		en formato EspacioDTO.
-	 * Devuelve null si no existe.
+	 * Dada una planta y las coordenadas 'x' e 'y' devuelve el Espacio
+	 * correspondiente en formato EspacioDTO. Devuelve null si no existe.
 	 */
 	public EspacioDTO getEspacioCoordenadas(int planta, double x, double y) {
 		EspacioDTO espacioDTO = new EspacioDTO();
@@ -84,7 +98,7 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 
 	/**
 	 * Dado un aforo minimo devuelve una lista de Espacios en formato EspacioDTO con
-	 * 		un aforo igual o superior al requerido.
+	 * un aforo igual o superior al requerido.
 	 */
 	public List<EspacioDTO> buscarEspacioPorAforo(int aforo) {
 		List<Espacio> espacios = espaciosRepository.findByPlazasGreaterThanEqual(aforo);
@@ -98,8 +112,8 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dados unos criterios de búsqueda devuelve una lista de Espacios en formato EspacioDTO
-	 * 		que cumplen con los requisitos.
+	 * Dados unos criterios de búsqueda devuelve una lista de Espacios en formato
+	 * EspacioDTO que cumplen con los requisitos.
 	 */
 	public List<EspacioDTO> buscarEspacioPorCriterios(CriteriosBusquedaDTO criterios) {
 
@@ -120,8 +134,9 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dados unos criterios de búsqueda y horario devuelve una lista de Espacios en formato EspacioDTO
-	 * 		que cumplen con estos requisitos y tiene el horario disponible.
+	 * Dados unos criterios de búsqueda y horario devuelve una lista de Espacios en
+	 * formato EspacioDTO que cumplen con estos requisitos y tiene el horario
+	 * disponible.
 	 */
 	public List<EspacioDTO> buscarEspaciosPorCriteriosYHorario(CriteriosBusquedaDTO criterios) {
 		Reserva miReserva;
@@ -141,7 +156,7 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 		for (Espacio espacio : espacios) {
 			miReserva = new Reserva(espacio, criterios.getHorarioRequest(), "busqueda", "reserva");
 			reservas = repositorioReservas.findByEspacio(espacio);
-			if(!reservas.isEmpty()){
+			if (!reservas.isEmpty()) {
 				// Para cada reserva se comprueba que no colisione con la búsqueda
 				for (Reserva reserva : reservas) {
 					// Si hay colisión no se agrega a los Espacio resultantes
@@ -149,8 +164,7 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 						espaciosResultantes.add(espacio);
 					}
 				}
-			}
-			else{
+			} else {
 				espaciosResultantes.add(espacio);
 			}
 		}
@@ -163,7 +177,8 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Devuelve true si y solo si ha modificado con exito el equipamiento de un Espacio.
+	 * Devuelve true si y solo si ha modificado con exito el equipamiento de un
+	 * Espacio.
 	 */
 	public boolean setEquipamiento(CriteriosBusquedaDTO cambios) {
 		List<Integer> numEq = cambios.cantidadEquipamientos();
@@ -175,8 +190,8 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dada la planta de un Espacio devuelve la lista de Espacios alquilables en formato EspacioDTO
-	 * 		disponibles en la planta.
+	 * Dada la planta de un Espacio devuelve la lista de Espacios alquilables en
+	 * formato EspacioDTO disponibles en la planta.
 	 */
 	public List<EspacioDTO> getEspaciosAlquilables(int planta) {
 		List<EspacioDTO> listaEspaciosDTO = new ArrayList<EspacioDTO>();
@@ -190,8 +205,8 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dada una lista de Espacios en formato EspacioDTO devuelve una lista de igual formato
-	 * 		con los Espacios alquilables.
+	 * Dada una lista de Espacios en formato EspacioDTO devuelve una lista de igual
+	 * formato con los Espacios alquilables.
 	 */
 	public List<EspacioDTO> getEspaciosAlquilables(List<EspacioDTO> espacios) {
 		List<EspacioDTO> listaEspaciosDTO = new ArrayList<EspacioDTO>();
@@ -204,7 +219,8 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Dado el identificador de un Espacio devuelve la tarifa en función de sus caracteríristicas.
+	 * Dado el identificador de un Espacio devuelve la tarifa en función de sus
+	 * caracteríristicas.
 	 */
 	public double calcularTarifaEspacioAlquilable(String id) {
 		Optional<Espacio> espacio = espaciosRepository.findById(id);
@@ -214,11 +230,13 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 			return 0;
 		}
 	}
+
 	/**
-	 * Dado el identificador de un espacio, devuelve true si modifica el estado de alquilable o no alquilabe
-	 * 		del espacio correctmente. Devuelve false en caso contrario
+	 * Dado el identificador de un espacio, devuelve true si modifica el estado de
+	 * alquilable o no alquilabe del espacio correctmente. Devuelve false en caso
+	 * contrario
 	 */
-	public boolean cambioAlquilable(String idEspacio, int opcion){
+	public boolean cambioAlquilable(String idEspacio, int opcion) {
 		boolean cambiado = false;
 		Optional<Espacio> espacio = espaciosRepository.findById(idEspacio);
 		if (espacio.isPresent()) {
@@ -229,11 +247,13 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 		}
 		return cambiado;
 	}
+
 	/**
-	 * Dado el identificador de un espacio, devuelve true si modifica el estado de reservable o no reservable
-	 * 		del espacio correctmente. Devuelve false en caso contrario
+	 * Dado el identificador de un espacio, devuelve true si modifica el estado de
+	 * reservable o no reservable del espacio correctmente. Devuelve false en caso
+	 * contrario
 	 */
-	public boolean cambioReservable(String idEspacio, int opcion){
+	public boolean cambioReservable(String idEspacio, int opcion) {
 		boolean cambiado = false;
 		Optional<Espacio> espacio = espaciosRepository.findById(idEspacio);
 		if (espacio.isPresent()) {
