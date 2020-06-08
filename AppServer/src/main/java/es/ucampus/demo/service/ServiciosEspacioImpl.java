@@ -214,4 +214,35 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 			return 0;
 		}
 	}
+	/**
+	 * Dado el identificador de un espacio, devuelve true si modifica el estado de alquilable o no alquilabe
+	 * 		del espacio correctmente. Devuelve false en caso contrario
+	 */
+	public boolean cambioAlquilable(String idEspacio, int opcion){
+		boolean cambiado = false;
+		Optional<Espacio> espacio = espaciosRepository.findById(idEspacio);
+		if (espacio.isPresent()) {
+			cambiado = espacio.get().cambiarAlquilable(opcion);
+			if (cambiado) {
+				espaciosRepository.save(espacio.get());
+			}
+		}
+		return cambiado;
+	}
+	/**
+	 * Dado el identificador de un espacio, devuelve true si modifica el estado de reservable o no reservable
+	 * 		del espacio correctmente. Devuelve false en caso contrario
+	 */
+	public boolean cambioReservable(String idEspacio, int opcion){
+		boolean cambiado = false;
+		Optional<Espacio> espacio = espaciosRepository.findById(idEspacio);
+		if (espacio.isPresent()) {
+			cambiado = espacio.get().cambiarReservable(opcion);
+			if (cambiado) {
+				espaciosRepository.save(espacio.get());
+			}
+		}
+		return cambiado;
+	}
+
 }

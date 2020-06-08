@@ -352,5 +352,32 @@ public class Espacio {
 	public double getTarifa() {
 		return tarifa;
 	}
+	
+	public boolean cambiarAlquilable(int opcion) {
+		if(opcion == 0){
+			alquilable = opcion;
+		}
+		else if(opcion == 1){
+			alquilable = opcion;
+		}
+		else{
+			return false;
+		}
+		return true;
+
+	}
+
+	public boolean cambiarReservable(int opcion) {
+		if(opcion == 0){
+			reservable = opcion;
+		}
+		else if(opcion == 1){
+			reservable = opcion;
+		}
+		else{
+			return false;
+		}
+		return true;
+	}
 
 }

@@ -196,6 +196,34 @@ public class AdapterEspacios {
 							emisorAMQP("FALLO");
 						}
 						break;
+					//Cambia el estado de resevable en el espacio seleccionado
+					//	0 -> No reservable
+					//	1 -> Reservable	
+					case "cambiar-reservable":
+						String idEspacioRes = mapper.readValue(path[1], String.class);
+						int opcionReservable = Integer.parseInt(path[2]);
+						boolean cambiarEstadoR = serviciosEspacio.cambioReservable(idEspacioRes, opcionReservable);
+						if (cambiarEstadoR) {
+							emisorAMQP("OK");
+						} else {
+							emisorAMQP("Espacio no encontrado");
+						}
+						break;
+
+					//Cambia el estado de alquilable en el espacio seleccionado
+					//	0 -> No alquilable
+					//	1 -> Alquilable
+					case "cambiar-alquilable":
+						String idEspacioAlq = mapper.readValue(path[1], String.class);
+						int opcionAlquilable = Integer.parseInt(path[2]);
+						boolean cambiarEstadoA = serviciosEspacio.cambioReservable(idEspacioAlq, opcionAlquilable);
+						if (cambiarEstadoA) {
+							emisorAMQP("Pagada");
+						} else {
+							emisorAMQP("Espacio no encontrado");
+						}
+						break;
+
 					// El mensaje recibido no corresponde con ninguna operación del servidor.
 					default:
 						emisorAMQP("Error");

@@ -69,4 +69,15 @@ public interface ServiciosEspacio {
 	 * Dado el identificador de un Espacio devuelve la tarifa en función de sus caracteríristicas.
 	 */
 	double calcularTarifaEspacioAlquilable(String id);
+	
+	/**
+	 * Dado el identificador de un espacio, devuelve true si modifica el estado de alquilable o no alquilabe
+	 * 		del espacio correctmente. Devuelve false en caso contrario
+	 */
+	boolean cambioAlquilable(String idEspacio, int opcion);
+	/**
+	 * Dado el identificador de un espacio, devuelve true si modifica el estado de reservable o no reservable
+	 * 		del espacio correctmente. Devuelve false en caso contrario
+	 */
+	boolean cambioReservable(String idEspacio, int opcion);
 }
