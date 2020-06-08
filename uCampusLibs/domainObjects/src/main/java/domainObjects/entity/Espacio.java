@@ -160,6 +160,10 @@ public class Espacio {
 		return id_edificio;
 	}
 
+	public String getId_centro() {
+		return id_centro;
+	}
+
 	public String getSuperficie() {
 		return superficie;
 	}

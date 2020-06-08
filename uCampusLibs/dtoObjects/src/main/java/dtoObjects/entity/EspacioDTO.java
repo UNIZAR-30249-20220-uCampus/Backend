@@ -13,6 +13,7 @@ public class EspacioDTO {
 	private String id_espacio;
 	private String id_edificio;
 	private String id_utc;
+	private String id_centro;
 	private String superficie;
 	private int reservable;
 	private int alquilable;
@@ -28,6 +29,7 @@ public class EspacioDTO {
 	public EspacioDTO(Espacio es) {
 		this.id_espacio = es.getId_espacio();
 		this.id_edificio = es.getId_edificio();
+		this.id_centro = es.getId_centro();
 		this.superficie = es.getSuperficie();
 		this.reservable = es.getReservable();
 		this.alquilable = es.getAlquilable();
@@ -49,6 +51,7 @@ public class EspacioDTO {
 		JSONObject j = new JSONObject();
 		j.put("id_espacio", this.id_espacio);
 		j.put("id_edificio", this.id_edificio);
+		j.put("id_centro", this.id_centro);
 		j.put("superficie", this.superficie);
 		j.put("reservable", this.reservable);
 		j.put("alquilable", this.alquilable);
@@ -75,6 +78,10 @@ public class EspacioDTO {
 
 	public String getId_edificio() {
 		return id_edificio;
+	}
+
+	public String getId_centro() {
+		return id_centro;
 	}
 
 	public String getId_utc() {
