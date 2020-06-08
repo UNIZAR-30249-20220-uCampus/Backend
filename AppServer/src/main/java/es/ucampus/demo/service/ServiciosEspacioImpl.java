@@ -139,7 +139,7 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 		// Para cada Espacio que cumple los criterios de equipamiento se examinan sus
 		// Reserva
 		for (Espacio espacio : espacios) {
-			miReserva = new Reserva(espacio, criterios.getHorarioRequest().getHorario(), null, null);
+			miReserva = new Reserva(espacio, criterios.getHorarioRequest(), "busqueda", "reserva");
 			reservas = repositorioReservas.findByEspacio(espacio);
 			if(!reservas.isEmpty()){
 				// Para cada reserva se comprueba que no colisione con la búsqueda
