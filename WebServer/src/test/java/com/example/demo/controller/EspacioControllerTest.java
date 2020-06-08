@@ -112,4 +112,53 @@ public class EspacioControllerTest {
 		ResponseEntity<EspacioDTO> result = espacioController.getEspacio(7, 675745.92064, 4616800.60363);
 		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 	}
+
+	/*
+	 *	Se verifica que permite cambiar un espacio a no reservable
+	 */
+	@Test
+	public void test_PUT_ESPACIOS_RESERVABLE() throws Exception {
+		String msg = "OK";
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+
+		ResponseEntity<String> result = espacioController.cambiarReservable("\"CRE.1065.02.200\"", 0);
+		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+
+	/*
+	 *	Se verifica que no permite cambiar un espacio no exisatente a no reservable
+	 */
+	@Test
+	public void test_PUT_ESPACIOS_RESERVABLE_ERROR() throws Exception {
+		String msg = "No encontrado";
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+
+		ResponseEntity<String> result = espacioController.cambiarReservable("\"CRE.1065.02.200\"", 0);
+		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+	}
+
+	/*
+	 *	Se verifica que permite cambiar un espacio a no alquilable
+	 */
+	@Test
+	public void test_PUT_ESPACIOS_ALQUILABLE() throws Exception {
+		String msg = "OK";
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+
+		ResponseEntity<String> result = espacioController.cambiarAlquilable("\"CRE.1065.02.200\"", 0);
+		assertEquals(HttpStatus.OK, result.getStatusCode());
+	}
+
+	/*
+	 *	Se verifica que no permite cambiar un espacio no existente a no alquilable
+	 */
+	@Test
+	public void test_PUT_ESPACIOS_ALQUILABLE_ERROR() throws Exception {
+		String msg = "No encontrado";
+		channel.basicPublish("", QUEUE_RECIBIR, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+
+		ResponseEntity<String> result = espacioController.cambiarAlquilable("\"CRE.1065.02.200\"", 0);
+		assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+	}
+
 }

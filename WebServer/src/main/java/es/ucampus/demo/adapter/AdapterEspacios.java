@@ -100,6 +100,17 @@ public class AdapterEspacios {
 	}
 
 	/*
+	 * Envia id de un espacio para hacerlo reservable o alquilable a traves de Rabbitmq
+	 */
+	public void cambiarAlquilable(String espacio, int estado, String tipo) throws IOException {
+		// Java object to JSON string
+		String messageString = "cambiar-" + tipo + "/" + espacio + "/" + estado ;
+		//publica mensaje en la cola, indicamos que el mensaje sea durable
+		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, messageString.getBytes());
+		System.out.println(" [x] Enviado '" + messageString + "'");
+	}
+
+	/*
 	 * Recibe la respuesta del servidor de aplicaciones
 	 */
 	public String recibirEspacio() throws Exception {

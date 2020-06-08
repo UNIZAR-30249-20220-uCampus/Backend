@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import dtoObjects.entity.EspacioDTO;
@@ -106,5 +107,59 @@ public class EspacioController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(adapterEspacios.recibirEspacio());
 	}
+
+	/*
+	 * Cambia un espacio a reservable o no reservable.
+	 */
+	@PutMapping(value = "/api/cambiar-reservable/{espacio}/{estado}")
+	@ApiOperation(value = "Cambia un espacio a reservable o no reservable")
+	public ResponseEntity<String> cambiarReservable(
+		@ApiParam(value = "Id del espacio que se quiere cambiar", required = true) @PathVariable String espacio,
+		@ApiParam(value = "Estado del espacio (0-No reservable, 1-Reservable)", required = true) @PathVariable int estado
+	) throws Exception {
+
+		//envia los datos
+		adapterEspacios.cambiarAlquilable(espacio,estado,"reservable");
+
+		//recibe la respuesta del servidor
+		String res = adapterEspacios.recibirEspacio();
+		HttpStatus codigo = HttpStatus.OK;
+
+		//espacio no encontrado segun ese id
+		if (res.equals("No encontrado")) {
+			codigo = HttpStatus.NOT_FOUND;
+			return ResponseEntity.status(codigo).body(res);
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(res);
+	}
+
+	/*
+	 * Cambia un espacio a alquilable o no alquilable.
+	 */
+	@PutMapping(value = "/api/cambiar-alquilable/{espacio}/{estado}")
+	@ApiOperation(value = "Cambia un espacio a alquilable o no alquilable")
+	public ResponseEntity<String> cambiarAlquilable(
+		@ApiParam(value = "Id del espacio que se quiere cambiar", required = true) @PathVariable String espacio,
+		@ApiParam(value = "Estado del espacio (0-No alquilable, 1-Alquilable)", required = true) @PathVariable int estado
+	) throws Exception {
+
+		//envia los datos
+		adapterEspacios.cambiarAlquilable(espacio,estado,"alquilable");
+
+		//recibe la respuesta del servidor
+		String res = adapterEspacios.recibirEspacio();
+		HttpStatus codigo = HttpStatus.OK;
+
+		//espacio no encontrado segun ese id
+		if (res.equals("No encontrado")) {
+			codigo = HttpStatus.NOT_FOUND;
+			return ResponseEntity.status(codigo).body(res);
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(res);
+	}
+
+
 
 }
