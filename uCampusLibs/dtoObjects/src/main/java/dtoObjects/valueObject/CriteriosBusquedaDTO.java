@@ -3,6 +3,7 @@ package dtoObjects.valueObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import domainObjects.request.HorarioRequest;
 import domainObjects.request.ReservaRequest;
 import domainObjects.valueObject.Equipamiento;
 import domainObjects.valueObject.TipoEquipamiento;
@@ -14,7 +15,7 @@ public class CriteriosBusquedaDTO {
 	private List<Equipamiento> equipamientos;
 	private List<String> filtrosActivos;
 	private List<Equipamiento> totalEquipamientos;
-	private ReservaRequest horarioRequest;
+	private HorarioRequest horarioRequest;
 
 	public CriteriosBusquedaDTO() {
 		totalEquipamientos = new ArrayList<Equipamiento>();
@@ -56,7 +57,7 @@ public class CriteriosBusquedaDTO {
 		return filtrosActivos;
 	}
 
-	public ReservaRequest getHorarioRequest() {
+	public HorarioRequest getHorarioRequest() {
 		return horarioRequest;
 	}
 
