@@ -90,7 +90,7 @@ public class AdapterEspacios {
 	 * broker "QUEUE_ENVIAR", destinada para enviar desde el AppServer al WebServer
 	 */
 	public void emisorAMQP(JSONObject obj) throws IOException {
-		//publica mensaje en la cola
+		// publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, obj.toJSONString().getBytes());
 		System.out.println(" [x] Enviado '" + obj.toJSONString() + "'");
 	}
@@ -100,7 +100,7 @@ public class AdapterEspacios {
 	 * para enviar desde el AppServer al WebServer
 	 */
 	public void emisorAMQP(String obj) throws IOException {
-		//publica mensaje en la cola
+		// publica mensaje en la cola
 		channel.basicPublish("", QUEUE_ENVIAR, MessageProperties.PERSISTENT_TEXT_PLAIN, obj.getBytes());
 		System.out.println(" [x] Enviado '" + obj + "'");
 	}
@@ -122,8 +122,8 @@ public class AdapterEspacios {
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 				String message = new String(delivery.getBody());
 				System.out.println(" [x] Recibido '" + message + "'");
-				//Hacemos el ACK explicito cuando hemos procesado el mensaje
-				//false indica que el ACK no es multiple: solo cuenta para un mensaje concreto
+				// Hacemos el ACK explicito cuando hemos procesado el mensaje
+				// false indica que el ACK no es multiple: solo cuenta para un mensaje concreto
 				channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
 
 				String[] path = message.split("/");
@@ -149,8 +149,8 @@ public class AdapterEspacios {
 					// criterios de búsqueda
 					case "buscar-espacio":
 						CriteriosBusquedaDTO criterios = mapper.readValue(path[1], CriteriosBusquedaDTO.class);
-						//filtros no activos
-						if(criterios.getFiltrosActivos().isEmpty()){
+						// filtros no activos
+						if (criterios.getFiltrosActivos().isEmpty()) {
 							List<EspacioDTO> espacios = new ArrayList<EspacioDTO>();
 							// Se publica en el broker el resultado de la búsqueda.
 							String espacios2 = new Gson().toJson(espacios);
@@ -158,9 +158,8 @@ public class AdapterEspacios {
 						}
 						// Si la busqueda es dado el id de un espacio
 						else if (criterios.busquedaPorId()) {
-
-							EspacioDTO espacio1 = serviciosEspacio.getEspacioDTOId(criterios.getNombre());
-							String jsonEspacio = mapper.writeValueAsString(espacio1);
+							List<EspacioDTO> espaciosDTO = serviciosEspacio.getEspaciosDTOId(criterios.getNombre());
+							String jsonEspacio = mapper.writeValueAsString(espaciosDTO);
 							// enviar espacio
 							emisorAMQP(jsonEspacio);
 						} else {
@@ -196,9 +195,9 @@ public class AdapterEspacios {
 							emisorAMQP("FALLO");
 						}
 						break;
-					//Cambia el estado de resevable en el espacio seleccionado
-					//	0 -> No reservable
-					//	1 -> Reservable	
+					// Cambia el estado de resevable en el espacio seleccionado
+					// 0 -> No reservable
+					// 1 -> Reservable
 					case "cambiar-reservable":
 						String idEspacioRes = path[1];
 						int opcionReservable = Integer.parseInt(path[2]);
@@ -210,9 +209,9 @@ public class AdapterEspacios {
 						}
 						break;
 
-					//Cambia el estado de alquilable en el espacio seleccionado
-					//	0 -> No alquilable
-					//	1 -> Alquilable
+					// Cambia el estado de alquilable en el espacio seleccionado
+					// 0 -> No alquilable
+					// 1 -> Alquilable
 					case "cambiar-alquilable":
 						String idEspacioAlq = path[1];
 						int opcionAlquilable = Integer.parseInt(path[2]);
@@ -230,10 +229,9 @@ public class AdapterEspacios {
 				}
 			} catch (IllegalArgumentException exception) {
 				emisorAMQP("Argumentos no validos");
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				emisorAMQP("Server caido");
-		   	} 
+			}
 		}
 	}
 }
