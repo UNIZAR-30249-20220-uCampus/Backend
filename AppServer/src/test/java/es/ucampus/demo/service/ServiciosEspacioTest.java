@@ -147,12 +147,6 @@ public class ServiciosEspacioTest {
 		assertEquals(0, tarifa, 0);
 	}
 
-	@Test
-	public void test_SET_EQUIPAMIENTOS() throws Exception {
-
-		boolean ok = serviciosEspacio.setEquipamiento(criteriosBusquedaDTO);
-		assertTrue(ok);
-	}
 
 	@Test
 	public void test_BUSQUEDA_CRITERIOS() throws Exception {
