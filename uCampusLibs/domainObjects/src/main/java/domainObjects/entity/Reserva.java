@@ -37,7 +37,8 @@ public class Reserva {
 	public Reserva(Espacio espacio, Horario horario, String usuario, String tipo) {
 		if (espacio == null || horario == null || usuario == null || tipo == null)
 			throw new IllegalArgumentException("Ningun campo puede ser null");
-		assert (tipo.equals("reserva") || tipo.equals("alquiler"));
+		if (!tipo.equals("reserva") && !tipo.equals("alquiler"))
+			throw new IllegalArgumentException("El campo tipo debe ser 'reserva' o 'alquiler'");
 		this.espacio = espacio;
 		this.horario = horario;
 		this.usuario = usuario;
@@ -48,7 +49,8 @@ public class Reserva {
 	public Reserva(Espacio espacio, HorarioRequest horario, String usuario, String tipo) {
 		if (espacio == null || horario == null || usuario == null || tipo == null)
 			throw new IllegalArgumentException("Ningun campo puede ser null");
-		assert (tipo.equals("reserva") || tipo.equals("alquiler"));
+		if (!tipo.equals("reserva") && !tipo.equals("alquiler"))
+			throw new IllegalArgumentException("El campo tipo debe ser 'reserva' o 'alquiler'");
 		this.espacio = espacio;
 		this.horario = new Horario(horario);
 		this.usuario = usuario;
