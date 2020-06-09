@@ -317,7 +317,7 @@ public class Espacio {
 	 * Dado un equipamiento, devuelve TRUE si no supera la cantidad máxima permitida
 	 * para ese equipamiento en el Espacio. Devuelve FALSE en cualquier otro caso
 	 */
-	private boolean comprobarEquipamientoMaximoPermitido(Equipamiento eq) {
+	public boolean comprobarEquipamientoMaximoPermitido(Equipamiento eq) {
 		boolean permitido = false;
 		boolean encontrado = false;
 		int i = 0;

@@ -105,7 +105,15 @@ public class EspacioController {
 		//envia los datos
 		adapterEspacios.establecerEquipamiento(equipRequest);
 
-		return ResponseEntity.status(HttpStatus.OK).body(adapterEspacios.recibirEspacio());
+		//recibe la respuesta del servidor
+		String res = adapterEspacios.recibirEspacio();
+		HttpStatus codigo = HttpStatus.OK;
+
+		//reserva no encontrada segun ese id
+		if(res.equals("FALLO")){
+			codigo = HttpStatus.BAD_REQUEST;
+		}
+		return ResponseEntity.status(codigo).body(res);
 	}
 
 	/*

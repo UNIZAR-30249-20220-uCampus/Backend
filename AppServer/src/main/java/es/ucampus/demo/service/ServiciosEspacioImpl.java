@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import domainObjects.entity.Espacio;
 import domainObjects.entity.Reserva;
+import domainObjects.valueObject.Equipamiento;
 import dtoObjects.entity.EspacioDTO;
 import dtoObjects.valueObject.CriteriosBusquedaDTO;
 import es.ucampus.demo.repository.RepositorioEspacios;
@@ -177,16 +178,30 @@ public class ServiciosEspacioImpl implements ServiciosEspacio {
 	}
 
 	/**
-	 * Devuelve true si y solo si ha modificado con exito el equipamiento de un
-	 * Espacio.
+	 * Devuelve true si y solo si ha modificado con exito el equipamiento de un Espacio.
 	 */
 	public boolean setEquipamiento(CriteriosBusquedaDTO cambios) {
-		List<Integer> numEq = cambios.cantidadEquipamientos();
 		String nombreEspacio = "\"" + cambios.getNombre() + "\"";
-		int i = espaciosRepository.establecerEquipamiento(nombreEspacio, numEq.get(0), numEq.get(1), numEq.get(2),
+		Optional<Espacio> espacio = espaciosRepository.findById(nombreEspacio);
+		List<Equipamiento> equipamFuturos = cambios.getEquipamientos();
+		boolean encontrado = false;
+		int i = 0;
+		while(!encontrado && i<equipamFuturos.size()){
+			encontrado = !espacio.get().comprobarEquipamientoMaximoPermitido(equipamFuturos.get(i)) || (equipamFuturos.get(i).getCantidad() < 0);
+			i++;
+		}
+		if(!encontrado){
+			System.out.println("aqui");
+			List<Integer> numEq = cambios.cantidadEquipamientos();
+			i = espaciosRepository.establecerEquipamiento(nombreEspacio, numEq.get(0), numEq.get(1), numEq.get(2),
 				Integer.toString(numEq.get(3)), numEq.get(4), numEq.get(5), numEq.get(6), numEq.get(7), numEq.get(8),
 				numEq.get(9), numEq.get(10), numEq.get(11), numEq.get(12), numEq.get(13));
-		return i > 0;
+			return i > 0;
+		}
+		else{
+			return false;
+		}
+		
 	}
 
 	/**
